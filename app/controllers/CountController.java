@@ -1,9 +1,10 @@
 package controllers;
 
-import javax.inject.*;
-import play.*;
-import play.mvc.*;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
+import play.mvc.Controller;
+import play.mvc.Result;
 import services.Counter;
 
 /**

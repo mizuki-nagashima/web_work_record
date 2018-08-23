@@ -1,0 +1,127 @@
+@(message: String, appFormList: List[models.form.ApproveForm])
+@import play.i18n._
+@import helper._
+@main("承認一覧 - KMS勤怠管理【WEB】") {
+<br>
+◆@message
+
+<!-- PDFボタン用script start -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="jquery.extablefilter-latest.js"></script>
+<!-- PDFボタン用script end -->
+
+<section class="content">
+
+<!-- ためしでべた書きテーブルを作成 2018.04.04 -->
+2018年4月
+	<br>年度
+	<select name="year">
+		<option value="2018">2018年度</option>
+		<option value="2017">2017年度</option>
+		<option value="2016">2016年度</option>
+	</select>
+	<button type="button" id="updateButton">
+	 	更新
+	</button>
+    <button type="Button" id="pdfButton" class="btn btn-primary pdf" style="margin-right: 10px">
+		<i class="fa fa-file-text"></i>
+              PDF出力
+    </button>
+	<br>
+	<br>
+
+	<div>
+        <table id="tabelData" class="table table-bordered">
+          <thead style="background: #d3e5ff;">
+          <tr>
+            <th rowspan="2">No.</th>
+            <th rowspan="2">業務コード</th>
+            <th rowspan="2">社員番号</th>
+            <th rowspan="2">社員名</th>
+            <th colspan="2">承認内容</th>
+            <th rowspan="2">備考欄</th>
+            <th rowspan="2">状況</th>
+            <th colspan="2">承認者</th>
+            <th rowspan="2">承認日時</th>
+            <th colspan="2" rowspan="2">承認</th>
+          </tr>
+          <tr>
+            <th>日付</th>
+            <th>内容</th>
+            <th>役職</th>
+            <th>承認者氏名</th>
+          </tr>
+          </thead>
+          <tbody>
+          @for(app <- appFormList ){
+ 			<tr>
+            <td>1</td>
+            <td>@app.bs_code</td>
+            <td>@app.employee_no</td>
+            <td>@app.employee_name</td>
+            <td>@app.months_years / @app.performance_date</td>
+            <td>@app.shift_class</td>
+            <td>@app.remarks</td>
+            <td>@app.performance_status</td>
+            <td>@app.approval_position_code</td>
+            <td>@app.approval_employee_name</td>
+            <td>@app.approval_date</td>
+            <td>
+            	<button type="button" id="approveButton" class="btn btn-primary pdf" style="margin-right: 10px">
+					<!-- <i class="fa fa-file-text"></i> -->
+              			承認する
+    			</button>
+    		</td>
+    		<td>
+    			<button type="button" id="notApproveButton" class="btn btn-primary pdf" style="margin-right: 10px" >
+					<!-- <i class="fa fa-file-text"></i> -->
+              			不可
+    			</button>
+
+    		</td>
+          </tr>
+			}
+          </tbody>
+        </table>
+	</div>
+
+</section>
+<script>
+  $(function(){
+  	$(".updateButton").click(function () {
+      var url = '@routes.ApproveCtl.index'
+      $.ajax({
+        type : 'GET',
+        url : url
+      });
+    });
+  
+    $(".approveButton").click(function () {
+      var url = '@routes.ApproveCtl.updateApprove'
+      $.ajax({
+        type : 'GET',
+        url : url,
+        success : function(data) {
+          if (data.result == "ok") {
+            window.location.href = data.link;
+          }
+        }
+      });
+    });
+    
+    $(".notApproveButton").click(function () {
+      var url = '@routes.ApproveCtl.updateNotApprove("05")'
+      $.ajax({
+        type : 'GET',
+        url : url,
+        success : function(data) {
+          if (data.result == "ok") {
+          	$(".notApproveButton").prop('disabled', true);
+            window.location.href = data.link;
+          }
+        }
+      });
+    });
+  });
+</script>
+}

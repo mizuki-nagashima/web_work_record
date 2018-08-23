@@ -1,8 +1,12 @@
 package controllers;
 
+import com.google.inject.Inject;
+import it.innove.play.pdf.PdfGenerator;
 import play.mvc.*;
 
 import views.html.*;
+
+import java.util.ArrayList;
 
 /**
  * This controller contains an action to handle HTTP requests
@@ -16,8 +20,18 @@ public class HomeController extends Controller {
      * this method will be called when the application receives a
      * <code>GET</code> request with a path of <code>/</code>.
      */
+
     public Result index() {
         return ok(index.render("Your new application is ready."));
     }
 
+    /*
+    @Inject
+    public PdfGenerator pdfGenerator;
+    public Result index() {
+        ArrayList<String> fonts = new ArrayList<>();
+        fonts.add("fonts/meiryo.ttc");
+        return pdfGenerator.ok(index.render("日本語にほんごニホンゴ"), "http://localhost:9000/", fonts);
+    }
+*/
 }

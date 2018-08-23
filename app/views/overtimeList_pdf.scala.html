@@ -1,0 +1,100 @@
+@(employeeNumber: String, employeeName: String, department: String, position: String, businessCd: String, businessName: String, teamLeader: String, month4: String, month5: String, month6: String, month7: String, month8: String, month9: String, month10: String, month11: String, month12: String, month1: String, month2: String, month3: String, over45HourCount: String, overtimeAverage: String)
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  @* Here's where we render the page title `String`. *@
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TITLE: 残業一覧</title>
+  <style>
+          html, body{
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: "Hiragino Kaku Gothic ProN","メイリオ","Meiryo UI",'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif!important;
+            font-size: 10.5px;!important;
+          }
+          table, td, th{
+               border: 1px solid #9c9c9c !important;
+               border-collapse: collapse !important;
+          }
+  </style>
+</head>
+<body>
+@import play.i18n._
+
+<section class="content-header" id="header">
+  <h1>h1: 残業一覧</h1>
+</section>
+  <div style="position: absolute; top: 0px; right: 80px; margin-bottom: 10px; border: 1px solid #333333; width: 70px; height: 70px;">
+  </div>
+  <div style="position: absolute; top: 0px; right: 0px; margin-bottom: 10px; border: 1px solid #333333; width: 70px; height: 70px;">
+  </div>
+<p>
+  ○ 社員番号 : 00229
+  / 氏名 : 大塚果穂
+  / 部署 : SSC
+</p>
+<p>
+  ● 業務コード : 社内運用保守
+  / 業務名 : 社内運用保守
+</p>
+<div id="container">
+  <table class="border-table" style="width: 100%;">
+    <thead style="background: #d3e5ff;">
+    <tr style="white-space: nowrap;">
+            <th>社員番号</th>
+            <th>氏名</th>
+            <th>部署</th>
+            <th>役職</th>
+            <th>業務コード</th>
+            <th>業務名</th>
+            <th>チームリーダー</th>
+            <th>4月</th>
+            <th>5月</th>
+            <th>6月</th>
+            <th>7月</th>
+            <th>8月</th>
+            <th>9月</th>
+            <th>10月</th>
+            <th>11月</th>
+            <th>12月</th>
+            <th>1月</th>
+            <th>2月</th>
+            <th>3月</th>
+            <th>45時間以上回数</th>
+            <th>平均残業時間</th>
+    </tr>
+    </thead>
+    <tbody style="background:#fff;">
+    <tr class="attendanceForm tableDeta">
+            <td style="white-space: nowrap;">@employeeNumber</td>
+            <td style="white-space: nowrap;">@employeeName</td>
+            <td style="white-space: nowrap;">@department</td>
+            <td style="white-space: nowrap;">@position</td>
+            <td style="white-space: nowrap;">@businessCd</td>
+            <td style="white-space: nowrap;">@businessName</td>
+            <td style="white-space: nowrap;">@teamLeader</td>
+            <td style="white-space: nowrap;">@month4</td>
+            <td style="white-space: nowrap;">@month5</td>
+            <td style="white-space: nowrap;">@month6</td>
+            <td style="white-space: nowrap;">@month7</td>
+            <td style="white-space: nowrap;">@month8</td>
+            <td style="white-space: nowrap;">@month9</td>
+            <td style="white-space: nowrap;">@month10</td>
+            <td style="white-space: nowrap;">@month11</td>
+            <td style="white-space: nowrap;">@month12</td>
+            <td style="white-space: nowrap;">@month1</td>
+            <td style="white-space: nowrap;">@month2</td>
+            <td style="white-space: nowrap;">@month3</td>         
+            <td style="white-space: nowrap;">@over45HourCount</td>
+            <td style="white-space: nowrap;">@overtimeAverage</td>
+    </tr>
+    </tbody>
+  </table>
+
+
+</div>
+</body>
