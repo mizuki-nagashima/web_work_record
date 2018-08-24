@@ -11,6 +11,8 @@ import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
 import com.avaje.ebean.SqlUpdate;
 
+import play.Logger;
+
 /**
  * 実績テーブル
  */
@@ -253,7 +255,7 @@ public class TblPerformance extends CommonModel {
 
         Ebean.execute(create);
     }
-    
+
     /**
      * 承認一覧情報取得
      * @param businessTeamCode 業務チームコード
@@ -262,7 +264,7 @@ public class TblPerformance extends CommonModel {
     public static List<SqlRow> getApproveList(List<String> businessTeamCodeList, String yearMonth) {
     	String sql = "select yma.business_code as bs_code, per.employee_no as emp_no, emp.employee_name as emp_name, per.months_years as mon_yr, per.performance_date as per_date, per.holiday_class as ho_cl, per.shift_class as shi_cl , " +
     				 "per.remarks as rem, per.performance_status as per_st, per.approval_employee_no as app_emp_no, per.approval_date as app_date, appemp.position_code as app_emp_position, appemp.employee_name as app_emp_name, " +
-    				 "yma.months_years_status as mon_yr_st " + 
+    				 "yma.months_years_status as mon_yr_st " +
     				 "from tbl_performance per inner join ms_employee emp join tbl_year_month_attribute yma on per.employee_no = emp.employee_no and per.employee_no = yma.employee_no " +
     				 "left outer join ( select employee_no, employee_name, position_code from ms_employee ) appemp on per.approval_employee_no = appemp.employee_no " +
     				 "where yma.months_years_status in ('02', '03') and per.performance_status in ('03', '04', '05') and per.months_years = :yearmonth and yma.business_team_code in (:btc)";
@@ -272,10 +274,10 @@ public class TblPerformance extends CommonModel {
     			.setParameter("btc" ,businessTeamCodeList).findList();
 
     	Logger.debug("sql:" + String.valueOf(sql));
-    	
+
     	return sqlRows;
     }
-    
+
     /**
      * 承認する
      * @param empNo 社員番号　
@@ -287,19 +289,19 @@ public class TblPerformance extends CommonModel {
     public static void updateApprove(String empNo, String yearMonth, String date, String perStatus, String appemp) {
     	String sql = "update tbl_performance set performance_status = :perStatus, approval_employee_no = :appEmp, approval_date = Now() " +
     				 "where employee_no = :emp and months_years = :yearmonth and performance_date = :date";
- 
+
     	SqlUpdate create = Ebean.createSqlUpdate(sql)
     		.setParameter("perStatus",perStatus)
     		.setParameter("appEmp",appemp)
 	        .setParameter("emp",empNo)
 	        .setParameter("yearmonth",yearMonth)
 	        .setParameter("date",date);
-    	
+
     	Logger.debug("sql:" + String.valueOf(sql));
-    	
+
     	Ebean.execute(create);
     }
-    
+
     /**
      * 承認しない(確認中とする)
      * @param empNo 社員番号　
@@ -310,16 +312,16 @@ public class TblPerformance extends CommonModel {
     public static void updateNotApprove(String empNo, String yearMonth, String date, String perStatus) {
     	String sql = "update tbl_performance set performance_status = :perStatus " +
     				 "where employee_no = :emp and months_years = :yearmonth and performance_date = :date";
- 
+
     	SqlUpdate create = Ebean.createSqlUpdate(sql)
     		.setParameter("perStatus",perStatus)
 	        .setParameter("emp",empNo)
 	        .setParameter("yearmonth",yearMonth)
 	        .setParameter("date",date);
-    	
+
     	Logger.debug("sql:" + String.valueOf(sql));
-    	
+
     	Ebean.execute(create);
     }
-    
+
 }
