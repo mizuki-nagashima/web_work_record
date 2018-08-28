@@ -1,0 +1,58 @@
+@import helper._
+@main("メニュー - KMS勤怠管理【WEB】") {
+<style>
+body {
+background-color:#f8f8f8;
+}
+</style>
+<section class="content">
+ <div class="login-box">
+  <div class="login-box-body">
+   <h2>メニュー</h2>
+   <button type="button" class="btn btn-info" id="loginBtn">勤怠入力</button>
+  </div>
+ </div>
+</section>
+<script>
+  $(function() {
+    $("#loginBtn").click(function () {
+      $(".error").empty();
+      $.postAjax('#loginForm', function(data){
+        if(data.result == "ok"){
+          window.location.href = data.link;
+        }else{
+          $(".errorMsg").text(data.msg1);
+          $(".errorMsg2").text(data.msg2);
+          $(".errorEmployeeNo").text(data.errorEmployeeNo);
+          $(".errorPassword").text(data.errorPassword);
+        }
+      });
+    });
+
+    $.postAjax = function(formId, callBack, url) {
+      var form = (typeof formId == "string" ? $(formId) : formId);
+      var accessUrl = null;
+      try {
+        if(form && form[0]) {
+          accessUrl = url ? url : form.attr('action')
+          $.ajax({
+            url     : accessUrl,
+            data    : form.serialize(),
+            type    : "POST",
+            success : function(data) {
+              callBack(data);
+            },
+            complete : function() {
+            }
+          });
+        }
+      } catch(e) {
+        alert('エラーが発生しました。');
+      }
+    };
+    if(!navigator.userAgent.match(/(iPhone|iPod|Android)/)){
+      $(".login-box").css("width", "500px");
+    }
+  });
+</script>
+}

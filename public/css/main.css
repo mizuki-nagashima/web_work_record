@@ -1,0 +1,40 @@
+#container {
+    width: 100%;
+    position: relative;
+    height: auto !important;
+    height: 100%;
+    min-height: 100%;
+}
+
+#header {
+  background-color: #7b7b7b;
+  color: #ffffff;
+  padding-bottom: 15px;
+  padding-left: 30px;
+}
+
+#footer {
+    background-color: #7b7b7b;
+    color: #ffffff;
+    padding: 10px;
+    padding-left: 30px;
+    bottom: 0;
+    width: 100%;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: "Hiragino Kaku Gothic ProN","メイリオ",'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif!important;
+}
+
+th, td {
+  word-break: break-all;
+}
+
+.table-bordered>thead>tr>th,
+.table-bordered>tbody>tr>th,
+.table-bordered>tfoot>tr>th,
+.table-bordered>thead>tr>td,
+.table-bordered>tbody>tr>td,
+ .table-bordered>tfoot>tr>td {
+  border: 1px solid #A3A3A3!important;
+}

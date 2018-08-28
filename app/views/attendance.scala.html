@@ -1,0 +1,1097 @@
+@(statusAndWorkForm:Form[models.form.StatusAndWorkForm], inputForm: Form[models.form.AttendanceInputFormList], date: List[models.form.DateList], year: String, month: String, existsDefaultValue: Boolean, empNo: String, hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
+@import play.i18n._
+@import helper._
+@main(Messages.get("attendance.title")) {
+<style>
+media screen and (max-width: 767px)
+.table-responsive {
+    width: 100%;
+    margin-bottom: 15px;
+    overflow-y: hidden;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    border: 1px solid #ddd;
+}
+.table-responsive {
+    min-height: .01%;
+    overflow-x: auto;
+}
+#page-save {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 14px;
+    z-index: 99;
+}
+#page-save a {
+    text-decoration: none;
+    color: #fff;
+    width: 120px;
+    padding: 20px 5px;
+    text-align: center;
+    display: block;
+    border-radius: 5px;
+    background-color:rgba(65,150,65,0.8);
+}
+.warn-msg{
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    text-decoration: none;
+    color: #fff;
+    padding: 20px 10px;
+    display: block;
+    border-radius: 5px;
+    background-color:rgba(169,68,66,0.9);
+}
+.warn-msg-forSmartPhone{
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    text-decoration: none;
+    color: #fff;
+    padding: 20px 10px;
+    display: block;
+    border-radius: 5px;
+    background-color:rgba(169,68,66,0.9);
+}
+#page-save a:hover {
+    text-decoration: none;
+    background-color:rgba(65,150,65,1);
+}
+
+tbody tr:nth-child(6n),
+tbody tr:nth-child(6n-1),
+tbody tr:nth-child(6n-2) {
+    background: #f2f2f2;
+}
+tbody tr:nth-child(6n-3),
+tbody tr:nth-child(6n-4),
+tbody tr:nth-child(6n-5){
+    background: #fff;
+}
+.hidden {
+    visibility : hidden;
+}
+.none-form-warning{
+    display: none;
+    font-size: 22px;
+}
+.form-warning{
+    display: block;
+    font-size: 22px;
+}
+.success-msg{
+    display: none; /* 初期状態は非表示 */
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    text-decoration: none;
+    color: #fff;
+    padding: 20px 30px;
+    border-radius: 5px;
+    background-color:rgba(65,150,65,1);
+}
+</style>
+<section class="content">
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="col-md-10 col-sm-10 col-xs-12">
+        <h2><i class="fa fa-pencil-square-o"></i> @Messages.get("attendance.titleDate",year,month)</h2>
+      </div>
+      <div class="col-md-2 col-sm-2 col-xs-12">
+        <button type="button" id="logoutBtn" class="btn btn-default pull-right" style="margin-top: 20px; margin-bottom: 10px">
+          <span class="glyphicon glyphicon-log-out"></span>
+          ログアウト
+        </button>
+      </div>
+      @form(action = routes.AttendanceCtl.statusAndWorkSave, 'id -> "statusAndWorkForm") {
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="col-md-12 col-sm-12 col-xs-12 well">
+          <div class="col-md-8 col-sm-8 col-xs-12">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <h3>@Messages.get("attendance.yourStatus")</h3>
+            </div>
+            <input type="hidden" id="monthsYears" name="monthsYears" value="@((year + month).toInt)">
+            <input type="hidden" id="businessCode" name="businessCode" value="@statusAndWorkForm.get().businessCode">
+            <input type="hidden" id="businessTeamCode" name="businessTeamCode" value="@statusAndWorkForm.get().businessTeamCode">
+            <input type="hidden" id="departmentCode" name="departmentCode" value="@statusAndWorkForm.get().departmentCode">
+            <input type="hidden" id="departmentCode" name="departmentCode" value="@statusAndWorkForm.get().departmentCode">
+            <input type="hidden" id="divisionCode" name="divisionCode" value="@statusAndWorkForm.get().divisionCode">
+            <div class="col-md-2 col-sm-2 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @Messages.get("attendance.employeeNo")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" readonly="readonly" name="employeeNo" class="form-control" value="@statusAndWorkForm.get().employeeNo">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @Messages.get("attendance.employeeName")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" readonly="readonly" name="employeeName" class="form-control" value="@statusAndWorkForm.get().employeeName">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @Messages.get("attendance.department")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="department" class="form-control" value="@statusAndWorkForm.get().departmentName">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @Messages.get("attendance.division")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="division" class="form-control" value="@statusAndWorkForm.get().divisionName">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @Messages.get("attendance.workName")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" id="businessCd" name="businessCd" class="form-control" value="@statusAndWorkForm.get().businessCodeDisp">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @Messages.get("attendance.workTeamName")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="businessName" class="form-control" value="@statusAndWorkForm.get().businessTeamName">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 col-sm-4 col-xs-12">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <h3>@Messages.get("attendance.workingContents")</h3>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @Messages.get("attendance.work1")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="breakdownName1" class="form-control" value="@statusAndWorkForm.get().breakdownName1">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @Messages.get("attendance.work2")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="breakdownName2" class="form-control" value="@statusAndWorkForm.get().breakdownName2">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @Messages.get("attendance.work3")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="breakdownName3" class="form-control" value="@statusAndWorkForm.get().breakdownName3">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @Messages.get("attendance.work4")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="breakdownName4" class="form-control" value="@statusAndWorkForm.get().breakdownName4">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+            </div>
+          </div>
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+            <button type="button" id="statusAndWorksaveBtn" class="btn btn-success" style="margin-top: 15px;">
+              <i class="fa fa-clipboard"></i> @Messages.get("attendance.statusSave")
+            </button>
+              </div>
+          </div>
+        </div>
+      </div>
+      }
+      @form(action = routes.AttendanceCtl.save(empNo, year + month), 'id -> "inputForm") {
+      <input type="hidden" id="monthsYears" name="monthsYears" value="@((year + month).toInt)">
+      <input type="hidden" id="businessCode" name="businessCode" value="@statusAndWorkForm.get().businessCode">
+      <input type="hidden" id="businessTeamCode" name="businessTeamCode" value="@statusAndWorkForm.get().businessTeamCode">
+      <input type="hidden" id="departmentCode" name="departmentCode" value="@statusAndWorkForm.get().departmentCode">
+      <input type="hidden" id="departmentCode" name="departmentCode" value="@statusAndWorkForm.get().departmentCode">
+      <input type="hidden" id="divisionCode" name="divisionCode" value="@statusAndWorkForm.get().divisionCode">
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
+          <div class="col-md-12 col-sm-12 col-xs-12 visible-xs form-inline margin-bottom">
+            <label>年月を指定して移動：</label>
+            <input value="" class="form-control datepicker moveYearMonth" style="display: inline; width: 75%;">
+          </div>
+          <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
+            <button type="button" id="attendanceSaveTop" class="btn btn-success saveBtn" style="margin-right: 10px">
+              <i class="fa fa-check-square-o"></i>
+              @Messages.get("attendance.save")
+            </button>
+            <button type="button" class="btn btn-info pdf" style="margin-right: 10px">
+              <i class="fa fa-file-text"></i>
+              @Messages.get("attendance.pdf")
+            </button>
+            <button type="button" class="btn btn-danger fix" style="margin-right: 10px">
+              <i class="fa fa-file-text"></i>
+              @Messages.get("attendance.fix")
+            </button>
+            <div class="pull-right hidden-xs">
+              <label>年月を指定して移動：</label>
+              <input value="" class="form-control datepicker moveYearMonth">
+            </div>
+          </div>
+          <!--
+          <label>始業:</label>
+          <input value="" class="form-control clockpicker" >
+          <label>終業:</label>
+          <input value="" class="form-control clockpicker" >
+          <button type="button" class="btn btn-default">すべての勤怠に定時入力</button>
+          -->
+        </div>
+      </div>
+
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <table class="table table-bordered">
+          <thead style="background: #d3e5ff;">
+          <tr>
+            <th rowspan="2" width="4%">@Messages.get("attendance.form.date")</th>
+            <th colspan="2" width="8%">@Messages.get("attendance.form.workTime")</th>
+            <th class="hidden-xs" colspan="4" width="16%">@Messages.get("attendance.form.workingContents")</th>
+            <th class="hidden-xs" colspan="2" width="8%">@Messages.get("attendance.form.deduction")</th>
+            <th class="hidden-xs" rowspan="2" width="3%">@Messages.get("attendance.form.total")</th>
+            <th class="hidden-xs" rowspan="2" width="3%">@Messages.get("attendance.form.nightWork")</th>
+            <th class="hidden-xs" rowspan="2" width="3%">@Messages.get("attendance.form.salaried")</th>
+            <th class="hidden-xs" rowspan="2" width="9%">@Messages.get("attendance.form.holidayClassCode")</th>
+            <th class="hidden-xs" rowspan="2" width="5%">@Messages.get("attendance.form.shiftClassCode")</th>
+            <th class="hidden-xs" rowspan="2" width="10%">@Messages.get("attendance.form.remarks")</th>
+          </tr>
+          <tr>
+            <th>@Messages.get("attendance.form.start")</th>
+            <th>@Messages.get("attendance.form.end")</th>
+            <th class="hidden-xs">@Messages.get("attendance.form.work1")</th>
+            <th class="hidden-xs">@Messages.get("attendance.form.work2")</th>
+            <th class="hidden-xs">@Messages.get("attendance.form.work3")</th>
+            <th class="hidden-xs">@Messages.get("attendance.form.work4")</th>
+            <th class="hidden-xs">@Messages.get("attendance.form.lateNight")</th>
+            <th class="hidden-xs">@Messages.get("attendance.form.other")</th>
+          </tr>
+          </thead>
+          <tbody style="font-size: 16px;">
+            @date.zipWithIndex.map{ case(d, idx) =>
+            <tr class="attendanceForm tableDeta" id="@d.dateId" data-monthsYears="@d.monthsYears" data-date="@d.date" string-date="@d.stringDate">
+              <input type="hidden" name="attendanceInputFormList[@idx].employeeNo" value="@empNo">
+              <input type="hidden" name="attendanceInputFormList[@idx].monthsYears" value="@d.monthsYears">
+              <input type="hidden" name="attendanceInputFormList[@idx].date" value="@d.date">
+              <input type="hidden" name="attendanceInputFormList[@idx].dateId" value="@d.dateId">
+              <input type="hidden" id="@d.dateId-closingTime" class="form-control hiddenClosingTime" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).closingTime"}>
+                <input type="hidden" id="beforeHolidayClass@idx" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).holidayClassCode"}else{"00"}>
+              <td valign="middle">
+                <span class="calendar" style="white-space: nowrap;">@d.stringDate</span>
+                <!-- @if(d.isHoliday){<span style="margin-bottom: 3px" class="label label-warning fa fa-calendar"> 休</span>}-->
+                @if(d.isHoliday){<span style="margin-bottom: 3px" class="label label-warning fa-calendar"> 休</span>}
+                @if(existsDefaultValue && (inputForm.get().attendanceInputFormList.get(idx).openingTime != "" || inputForm.get().attendanceInputFormList.get(idx).holidayClassCode != "00")){
+                  <span style="margin-bottom: 3px" class="label label-success fa fa-check"> @Messages.get("attendance.form.alreadySave")</span>
+                }
+                <i class="fa fa-exclamation-circle none-form-warning text-danger" id="form-warning"></i>
+              </td>
+              <td valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.start") id="openingTime" name="attendanceInputFormList[@idx].openingTime" class="form-control timePicker openingTime changeEventForm" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).openingTime"}> </td>
+              <td valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.end") id="closingTime" name="attendanceInputFormList[@idx].closingTime" class="form-control timePicker closingTime changeEventForm" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).closingTime" }> </td>
+              <td class="hidden-xs" valign="middle"> <input type="number" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")1 id="breakdown1" name="attendanceInputFormList[@idx].breakdown1" class="breakdown1 form-control breakdown1-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown1"}else{"0.0"}> </td>
+              <td class="hidden-xs" valign="middle"> <input type="number" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")2 id="breakdown2" name="attendanceInputFormList[@idx].breakdown2" class="breakdown2 form-control breakdown2-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown2"}else{"0.0"}> </td>
+              <td class="hidden-xs" valign="middle"> <input type="number" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")3 id="breakdown3" name="attendanceInputFormList[@idx].breakdown3" class="breakdown3 form-control breakdown3-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown3"}else{"0.0"}> </td>
+              <td class="hidden-xs" valign="middle"> <input type="number" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")4 id="breakdown4" name="attendanceInputFormList[@idx].breakdown4" class="breakdown4 form-control breakdown4-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown4"}else{"0.0"}> </td>
+              <td class="hidden-xs" valign="middle"> <input type="number" data-toggle="popover" data-content=@Messages.get("attendance.form.lateNight")控除 id="deductionNight" name="attendanceInputFormList[@idx].deductionNight" class="deductionNight form-control changeEventForm deductionNight-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).deductionNight"}else{"0.0"}> </td>
+              <td class="hidden-xs" valign="middle"> <input type="number" data-toggle="popover" data-content=@Messages.get("attendance.form.other")控除 id="deductionOther" name="attendanceInputFormList[@idx].deductionOther" class="deductionOther form-control changeEventForm deductionOther-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).deductionOther"}else{"0.0"}> </td>
+              <td class="hidden-xs" valign="middle"> <input type="number" readonly="readonly" id="performanceTime" name="attendanceInputFormList[@idx].performanceTime" class="performanceTime form-control performanceTime-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).performanceTime"}else{"0.0"}></td>
+              <td class="hidden-xs" valign="middle"> <input type="number" readonly="readonly" id="nightWork" class="form-control nightWork" value="0.0"></td>
+              <td class="hidden-xs" valign="middle"> <input type="number" readonly="readonly" id="salaried" class="form-control salaried" value="0.0"></td>
+              <td class="hidden-xs" valign="middle">
+                <select id="holidayClass@d.dateId" name="attendanceInputFormList[@idx].holidayClassCode" class="form-control holidayClass changeEventForm holidayClass-@d.dateId">
+                  <option value="00"></option>
+                  @hcmList.map{ hcm =>
+                    <option value="@hcm.code">@hcm.codeName</option>
+                  }
+                  @if(existsDefaultValue){
+                    <script>
+                    var holidayClass = '@inputForm.get().attendanceInputFormList.get(idx).holidayClassCode';
+                    if(holidayClass != 00){
+                      var targetHolidayClass = "#holidayClass@d.dateId"
+                      $(targetHolidayClass).val(holidayClass)
+                    }
+                    </script>
+                  }
+                </select>
+              </td>
+              <td class="hidden-xs" valign="middle">
+                <select id="holidayClass@d.dateId" name="attendanceInputFormList[@idx].shifｔClassCode" class="form-control shifｔClass changeEventForm shifｔClass-@d.dateId">
+                  <option value="00"></option>
+                  @shiftList.map{ shift =>
+                    <option value="@shift.code">@shift.codeName</option>
+                  }
+                  @if(existsDefaultValue){
+                    <script>
+                    var shiftClass = '@inputForm.get().attendanceInputFormList.get(idx).shifｔClassCode';
+                    if(shiftClass != 00){
+                      var targetShiftClass = "#shiftClass@d.dateId"
+                      $(targetShiftClass).val(shiftClass)
+                    }
+                    </script>
+                  }
+                </select>
+              </td>
+              <td class="hidden-xs" valign="middle"> <input type="text" id="remarks" name="attendanceInputFormList[@idx].remarks" class="form-control  remarks-@d.dateId" @if(existsDefaultValue){ value="@inputForm.get().attendanceInputFormList.get(idx).remarks" }> </td>
+            </tr>
+            <tr class="visible-xs">
+              <td colspan="3"><button class="btn btn-default col-xs-12 otherInputModalBtn" date-id="@d.dateId" type="button"><i class="fa fa-pencil"></i>その他詳細入力</button></td>
+            </tr>
+            <!--<tr class="tableDeta hidden-xs" id="behindTr" date-id="@d.dateId">
+              <input type="hidden" id="@d.dateId-closingTime" class="form-control hiddenClosingTime" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).closingTime"}>
+            </tr>-->
+            <div class="modal fade otherInputModal" id="otherInputModal@d.dateId" date-id="@d.dateId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
+                    <h4 class="modal-title">その他詳細入力</h4>
+                  </div>
+                  <div class="modal-body">
+                    <label>@Messages.get("attendance.form.workingContents")1</label>
+                    <input type="number" id="breakdown1-modal-@d.dateId" class="form-control" step="0.5" min="0" >
+                    <label>@Messages.get("attendance.form.workingContents")2</label>
+                    <input type="number" id="breakdown2-modal-@d.dateId" class="form-control" step="0.5" min="0" >
+                    <label>@Messages.get("attendance.form.workingContents")3 </label>
+                    <input type="number" id="breakdown3-modal-@d.dateId" class="form-control" step="0.5" min="0" >
+                    <label>@Messages.get("attendance.form.workingContents")4</label>
+                    <input type="number" id="breakdown4-modal-@d.dateId" class="form-control" step="0.5" min="0" >
+                    <label>@Messages.get("attendance.form.lateNight")控除 </label>
+                    <input type="number" id="deductionNight-modal-@d.dateId" class="form-control" step="0.5" min="0" >
+                    <label>@Messages.get("attendance.form.other")控除</label>
+                    <input type="number" id="deductionOther-modal-@d.dateId" class="form-control" step="0.5" min="0" >
+                    <label>@Messages.get("attendance.form.holidayClassCode")</label>
+                    <select id="holidayClass-modal-@d.dateId" class="form-control changeEventForm" >
+                      <option value="0"></option>
+                      @hcmList.map{ hcm =>
+                      <option value="@hcm.code">@hcm.codeName</option>
+                      }
+                    </select>
+                    <label>@Messages.get("attendance.form.shiftClassCode")</label>
+                    <select id="holidayClass-modal-@d.dateId" class="form-control changeEventForm" >
+                      <option value="0"></option>
+                      @hcmList.map{ hcm =>
+                      <option value="@hcm.code">@hcm.codeName</option>
+                      }
+                    </select>
+                    <label>@Messages.get("attendance.form.remarks")</label>
+                    <input type="text" id="remarks-modal-@d.dateId" class="form-control">
+                    <label>@Messages.get("attendance.form.total")</label>
+                    <input type="number" readonly="readonly" id="performanceTime-modal-@d.dateId" class="form-control" step="0.5" min="0">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary otherInputModalCloseBtn" data-dismiss="modal" date-id="@d.dateId">値をセットして閉じる</button>
+                    <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                  </div>
+                </div>
+              </div>
+            </div>
+            }
+            <tr>
+              <td colspan="3">TOTAL</td>
+              <td class="hidden-xs"> <input type="number" readonly="readonly" id="sumBreakdown1" class="form-control"></td>
+              <td class="hidden-xs"> <input type="number" readonly="readonly" id="sumBreakdown2" class="form-control"></td>
+              <td class="hidden-xs"> <input type="number" readonly="readonly" id="sumBreakdown3" class="form-control"></td>
+              <td class="hidden-xs"> <input type="number" readonly="readonly" id="sumBreakdown4" class="form-control"></td>
+              <td class="hidden-xs"> <input type="number" readonly="readonly" id="sumDeductionNight" class="form-control"></td>
+              <td class="hidden-xs"> <input type="number" readonly="readonly" id="sumDeductionOther" class="form-control"></td>
+              <td> <input type="number" readonly="readonly" id="sumPerformanceTime" class="form-control"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
+          <div class="col-md-12 col-sm-12 col-xs-12 visible-xs form-inline margin-bottom">
+            <label>年月を指定して移動：</label>
+            <input value="" class="form-control datepicker moveYearMonth" style="display: inline; width: 75%;">
+          </div>
+          <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
+            <button type="button" id="attendanceSave" class="btn btn-success saveBtn" style="margin-right: 10px">
+              <i class="fa fa-check-square-o"></i>
+              @Messages.get("attendance.save")
+            </button>
+            <button type="button" class="btn btn-info pdf" style="margin-right: 10px">
+              <i class="fa fa-file-text"></i>
+              @Messages.get("attendance.pdf")
+            </button>
+            <button type="button" class="btn btn-danger fix" style="margin-right: 10px">
+              <i class="fa fa-file-text"></i>
+              @Messages.get("attendance.fix")
+            </button>
+            <div class="pull-right hidden-xs">
+              <label>年月を指定して移動：</label>
+              <input value="" class="form-control datepicker moveYearMonth">
+            </div>
+          </div>
+          <!--
+          <label>始業:</label>
+          <input value="" class="form-control clockpicker" >
+          <label>終業:</label>
+          <input value="" class="form-control clockpicker" >
+          <button type="button" class="btn btn-default">すべての勤怠に定時入力</button>
+          -->
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</section>
+<p id="page-save" class="saveBtn"><a class="saveBtn-a"><i class="fa fa-check-square-o"></i> @Messages.get("attendance.save")</a></p>
+<div class="hidden warn-msg">
+  <p id="warn-msg-title"><i class="fa fa-exclamation-circle"></i>以下の入力値が誤っているため保存できません、修正して下さい。</p>
+  <div align="right">
+    <small>※クリックでこのメッセージを閉じます。</small>
+  </div>
+</div>
+<div class="success-msg fa fa-thumbs-o-up">
+</div>
+
+<div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
+        <h4 class="modal-title" id="exampleModalLabel">PDF出力</h4>
+      </div>
+      <div class="modal-body">
+        <p>出力するPDFを選んでください</p>
+        <button type="button" id="normalPdf" class="btn btn-default" value="target='_blank'" onClick="window.open('@routes.AttendancePdfCtl.index(year,month,1)','_blank','')">社員用(ノーマル)</button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(function() {
+    if(localStorage.saveMsg){
+      $('.success-msg').text(localStorage.saveMsg).fadeIn(1000).delay(2000).fadeOut(2000);
+      localStorage.removeItem('saveMsg');
+    }else if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
+      $(document).ready(function () {
+        setTimeout(function() { window.scrollTo(0,$('#attendanceSaveTop').offset().top); }, 1);
+      });
+    }
+
+    $('.openingTime').timepicker({
+      'scrollDefault': '10:00',
+      'timeFormat':'H:i',
+      'wrapHours': false,
+      'showOnFocus': false
+    });
+
+    $('.closingTime').timepicker({
+      'scrollDefault': 'now',
+      'timeFormat':'H:i',
+      'wrapHours': false,
+      'showOnFocus': false
+    });
+
+    $('.datepicker').datepicker({
+      format: 'yyyy/mm',
+      language: 'ja',
+      autoclose: true,
+      minViewMode: 'months'
+    }).on({
+      changeDate : function(){
+        var yearMonth = $(this).val();
+        var nowYearMonth = $('#monthsYears').val();
+        var empNum = '@empNo';
+        var url = '@routes.AttendanceCtl.moveTargetYearMonth("0","0","0")';
+        url = url.substring(0, url.length - 5) + empNum + '/' + yearMonth.replace("/","") + '/' + nowYearMonth;
+        $.ajax({
+          type : 'GET',
+          url : url,
+          success : function(data) {
+            if (data.result == "ok") {
+              window.location.href = data.link;
+            }
+          }
+        });
+      }
+    });
+    var pageSaveBtn = $('#page-save');
+    pageSaveBtn.hide();
+    var saveBtnTop = $('#attendanceSaveTop');
+    var saveBtnTopPosition = saveBtnTop.offset().top;
+    $(window).scroll(function () {
+        //$.headerScroll();
+        if (($(this).scrollTop() > saveBtnTopPosition)) {
+            pageSaveBtn.fadeIn();
+        } else {
+            pageSaveBtn.fadeOut();
+        }
+    });
+
+    $(".changeEventForm").change(function(){
+      var targetTr = $(this).closest('tr');
+      var targetTrId = targetTr.attr('id');
+      if(targetTrId == "behindTr"){
+        targetTrId = targetTr.attr('date-id');
+      }
+      var start = $('#' + targetTrId).children().children('.openingTime').val();
+      var end = $('#' + targetTrId).children().children('.closingTime').val();
+      var holidayClass = $('#holidayClass' + targetTrId).val();
+      var modalHolidayClass = $('#holidayClass-modal-' + targetTrId).val();
+      if(modalHolidayClass != 00){
+        holidayClass = modalHolidayClass;
+      }
+      if(((start != "")&&(end  != "")) || holidayClass != 00){
+        $('#' + targetTrId + '-closingTime').val(end);
+        var url = '@routes.AttendanceCtl.getPerformanceTime("0","0","0","0")';
+        var deductionNight = $('#' + targetTrId).children().children('.deductionNight').val();
+        var deductionOther = $('#' + targetTrId).children().children('.deductionOther').val();
+        var deduction = parseFloat(deductionNight) + parseFloat(deductionOther);
+        deduction = deduction.toString();
+        if((start == "") || (end == "")){
+          start = "none"
+          end = "none"
+        }
+        url = url.substring(0, url.length - 7) + start + '/' + end + '/' + holidayClass + '/' + deduction;
+        $.ajax({
+          type : 'GET',
+          url : url,
+          success : function(data) {
+            var warnMsgId = 'warnMsgId' + targetTrId;
+            $('#' + warnMsgId).remove();
+            if(data.result == "ok"){
+              var target = $('#' + targetTrId).children();
+              var breakdown1 = parseFloat(target.children('#breakdown1').val());
+              var breakdown2 = parseFloat(target.children('#breakdown2').val());
+              var breakdown3 = parseFloat(target.children('#breakdown3').val());
+              var breakdown4 = parseFloat(target.children('#breakdown4').val());
+              if((breakdown1 + breakdown2 + breakdown3 + breakdown4 == 0) ||
+                 (breakdown2 + breakdown3 + breakdown4 == 0)){
+                target.children('#breakdown1').val(data.workTime);
+              }
+              target.children('#performanceTime').val(data.performanceTime);
+              $('#performanceTime-modal-' + targetTrId).val(data.performanceTime);
+              target.children('#form-warning').removeClass("form-warning");
+              target.children('#form-warning').addClass("none-form-warning");
+              if(!$("p").hasClass('warn-msg-contents')){
+                $(".saveBtn").prop('disabled', false);
+                $(".saveBtn-a").removeClass("hidden");
+                if($("p").hasClass('save-warn-msg-contents')){
+                   //$("#warn-msg").css("left","155px");
+                }else{
+                  $(".warn-msg").addClass("hidden");
+                }
+              }
+              $.totalInsert();
+            }else{
+               $(".saveBtn").prop('disabled', true);
+               $(".saveBtn-a").addClass("hidden");
+               $(".warn-msg").removeClass("hidden");
+               $('#' + targetTrId).children().children('#form-warning').removeClass("none-form-warning");
+               $('#' + targetTrId).children().children('#form-warning').addClass("form-warning");
+               var stringDate = targetTr.attr('string-date');
+               var msgContents = '<p id=' + warnMsgId + ' class=' + 'warn-msg-contents' + '>' + stringDate + '&nbsp;-&nbsp;' + data.msg + '<p>';
+               $('#warn-msg-title').after(msgContents);
+               $('#' + targetTrId).children().children('#performanceTime').val("");
+               $.totalInsert();
+               if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
+                $(".warn-msg").css('top','initial');
+                $(".warn-msg").css('bottom','20px');
+               }
+            }
+          }
+        });
+      }else{
+        $('#' + targetTrId).children().children('#performanceTime').val("");
+      }
+    });
+
+    $("#inputForm input").change(function(){
+      if(!$("p").hasClass('warn-msg-contents')){
+        $(".saveBtn").prop('disabled', false);
+        $(".saveBtn-a").removeClass("hidden");
+        if(!$("p").hasClass('save-warn-msg-contents')){
+          $("#page-save").css("bottom","20px");
+          $(".warn-msg").addClass("hidden");
+        }
+      }
+      $.totalInsert();
+    });
+
+    $("#inputForm select").change(function(){
+      if(!$("p").hasClass('warn-msg-contents')){
+        $(".saveBtn").prop('disabled', false);
+        $(".saveBtn-a").removeClass("hidden");
+        if(!$("p").hasClass('save-warn-msg-contents')){
+          //$("#page-save").css("top","20px");
+          $(".warn-msg").addClass("hidden");
+        }
+      }
+      $.totalInsert();
+    });
+
+/*
+    $(".moveBtn").click(function () {
+        var yearMonth = $(this).parent().find('.moveYearMonth').val();
+        var nowYearMonth = $('#monthsYears').val();
+        var empNum = '@empNo';
+        var url = '@routes.AttendanceCtl.moveTargetYearMonth("0","0","0")';
+        url = url.substring(0, url.length - 5) + empNum + '/' + yearMonth.replace("/","") + '/' + nowYearMonth;
+        $.ajax({
+          type : 'GET',
+          url : url,
+          success : function(data) {
+            if (data.result == "ok") {
+              window.location.href = data.link;
+            }
+          }
+        });
+    });
+*/
+
+    $(".warn-msg").click(function () {
+      $(this).addClass("hidden");
+    });
+
+    $(".saveBtn").click(function () {
+      $(".warn-msg").addClass("hidden");
+      $('.warn-msg-contents').remove();
+      $('.save-warn-msg-contents').remove();
+      $('#form-warning').addClass("none-form-warning");
+      $('#form-warning').removeClass("form-warning");
+      $.postAjax('#inputForm', function(data){
+        if(data.result == "ok"){
+          localStorage.saveMsg = '勤怠を保存しました。';
+          location.reload();
+        }else if(data.result == "ng"){
+          $(".warn-msg").removeClass("hidden");
+          var errorMsgList = data.msg;
+          var alertMsgContents = "";
+          $.each(errorMsgList, function(key, obj) {
+            $.each(obj, function(dId, msg) {
+              var dateId = dId;
+              var dataMsg = msg;
+              var stringDate = $('#' + dateId).attr('string-date');
+              var msgContents = '<p id=' + dateId + ' class=' + 'save-warn-msg-contents' + '>' + stringDate + '&nbsp;-&nbsp;' + dataMsg + '<p>';
+              alertMsgContents = msgContents + '\n'
+              $('#' + dateId).children().children('#form-warning').removeClass("none-form-warning");
+              $('#' + dateId).children().children('#form-warning').addClass("form-warning");
+              $('#warn-msg-title').after(msgContents);
+              if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
+                $(".warn-msg").removeAttr('style');
+                $(".warn-msg").css('bottom','20px');
+              }
+            });
+          });
+        }else{
+          alert('エラーが発生しました。');
+        }
+      });
+    });
+
+    $("#statusAndWorksaveBtn").click(function () {
+      $.postAjax('#statusAndWorkForm', function(data){
+        if(data.result == "ok"){
+          localStorage.saveMsg = 'ステータスと作業実績内訳詳細を保存しました。';
+          location.reload();
+        }else{
+          alert('エラーが発生しました。');
+        }
+      });
+    });
+
+    // TODO
+    $(".fix").click(function () {
+      // fix処理
+      var url = '@routes.AttendanceCtl.fix(empNo, year + month)'
+      $.ajax({
+          type:'POST',
+          url:url,
+          success:function(data) {
+            if(data.result == "ok"){
+              window.location.href = data.link;
+            }else if(data.result == "ng"){
+              $(".warn-msg").removeClass("hidden");
+              var errorMsgList = data.msg;
+              var alertMsgContents = "";
+              $.each(errorMsgList, function(key, obj) {
+                $.each(obj, function(dId, msg) {
+                  var dateId = dId;
+                  var dataMsg = msg;
+                  var stringDate = $('#' + dateId).attr('string-date');
+                  var msgContents = '<p id=' + dateId + ' class=' + 'save-warn-msg-contents' + '>' + stringDate + '&nbsp;-&nbsp;' + dataMsg + '<p>';
+                  alertMsgContents = msgContents + '\n'
+                  $('#' + dateId).children().children('#form-warning').removeClass("none-form-warning");
+                  $('#' + dateId).children().children('#form-warning').addClass("form-warning");
+                  $('#warn-msg-title').after(msgContents);
+                  if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
+                    $(".warn-msg").removeAttr('style');
+                    $(".warn-msg").css('bottom','20px');
+                  }
+                });
+              });
+            }else{
+               alert('エラーが発生しました。');
+            }
+          }
+      });
+      location.reload();
+    });
+
+
+    $(".pdf").click(function () {
+　　　　　$('#pdfModal').modal('show');
+    });
+
+    $(".otherInputModalBtn").click(function () {
+       var dateId = $(this).attr('date-id');
+       $('#breakdown1-modal-' + dateId).val($('.breakdown1-' + dateId).val());
+       $('#breakdown2-modal-' + dateId).val($('.breakdown2-' + dateId).val());
+       $('#breakdown3-modal-' + dateId).val($('.breakdown3-' + dateId).val());
+       $('#breakdown4-modal-' + dateId).val($('.breakdown4-' + dateId).val());
+       $('#deductionNight-modal-' + dateId).val($('.deductionNight-' + dateId).val());
+       $('#deductionOther-modal-' + dateId).val($('.deductionOther-' + dateId).val());
+       $('#holidayClass-modal-' + dateId).val($('.holidayClass-' + dateId).val());
+       $('#remarks-modal-' + dateId).val($('.remarks-' + dateId).val());
+       $('#performanceTime-modal-' + dateId).val($('.performanceTime-' + dateId).val());
+       $('#otherInputModal' + dateId).modal('show');
+    });
+
+
+    $("#logoutBtn").click(function () {
+      var url = '@routes.AuthCtl.logout'
+      $.ajax({
+        type : 'GET',
+        url : url,
+        success : function(data) {
+          if (data.result == "ok") {
+            window.location.href = data.link;
+          }
+        }
+      });
+    });
+
+    $(".otherInputModalCloseBtn").click(function () {
+      var dateId = $(this).attr('date-id');
+      $('.breakdown1-' + dateId).val($('#breakdown1-modal-' + dateId).val());
+      $('.breakdown2-' + dateId).val($('#breakdown2-modal-' + dateId).val());
+      $('.breakdown3-' + dateId).val($('#breakdown3-modal-' + dateId).val());
+      $('.breakdown4-' + dateId).val($('#breakdown4-modal-' + dateId).val());
+      $('.deductionNight-' + dateId).val($('#deductionNight-modal-' + dateId).val());
+      $('.deductionOther-' + dateId).val($('#deductionOther-modal-' + dateId).val());
+      $('.holidayClass-' + dateId).val($('#holidayClass-modal-' + dateId).val());
+      $('.remarks-' + dateId).val($('#remarks-modal-' + dateId).val());
+      $.totalInsert();
+    });
+
+    $.addZero = function(num) {
+      var number = String(num);
+      if(number.substr( -2, 2 ) != ".5"){
+        return number + ".0"
+      }else{
+        return number
+      }
+    };
+
+    $.totalInsert = function() {
+       var sumBreakdown1 = 0.0;
+       var sumBreakdown2 = 0.0;
+       var sumBreakdown3 = 0.0;
+       var sumBreakdown4 = 0.0;
+       var sumDeductionNight = 0.0;
+       var sumDeductionOther = 0.0;
+       var sumPerformanceTime = 0.0;
+
+       $(".breakdown1").each(function(){
+         var value = $(this).val();
+         sumBreakdown1 = sumBreakdown1 + parseFloat(value);
+       });
+       $("#sumBreakdown1").val($.addZero(sumBreakdown1));
+
+       $(".breakdown2").each(function(){
+         var value = $(this).val();
+         sumBreakdown2 = sumBreakdown2 + parseFloat(value);
+       });
+       $("#sumBreakdown2").val($.addZero(sumBreakdown2));
+
+       $(".breakdown3").each(function(){
+         var value = $(this).val();
+         sumBreakdown3 = sumBreakdown3 + parseFloat(value);
+       });
+       $("#sumBreakdown3").val($.addZero(sumBreakdown3));
+
+       $(".breakdown4").each(function(){
+         var value = $(this).val();
+         sumBreakdown4 = sumBreakdown4 + parseFloat(value);
+       });
+       $("#sumBreakdown4").val($.addZero(sumBreakdown4));
+
+       $(".deductionNight").each(function(){
+         var value = $(this).val();
+         sumDeductionNight = sumDeductionNight + parseFloat(value);
+       });
+       $("#sumDeductionNight").val($.addZero(sumDeductionNight));
+
+       $(".deductionOther").each(function(){
+         var value = $(this).val();
+         sumDeductionOther = sumDeductionOther + parseFloat(value);
+       });
+       $("#sumDeductionOther").val($.addZero(sumDeductionOther));
+
+       $(".nightWork").each(function(){
+         var nightWork = $(this)
+         hiddenClosingTime = $(this).parent().parent().find(".hiddenClosingTime").val();
+
+         if(hiddenClosingTime != ""){
+           var url = '@routes.AttendanceCtl.getNightWork("0")';
+           url = url.substring(0, url.length - 1) + hiddenClosingTime;
+           endTime = ""
+           $(this).parent().parent().find(".hiddenClosingTime").val("");
+           $.ajax({
+             type : 'GET',
+             url : url,
+             success : function(data) {
+               if (data.result == "ok") {
+                 var value = parseFloat(data.value);
+                 $(nightWork).val(value);
+               }
+             }
+           });
+         }
+       });
+
+       $(".salaried").each(function(){
+         var salaried = $(this)
+         var hiddensalaried = $(this).parent().parent().find(".holidayClass").val();
+         var trId = $(this).parent().parent().attr('prev-tr-id');
+         var url = '@routes.AttendanceCtl.getSalaried("0")';
+         url = url.substring(0, url.length - 1) + hiddensalaried;
+         $.ajax({
+           type : 'GET',
+           url : url,
+           success : function(data) {
+             if (data.result == "ok") {
+               var beforeHolidayClassValue = $('#beforeHolidayClass' + trId).val();
+               var performanceTime = $('#performanceTime' + trId);
+               var sumPerformanceTime =  $("#sumPerformanceTime").val();
+               var value = data.value;
+               var sumValue = parseFloat(performanceTime) + parseFloat(value) - parseFloat(beforeHolidayClassValue);
+               $(salaried).val($.addZero(value));
+               $('#beforeHolidayClass' + trId).val(value);
+               $('#performanceTime' + trId).val(sumValue);
+             }
+           }
+         });
+       });
+
+       $(".performanceTime").each(function(){
+         var value = $(this).val();
+         sumPerformanceTime = sumPerformanceTime + parseFloat(value);
+       });
+       $("#sumPerformanceTime").val($.addZero(sumPerformanceTime));
+
+    };
+    $.totalInsert();
+/*
+    $.headerScroll = function() {
+       var $table = $(".table");          // テーブルの要素を取得
+       var $thead = $table.children("thead");  // thead取得
+       var toffset = $table.offset();          // テーブルの位置情報取得
+       // テーブル位置+テーブル縦幅 < スクロール位置 < テーブル位置
+       if(toffset.top + $table.height()< $(window).scrollTop()
+         || toffset.top > $(window).scrollTop()){
+           // クローンテーブルが存在する場合は消す
+           var $clone = $("#clonetable");
+           if($clone.length > 0){
+               $clone.css("display", "none");
+           }
+       }else if(toffset.top < $(window).scrollTop()){
+         // クローンテーブルが存在するか確認
+         var $clone = $("#clonetable");
+         if($clone.length == 0){
+             // 存在しない場合は、theadのクローンを作成
+             $clone= $thead.clone(true);
+             // idをclonetableとする
+             $clone.attr("id", "clonetable");
+             // body部に要素を追加
+             $clone.appendTo("body");
+             // theadのCSSをコピーする
+             StyleCopy($clone, $thead);
+             // theadの子要素(tr)分ループさせる
+             var ttttt = $thead.children("tr").length;;
+             for(var i = -1; i < $thead.children("tr").length; ++i)
+             {
+                 // i番目のtrを取得
+                 var $theadtr = $thead.children("tr").eq(i);
+                 var $clonetr = $clone.children("tr").eq(i);
+                 // trの子要素(th)分ループさせる
+                 for (var j = 0; j < $theadtr.eq(i).children("th").length; j++){
+                     // j番目のthを取得
+                     var $theadth = $theadtr.eq(i).children("th").eq(j);
+                     var $cloneth = $clonetr.eq(i).children("th").eq(j);
+                     // thのCSSをコピーする
+                     StyleCopy($cloneth, $theadth);
+                 }
+             }
+         }
+
+         // コピーしたtheadの表示形式をtableに変更
+         $clone.css("display", "table");
+         // positionをブラウザに対し絶対値とする
+         $clone.css("position", "fixed");
+         $clone.css("border-collapse", "collapse");
+         // positionの位置を設定(left = 元のテーブルのleftとする)
+         $clone.css("left", toffset.left - $(window).scrollLeft());
+         // positionの位置を設定(topをブラウザの一番上とする)
+         $clone.css("top", "0px");
+         $clone.css("background-color", "rgba(211, 229, 255,0.8)");
+       }
+    };
+
+    // CSSのコピー
+    function StyleCopy($copyTo, $copyFrom){
+        $copyTo.css("width",
+                    $copyFrom.css("width"));
+        $copyTo.css("height",
+                    $copyFrom.css("height"));
+
+        $copyTo.css("padding-top",
+                    $copyFrom.css("padding-top"));
+        $copyTo.css("padding-left",
+                    $copyFrom.css("padding-left"));
+        $copyTo.css("padding-bottom",
+                    $copyFrom.css("padding-bottom"));
+        $copyTo.css("padding-right",
+                    $copyFrom.css("padding-right"));
+
+        $copyTo.css("background",
+                    $copyFrom.css("background"));
+        $copyTo.css("background-color",
+                    $copyFrom.css("background-color"));
+        $copyTo.css("vertical-align",
+                    $copyFrom.css("vertical-align"));
+
+        $copyTo.css("border-top-width",
+                    $copyFrom.css("border-top-width"));
+        $copyTo.css("border-top-color",
+                    $copyFrom.css("border-top-color"));
+        $copyTo.css("border-top-style",
+                    $copyFrom.css("border-top-style"));
+
+        $copyTo.css("border-left-width",
+                    $copyFrom.css("border-left-width"));
+        $copyTo.css("border-left-color",
+                    $copyFrom.css("border-left-color"));
+        $copyTo.css("border-left-style",
+                    $copyFrom.css("border-left-style"));
+
+        $copyTo.css("border-right-width",
+                    $copyFrom.css("border-right-width"));
+        $copyTo.css("border-right-color",
+                    $copyFrom.css("border-right-color"));
+        $copyTo.css("border-right-style",
+                    $copyFrom.css("border-right-style"));
+
+        $copyTo.css("border-bottom-width",
+                    $copyFrom.css("border-bottom-width"));
+        $copyTo.css("border-bottom-color",
+                    $copyFrom.css("border-bottom-color"));
+        $copyTo.css("border-bottom-style",
+                    $copyFrom.css("border-bottom-style"));
+    };
+*/
+    $('[data-toggle="popover"]').popover({
+      trigger: 'focus',
+      placement: 'top'
+     });
+
+    $(".fa-calendar").each(function(){
+      var calendarClass = $(this).parent().find(".calendar");
+      var calendar = calendarClass.text();
+      var value = calendar.substr(calendar.length-2);
+      if(value.match('土')){
+        calendarClass.addClass("text-primary");
+      }else if (value.match('日')){
+        calendarClass.addClass("text-danger");
+      }
+    });
+
+    $.postAjax = function(formId, callBack, url) {
+      var form = (typeof formId == "string" ? $(formId) : formId);
+      var accessUrl = null;
+      try {
+        if(form && form[0]) {
+          accessUrl = url ? url : form.attr('action')
+          $.ajax({
+            url     : accessUrl,
+            data    : form.serialize(),
+            type    : "POST",
+            success : function(data) {
+              callBack(data);
+            },
+            complete : function() {
+            }
+          });
+        }
+      } catch(e) {
+        alert('エラーが発生しました。');
+      }
+    };
+
+
+
+  });
+</script>
+}

@@ -1,0 +1,82 @@
+@(loginForm: Form[models.form.LoginForm])
+@import helper._
+@main("ログイン - KMS勤怠管理【WEB】") {
+<style>
+body {
+background-color:#f8f8f8;
+}
+</style>
+<section class="content">
+ @form(action = routes.AuthCtl.login, 'id -> "loginForm") {
+ <div class="login-box">
+  <div class="login-box-body">
+   <h2>KMS勤怠【WEB】</h2>
+   <p class="error text-danger errorMsg"></p>
+   <p class="error text-danger errorMsg2"></p>
+   <p class="error text-danger errorEmployeeNo"></p>
+   <p class="error text-danger errorPassword"></p>
+   @inputText(loginForm("employeeNo"), 'class -> "form-control", 'placeholder -> "社員番号を入力してください。", '_label ->"社員番号" ,'_showConstraints -> false)
+   @inputText(loginForm("password"), 'type -> "password", 'class -> "form-control", 'placeholder -> "パスワードを入力してください。", '_label ->"パスワード" ,'_showConstraints -> false)
+   <button type="button" class="btn btn-info" id="loginBtn">ログイン</button>
+  </div>
+ </div>
+ }
+</section>
+<script>
+  $(function() {
+    $("#loginBtn").click(function () {
+      $(".error").empty();
+      $.postAjax('#loginForm', function(data){
+        if(data.result == "ok"){
+          window.location.href = data.link;
+        }else{
+          $(".errorMsg").text(data.msg1);
+          $(".errorMsg2").text(data.msg2);
+          $(".errorEmployeeNo").text(data.errorEmployeeNo);
+          $(".errorPassword").text(data.errorPassword);
+        }
+      });
+    });
+
+    $("#password").keypress( function ( e ) {
+	    if ( e.which == 13 ) {
+	      $(".error").empty();
+        $.postAjax('#loginForm', function(data){
+          if(data.result == "ok"){
+            window.location.href = data.link;
+          }else{
+            $(".errorMsg").text(data.msg1);
+            $(".errorEmployeeNo").text(data.errorEmployeeNo);
+            $(".errorPassword").text(data.errorPassword);
+          }
+        });
+	    }
+    });
+
+    $.postAjax = function(formId, callBack, url) {
+      var form = (typeof formId == "string" ? $(formId) : formId);
+      var accessUrl = null;
+      try {
+        if(form && form[0]) {
+          accessUrl = url ? url : form.attr('action')
+          $.ajax({
+            url     : accessUrl,
+            data    : form.serialize(),
+            type    : "POST",
+            success : function(data) {
+              callBack(data);
+            },
+            complete : function() {
+            }
+          });
+        }
+      } catch(e) {
+        alert('エラーが発生しました。');
+      }
+    };
+    if(!navigator.userAgent.match(/(iPhone|iPod|Android)/)){
+      $(".login-box").css("width", "500px");
+    }
+  });
+</script>
+}
