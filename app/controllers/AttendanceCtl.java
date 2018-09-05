@@ -224,7 +224,7 @@ public class AttendanceCtl extends Controller {
                         pft.deductionNight = inputForm.deductionNight;
                         pft.deductionOther = inputForm.deductionOther;
                         pft.holidayClass = holidayClassCode;
-                        pft.shiftClass = inputForm.shifｔClassCode;
+                        pft.shiftClass = inputForm.shiftClassCode;
                         // TODO その他承認区分
                         pft.other_approval_class = "";
                         pft.remarks = inputForm.remarks;
@@ -320,7 +320,7 @@ public class AttendanceCtl extends Controller {
 
             // 要承認の実績
             if (isNeedApprovalPerformance(
-                    form.holidayClassName, form.shifｔClassCode, form.deductionNight, form.deductionOther)) {
+                    form.holidayClassName, form.shiftClassCode, form.deductionNight, form.deductionOther)) {
                 form.performanceStatus = Const.PERFORMANCE_STATUS_NEED_APPROVAL;
                 System.out.println(form.date + "日の実績は要承認です。");
             // 承認不要の実績

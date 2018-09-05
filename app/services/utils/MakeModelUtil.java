@@ -134,7 +134,7 @@ public class MakeModelUtil {
             double deductionOther = 0.0;
             double performanceTime = 0.0;
             String holidayClassCode = Const.HOLIDAY_CLASS_NOTHING;
-            String shifｔClassCode = Const.SHIFT_CLASS_NOTHING;
+            String shiftClassCode = Const.SHIFT_CLASS_NOTHING;
             String otherApprovalClass = "";
             String performanceStatus = "";
 
@@ -154,7 +154,7 @@ public class MakeModelUtil {
                     deductionOther = Optional.ofNullable(pd.getDouble("deduction_other")).orElse(deductionOther);
                     performanceTime = Optional.ofNullable(pd.getDouble("performance_time")).orElse(performanceTime);
                     holidayClassCode = Optional.ofNullable(pd.getString("holiday_class")).orElse(holidayClassCode);
-                    shifｔClassCode = Optional.ofNullable(pd.getString("shift_class")).orElse(shifｔClassCode);
+                    shiftClassCode = Optional.ofNullable(pd.getString("shift_class")).orElse(shiftClassCode);
                     remarks = Optional.ofNullable(pd.getString("remarks")).orElse(remarks);
                 }
             }
@@ -173,7 +173,7 @@ public class MakeModelUtil {
             aif.holidayClassCode = holidayClassCode;
             // TODO
             aif.holidayClassCode = holidayClassCode;
-            aif.shifｔClassCode = shifｔClassCode;
+            aif.shiftClassCode = shiftClassCode;
             aif.otherApprovalClass = otherApprovalClass;
             aif.performanceStatus = performanceStatus;
 
