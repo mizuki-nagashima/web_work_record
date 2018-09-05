@@ -3,19 +3,12 @@
 @import helper._
 @main(Messages.get("attendance.title")) {
 
-<link rel="stylesheet" href="./main.css">
-<script src="./main.js"></script>
+<link rel="stylesheet" href="/main.css">
 <section class="content">
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <div class="col-md-10 col-sm-10 col-xs-12">
         <h2><i class="fa fa-pencil-square-o"></i> @Messages.get("attendance.titleDate",year,month)</h2>
-      </div>
-      <div class="col-md-2 col-sm-2 col-xs-12">
-        <button type="button" id="logoutBtn" class="btn btn-default pull-right" style="margin-top: 20px; margin-bottom: 10px">
-          <span class="glyphicon glyphicon-log-out"></span>
-          ログアウト
-        </button>
       </div>
       @form(action = routes.AttendanceCtl.statusAndWorkSave, 'id -> "statusAndWorkForm") {
       <div class="col-md-12 col-sm-12 col-xs-12">
@@ -217,7 +210,7 @@
             <th colspan="2" width="10%">@Messages.get("attendance.form.workTime")</th>
             <th class="hidden-xs" colspan="4" width="18%">@Messages.get("attendance.form.workingContents")</th>
             <th class="hidden-xs" colspan="2" width="9%">@Messages.get("attendance.form.deduction")</th>
-            <th class="hidden-xs" rowspan="2" width="4.5%">@Messages.get("attendance.form.total")</th>
+            <th rowspan="2" width="4.5%">@Messages.get("attendance.form.total")</th>
             <th class="hidden-xs" rowspan="2" width="4.5%">@Messages.get("attendance.form.nightWork")</th>
             <th class="hidden-xs" rowspan="2" width="4.5%">@Messages.get("attendance.form.salaried")</th>
             <th class="hidden-xs" rowspan="2" width="5%">@Messages.get("attendance.form.holidayClassCode")</th>
@@ -261,7 +254,7 @@
               <td class="hidden-xs" valign="middle"> <input type="number" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")4 id="breakdown4" name="attendanceInputFormList[@idx].breakdown4" class="breakdown4 form-control breakdown4-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown4"}else{"0.0"}> </td>
               <td class="hidden-xs" valign="middle"> <input type="number" data-toggle="popover" data-content=@Messages.get("attendance.form.lateNight")控除 id="deductionNight" name="attendanceInputFormList[@idx].deductionNight" class="deductionNight form-control changeEventForm deductionNight-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).deductionNight"}else{"0.0"}> </td>
               <td class="hidden-xs" valign="middle"> <input type="number" data-toggle="popover" data-content=@Messages.get("attendance.form.other")控除 id="deductionOther" name="attendanceInputFormList[@idx].deductionOther" class="deductionOther form-control changeEventForm deductionOther-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).deductionOther"}else{"0.0"}> </td>
-              <td class="hidden-xs" valign="middle"> <input type="number" readonly="readonly" id="performanceTime" name="attendanceInputFormList[@idx].performanceTime" class="performanceTime form-control performanceTime-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).performanceTime"}else{"0.0"}></td>
+              <td valign="middle"> <input type="number" readonly="readonly" id="performanceTime" name="attendanceInputFormList[@idx].performanceTime" class="performanceTime form-control performanceTime-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).performanceTime"}else{"0.0"}></td>
               <td class="hidden-xs" valign="middle"> <input type="number" readonly="readonly" id="nightWork" class="form-control nightWork" value="0.0"></td>
               <td class="hidden-xs" valign="middle"> <input type="number" readonly="readonly" id="salaried" class="form-control salaried" value="0.0"></td>
               <td class="hidden-xs" valign="middle">
@@ -410,8 +403,8 @@
     <small>※クリックでこのメッセージを閉じます。</small>
   </div>
 </div>
-<div class="success-msg fa fa-thumbs-o-up">
-</div>
+<!--  <div class="success-msg fa fa-thumbs-o-up">
+</div> -->
 
 <div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">

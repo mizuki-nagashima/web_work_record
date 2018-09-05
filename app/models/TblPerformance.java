@@ -188,7 +188,7 @@ public class TblPerformance extends CommonModel {
             Ebean.commitTransaction();
         } catch (Exception e) {
             // FIXME debug
-            System.out.println(e);
+            System.out.println("実績データ登録失敗："+ e);
             Ebean.rollbackTransaction();
             throw e;
         } finally {
@@ -231,7 +231,7 @@ public class TblPerformance extends CommonModel {
             Ebean.commitTransaction();
         } catch (Exception e) {
             // FIXME debug
-            System.out.println(e);
+            System.out.println("実績データ更新失敗："+ e);
             Ebean.rollbackTransaction();
             throw e;
         } finally {

@@ -1,9 +1,16 @@
 package controllers;
 
+import static models.TblPerformance.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import com.avaje.ebean.SqlRow;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 
-import models.MsEmployee;
+import common.Const;
 import models.MsGeneralCode;
 import models.TblPerformance;
 import models.TblYearMonthAttribute;
@@ -12,20 +19,16 @@ import models.form.AttendanceInputFormList;
 import models.form.DateList;
 import models.form.StatusAndWorkForm;
 import play.data.Form;
+import play.data.FormFactory;
 import play.libs.Json;
-import play.mvc.*;
+import play.mvc.Controller;
+import play.mvc.Result;
+import play.mvc.Security;
+import services.auth.Secured;
 import services.utils.CheckUtil;
 import services.utils.DateUtil;
 import services.utils.MakeModelUtil;
-import services.auth.Secured;
-import views.html.*;
-import play.data.FormFactory;
-
-import static models.TblPerformance.getPerformanceData;
-import com.google.common.collect.ImmutableMap;
-import common.Const;
-
-import java.util.*;
+import views.html.attendance;
 
 /**
  * 勤怠管理画面用コントローラです。
