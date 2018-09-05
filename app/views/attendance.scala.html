@@ -2,96 +2,9 @@
 @import play.i18n._
 @import helper._
 @main(Messages.get("attendance.title")) {
-<style>
-media screen and (max-width: 767px)
-.table-responsive {
-    width: 100%;
-    margin-bottom: 15px;
-    overflow-y: hidden;
-    -ms-overflow-style: -ms-autohiding-scrollbar;
-    border: 1px solid #ddd;
-}
-.table-responsive {
-    min-height: .01%;
-    overflow-x: auto;
-}
-#page-save {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    font-size: 14px;
-    z-index: 99;
-}
-#page-save a {
-    text-decoration: none;
-    color: #fff;
-    width: 120px;
-    padding: 20px 5px;
-    text-align: center;
-    display: block;
-    border-radius: 5px;
-    background-color:rgba(65,150,65,0.8);
-}
-.warn-msg{
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    text-decoration: none;
-    color: #fff;
-    padding: 20px 10px;
-    display: block;
-    border-radius: 5px;
-    background-color:rgba(169,68,66,0.9);
-}
-.warn-msg-forSmartPhone{
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    text-decoration: none;
-    color: #fff;
-    padding: 20px 10px;
-    display: block;
-    border-radius: 5px;
-    background-color:rgba(169,68,66,0.9);
-}
-#page-save a:hover {
-    text-decoration: none;
-    background-color:rgba(65,150,65,1);
-}
 
-tbody tr:nth-child(6n),
-tbody tr:nth-child(6n-1),
-tbody tr:nth-child(6n-2) {
-    background: #f2f2f2;
-}
-tbody tr:nth-child(6n-3),
-tbody tr:nth-child(6n-4),
-tbody tr:nth-child(6n-5){
-    background: #fff;
-}
-.hidden {
-    visibility : hidden;
-}
-.none-form-warning{
-    display: none;
-    font-size: 22px;
-}
-.form-warning{
-    display: block;
-    font-size: 22px;
-}
-.success-msg{
-    display: none; /* 初期状態は非表示 */
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    text-decoration: none;
-    color: #fff;
-    padding: 20px 30px;
-    border-radius: 5px;
-    background-color:rgba(65,150,65,1);
-}
-</style>
+<link rel="stylesheet" href="./main.css">
+<script src="./main.js"></script>
 <section class="content">
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -300,16 +213,16 @@ tbody tr:nth-child(6n-5){
         <table class="table table-bordered">
           <thead style="background: #d3e5ff;">
           <tr>
-            <th rowspan="2" width="4%">@Messages.get("attendance.form.date")</th>
-            <th colspan="2" width="8%">@Messages.get("attendance.form.workTime")</th>
-            <th class="hidden-xs" colspan="4" width="16%">@Messages.get("attendance.form.workingContents")</th>
-            <th class="hidden-xs" colspan="2" width="8%">@Messages.get("attendance.form.deduction")</th>
-            <th class="hidden-xs" rowspan="2" width="3%">@Messages.get("attendance.form.total")</th>
-            <th class="hidden-xs" rowspan="2" width="3%">@Messages.get("attendance.form.nightWork")</th>
-            <th class="hidden-xs" rowspan="2" width="3%">@Messages.get("attendance.form.salaried")</th>
-            <th class="hidden-xs" rowspan="2" width="9%">@Messages.get("attendance.form.holidayClassCode")</th>
+            <th rowspan="2" width="1%">@Messages.get("attendance.form.date")</th>
+            <th colspan="2" width="10%">@Messages.get("attendance.form.workTime")</th>
+            <th class="hidden-xs" colspan="4" width="18%">@Messages.get("attendance.form.workingContents")</th>
+            <th class="hidden-xs" colspan="2" width="9%">@Messages.get("attendance.form.deduction")</th>
+            <th class="hidden-xs" rowspan="2" width="4.5%">@Messages.get("attendance.form.total")</th>
+            <th class="hidden-xs" rowspan="2" width="4.5%">@Messages.get("attendance.form.nightWork")</th>
+            <th class="hidden-xs" rowspan="2" width="4.5%">@Messages.get("attendance.form.salaried")</th>
+            <th class="hidden-xs" rowspan="2" width="5%">@Messages.get("attendance.form.holidayClassCode")</th>
             <th class="hidden-xs" rowspan="2" width="5%">@Messages.get("attendance.form.shiftClassCode")</th>
-            <th class="hidden-xs" rowspan="2" width="10%">@Messages.get("attendance.form.remarks")</th>
+            <th class="hidden-xs" rowspan="2" width="8%">@Messages.get("attendance.form.remarks")</th>
           </tr>
           <tr>
             <th>@Messages.get("attendance.form.start")</th>
@@ -322,7 +235,7 @@ tbody tr:nth-child(6n-5){
             <th class="hidden-xs">@Messages.get("attendance.form.other")</th>
           </tr>
           </thead>
-          <tbody style="font-size: 16px;">
+          <tbody style="font-size: 14px;">
             @date.zipWithIndex.map{ case(d, idx) =>
             <tr class="attendanceForm tableDeta" id="@d.dateId" data-monthsYears="@d.monthsYears" data-date="@d.date" string-date="@d.stringDate">
               <input type="hidden" name="attendanceInputFormList[@idx].employeeNo" value="@empNo">
@@ -353,7 +266,7 @@ tbody tr:nth-child(6n-5){
               <td class="hidden-xs" valign="middle"> <input type="number" readonly="readonly" id="salaried" class="form-control salaried" value="0.0"></td>
               <td class="hidden-xs" valign="middle">
                 <select id="holidayClass@d.dateId" name="attendanceInputFormList[@idx].holidayClassCode" class="form-control holidayClass changeEventForm holidayClass-@d.dateId">
-                  <option value="00"></option>
+                   <option value="00"></option>
                   @hcmList.map{ hcm =>
                     <option value="@hcm.code">@hcm.codeName</option>
                   }
@@ -369,14 +282,14 @@ tbody tr:nth-child(6n-5){
                 </select>
               </td>
               <td class="hidden-xs" valign="middle">
-                <select id="holidayClass@d.dateId" name="attendanceInputFormList[@idx].shifｔClassCode" class="form-control shifｔClass changeEventForm shifｔClass-@d.dateId">
+                <select id="holidayClass@d.dateId" name="attendanceInputFormList[@idx].shiftClassCode" class="form-control shiftClass changeEventForm shiftClass-@d.dateId">
                   <option value="00"></option>
                   @shiftList.map{ shift =>
                     <option value="@shift.code">@shift.codeName</option>
                   }
                   @if(existsDefaultValue){
                     <script>
-                    var shiftClass = '@inputForm.get().attendanceInputFormList.get(idx).shifｔClassCode';
+                    var shiftClass = '@inputForm.get().attendanceInputFormList.get(idx).shiftClassCode';
                     if(shiftClass != 00){
                       var targetShiftClass = "#shiftClass@d.dateId"
                       $(targetShiftClass).val(shiftClass)
