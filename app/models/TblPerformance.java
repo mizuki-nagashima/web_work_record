@@ -72,10 +72,6 @@ public class TblPerformance extends CommonModel {
      */
     public Double performanceTime;
 
-    /**
-     * KMS実働時間
-     */
-    public Double kmsProductionTme;
 
     /**
      * 控除（深夜）
