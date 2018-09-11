@@ -519,10 +519,12 @@ public class AttendanceCtl extends Controller {
      * @return 結果
      */
     public Result getNightWork(String endTime){
+    	double nightwork = 0.0;
+    	nightwork = DateUtil.getLateNightWorkTime(endTime);
         return ok(Json.toJson(
                 ImmutableMap.of(
                         "result","ok",
-                        "value", DateUtil.getLateNightWorkTime(endTime)
+                        "value", nightwork
                 )));
     }
 
