@@ -1,4 +1,4 @@
-@(statusAndWorkForm:Form[models.form.StatusAndWorkForm], inputForm: Form[models.form.AttendanceInputFormList], date: List[models.form.DateList], year: String, month: String, existsDefaultValue: Boolean, empNo: String, hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
+@(statusAndWorkForm:Form[models.form.StatusAndWorkForm], inputForm: Form[models.form.AttendanceInputFormList], date: List[models.form.DateList], year: String, month: String, existsDefaultValue: Boolean, empNo: String, departList: List[models.MsGeneralCode],hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
 @import play.i18n._
 @import helper._
 @main(Messages.get("attendance.title")) {
@@ -54,7 +54,12 @@
                     @Messages.get("attendance.department")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text" name="department" class="form-control" value="@statusAndWorkForm.get().departmentName">
+                    <select id="department" name="department" class="form-control">
+	                  <option value="0"></option>
+	                  @departList.map{ list =>
+	                    <option value="@list.code">@list.codeName</option>
+	                  }
+	                </select>
                   </div>
                 </div>
               </div>
@@ -230,7 +235,7 @@
           </thead>
           <tbody style="font-size: 14px;">
             @date.zipWithIndex.map{ case(d, idx) =>
-            <tr class="attendanceForm tableDeta" id="@d.dateId" data-monthsYears="@d.monthsYears" data-date="@d.date" string-date="@d.stringDate">
+            <tr class="attendanceForm tableDeta" id="@d.dateId" data-monthsYears="@d.monthsYears" data-date="@d.date" string-date="@d.stringDate" @if(d.isHoliday){background="#f2f2f2"}>
               <input type="hidden" name="attendanceInputFormList[@idx].employeeNo" value="@empNo">
               <input type="hidden" name="attendanceInputFormList[@idx].monthsYears" value="@d.monthsYears">
               <input type="hidden" name="attendanceInputFormList[@idx].date" value="@d.date">
@@ -318,6 +323,12 @@
                     <input type="number" id="deductionNight-modal-@d.dateId" class="form-control" step="0.5" min="0" >
                     <label>@Messages.get("attendance.form.other")控除</label>
                     <input type="number" id="deductionOther-modal-@d.dateId" class="form-control" step="0.5" min="0" >
+                    <label>@Messages.get("attendance.form.total")</label>
+                    <input type="number" readonly="readonly" id="performanceTime-modal-@d.dateId" class="form-control" step="0.5" min="0">
+                    <label>@Messages.get("attendance.form.nightWork")</label>
+                    <input type="number" readonly="readonly" id="nightWork-model-@d.dateId" class="form-control" step="0.5" min="0">
+            		<label>@Messages.get("attendance.form.salaried")</label>
+            		<input type="number" readonly="readonly" id="salaried-model-@d.dateId" class="form-control" step="0.5" min="0">
                     <label>@Messages.get("attendance.form.holidayClassCode")</label>
                     <select id="holidayClass-modal-@d.dateId" class="form-control changeEventForm" >
                       <option value="0"></option>
@@ -334,8 +345,6 @@
                     </select>
                     <label>@Messages.get("attendance.form.remarks")</label>
                     <input type="text" id="remarks-modal-@d.dateId" class="form-control">
-                    <label>@Messages.get("attendance.form.total")</label>
-                    <input type="number" readonly="readonly" id="performanceTime-modal-@d.dateId" class="form-control" step="0.5" min="0">
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary otherInputModalCloseBtn" data-dismiss="modal" date-id="@d.dateId">値をセットして閉じる</button>
@@ -652,7 +661,7 @@
           localStorage.saveMsg = 'ステータスと作業実績内訳詳細を保存しました。';
           location.reload();
         }else{
-          alert('エラーが発生しました。');
+          alert('ステータスと作業実績内訳詳細保存中にエラーが発生しました。');
         }
       });
     });
