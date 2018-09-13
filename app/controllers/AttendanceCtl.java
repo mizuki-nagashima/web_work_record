@@ -1,9 +1,16 @@
 package controllers;
 
+import static models.TblPerformance.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import com.avaje.ebean.SqlRow;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 
-import models.MsEmployee;
+import common.Const;
 import models.MsGeneralCode;
 import models.TblPerformance;
 import models.TblYearMonthAttribute;
@@ -12,20 +19,16 @@ import models.form.AttendanceInputFormList;
 import models.form.DateList;
 import models.form.StatusAndWorkForm;
 import play.data.Form;
+import play.data.FormFactory;
 import play.libs.Json;
-import play.mvc.*;
+import play.mvc.Controller;
+import play.mvc.Result;
+import play.mvc.Security;
+import services.auth.Secured;
 import services.utils.CheckUtil;
 import services.utils.DateUtil;
 import services.utils.MakeModelUtil;
-import services.auth.Secured;
-import views.html.*;
-import play.data.FormFactory;
-
-import static models.TblPerformance.getPerformanceData;
-import com.google.common.collect.ImmutableMap;
-import common.Const;
-
-import java.util.*;
+import views.html.attendance;
 
 /**
  * 勤怠管理画面用コントローラです。
@@ -72,8 +75,10 @@ public class AttendanceCtl extends Controller {
         Form<AttendanceInputFormList> inputForm = formFactory.form(AttendanceInputFormList.class).fill(aifl);
 
         // TODO 部署リスト
+        List<MsGeneralCode> departList = MakeModelUtil.makeDepartmentCodeMst();
 
         // TODO 課リスト
+        List<MsGeneralCode> divisionList = MakeModelUtil.makeDivisionCodeMst();
 
         // TODO 業務名リスト
 
@@ -94,6 +99,7 @@ public class AttendanceCtl extends Controller {
                     month,
                     existsDefaultValue,
                     employeeNo,
+                    departList,
                     hcmList,
                     shiftList
             ));
@@ -113,6 +119,9 @@ public class AttendanceCtl extends Controller {
         // FormからEntityに詰め替え
         TblYearMonthAttribute ymat = MakeModelUtil.makeYearMonthAttributeTbl(
                 statusAndWorkForm.employeeNo, statusAndWorkForm.monthsYears, statusAndWorkForm);
+        // FIXME debug
+        System.out.println("DEBUG：" + statusAndWorkForm.employeeNo +" "+ statusAndWorkForm.monthsYears);
+        System.out.println("DEBUG：" + ymat.departmentCode +" "+ ymat.divisionCode);
 
         try {
             // 年月属性テーブル情報を取得
@@ -148,10 +157,10 @@ public class AttendanceCtl extends Controller {
         AttendanceInputFormList attendanceFormList =
                 formFactory.form(AttendanceInputFormList.class).bindFromRequest().get();
         List<AttendanceInputForm> adl = attendanceFormList.attendanceInputFormList;
-        //　登録済の実績を取得
+        // 登録済の実績を取得
         ArrayList<String> performanceDataList = TblPerformance.getPerformanceDataList(empNo, monthsYears);
 
-        //　エラーメッセージを詰め込むためのリスト
+        // エラーメッセージを詰め込むためのリスト
         ArrayList<HashMap> errorMsgList = new ArrayList<>();
 
         // TODO 年月属性を取得
@@ -188,19 +197,19 @@ public class AttendanceCtl extends Controller {
 //            TblYearMonthAttribute.insertYearMonthData(ymat);
 //        }
 
-            //　当月の最大の日付分フォームがあるのでその分処理(31日まである月なら31個分)
+            // 当月の最大の日付分フォームがあるのでその分処理(31日まである月なら31個分)
             for (AttendanceInputForm inputForm : adl){
                 String op = inputForm.openingTime;
                 String cl = inputForm.closingTime;
                 String emptyChar = "";
 
-                //　フォームの"始業"と"終業"が入力されている または　休暇等区分が選択されているフォームのみ処理する。
+                // フォームの"始業"と"終業"が入力されている または 休暇等区分が選択されているフォームのみ処理する。
                 if ((!emptyChar.equals(op) && !emptyChar.equals(cl))
                         || !Const.HOLIDAY_CLASS_NOTHING.equals(inputForm.holidayClassCode)) {
 
-                    //　エラーメッセージがあるかチェック
+                    // エラーメッセージがあるかチェック
                     ArrayList<HashMap> errorMsg = checkAttendanceInputForm(inputForm);
-                    //　エラーがある場合エラーメッセージのリストにメッセージを詰め込む、エラーがない場合は登録処理
+                    // エラーがある場合エラーメッセージのリストにメッセージを詰め込む、エラーがない場合は登録処理
                     if (!errorMsg.isEmpty()) {
                         for (HashMap msg : errorMsg) {
                             errorMsgList.add(msg);
@@ -224,14 +233,14 @@ public class AttendanceCtl extends Controller {
                         pft.deductionNight = inputForm.deductionNight;
                         pft.deductionOther = inputForm.deductionOther;
                         pft.holidayClass = holidayClassCode;
-                        pft.shiftClass = inputForm.shifｔClassCode;
+                        pft.shiftClass = inputForm.shiftClassCode;
                         // TODO その他承認区分
                         pft.other_approval_class = "";
                         pft.remarks = inputForm.remarks;
                         pft.performanceStatus = Const.PERFORMANCE_STATUS_SAVE;
                         try {
                             String date = DateUtil.getZeroPadding(inputForm.date);
-                            //　登録しようとしている日のデータがある場合は更新、ない場合登録
+                            // 登録しようとしている日のデータがある場合は更新、ない場合登録
                             if (performanceDataList.contains(date)) {
                                 // FIXME
                                 pft.updateUserId = inputForm.employeeNo;
@@ -285,11 +294,11 @@ public class AttendanceCtl extends Controller {
         // FIXME debug
         System.out.println("fix!!!!!");
 
-        //　画面の入力値を取得
+        // 画面の入力値を取得
         AttendanceInputFormList attendanceFormList =
                 formFactory.form(AttendanceInputFormList.class).bindFromRequest().get();
 
-        //　エラーがあるかチェック
+        // エラーがあるかチェック
         ArrayList<HashMap> errorMsgList = new ArrayList<>();
         for (AttendanceInputForm form : attendanceFormList.attendanceInputFormList) {
             ArrayList<HashMap> errorMsg = checkAttendanceInputForm(form);
@@ -320,7 +329,7 @@ public class AttendanceCtl extends Controller {
 
             // 要承認の実績
             if (isNeedApprovalPerformance(
-                    form.holidayClassName, form.shifｔClassCode, form.deductionNight, form.deductionOther)) {
+                    form.holidayClassName, form.shiftClassCode, form.deductionNight, form.deductionOther)) {
                 form.performanceStatus = Const.PERFORMANCE_STATUS_NEED_APPROVAL;
                 System.out.println(form.date + "日の実績は要承認です。");
             // 承認不要の実績
@@ -516,10 +525,12 @@ public class AttendanceCtl extends Controller {
      * @return 結果
      */
     public Result getNightWork(String endTime){
+    	double nightwork = 0.0;
+    	nightwork = DateUtil.getLateNightWorkTime(endTime);
         return ok(Json.toJson(
                 ImmutableMap.of(
                         "result","ok",
-                        "value", DateUtil.getLateNightWorkTime(endTime)
+                        "value", nightwork
                 )));
     }
 

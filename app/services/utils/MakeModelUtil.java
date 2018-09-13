@@ -134,7 +134,7 @@ public class MakeModelUtil {
             double deductionOther = 0.0;
             double performanceTime = 0.0;
             String holidayClassCode = Const.HOLIDAY_CLASS_NOTHING;
-            String shifｔClassCode = Const.SHIFT_CLASS_NOTHING;
+            String shiftClassCode = Const.SHIFT_CLASS_NOTHING;
             String otherApprovalClass = "";
             String performanceStatus = "";
 
@@ -154,7 +154,7 @@ public class MakeModelUtil {
                     deductionOther = Optional.ofNullable(pd.getDouble("deduction_other")).orElse(deductionOther);
                     performanceTime = Optional.ofNullable(pd.getDouble("performance_time")).orElse(performanceTime);
                     holidayClassCode = Optional.ofNullable(pd.getString("holiday_class")).orElse(holidayClassCode);
-                    shifｔClassCode = Optional.ofNullable(pd.getString("shift_class")).orElse(shifｔClassCode);
+                    shiftClassCode = Optional.ofNullable(pd.getString("shift_class")).orElse(shiftClassCode);
                     remarks = Optional.ofNullable(pd.getString("remarks")).orElse(remarks);
                 }
             }
@@ -171,9 +171,7 @@ public class MakeModelUtil {
             aif.deductionOther = deductionOther;
             aif.performanceTime = performanceTime;
             aif.holidayClassCode = holidayClassCode;
-            // TODO
-            aif.holidayClassCode = holidayClassCode;
-            aif.shifｔClassCode = shifｔClassCode;
+            aif.shiftClassCode = shiftClassCode;
             aif.otherApprovalClass = otherApprovalClass;
             aif.performanceStatus = performanceStatus;
 
@@ -188,6 +186,38 @@ public class MakeModelUtil {
             aifList.add(aif);
         }
         return aifList;
+    }
+
+    /**
+     * 部署のリストを作成します。
+     * @return List<MGeneralCode>
+     */
+    public static List<MsGeneralCode> makeDepartmentCodeMst(){
+        List<MsGeneralCode> dmcmList = new ArrayList<>();
+        // FIXME Const化
+        for (SqlRow dmcm : MsGeneralCode.getCodeMasterList("DEPARTMENT_CODE")) {
+            MsGeneralCode mGeneralCode = new MsGeneralCode();
+            mGeneralCode.code = dmcm.getString("code");
+            mGeneralCode.codeName = dmcm.getString("code_name");
+            dmcmList.add(mGeneralCode);
+        }
+        return dmcmList;
+    }
+
+    /**
+     * 課リストを作成します。
+     * @return List<MGeneralCode>
+     */
+    public static List<MsGeneralCode> makeDivisionCodeMst(){
+        List<MsGeneralCode> dcmList = new ArrayList<>();
+        // FIXME Const化
+        for (SqlRow dcm : MsGeneralCode.getCodeMasterList("DIVISION_CODE")) {
+            MsGeneralCode mGeneralCode = new MsGeneralCode();
+            mGeneralCode.code = dcm.getString("code");
+            mGeneralCode.codeName = dcm.getString("code_name");
+            dcmList.add(mGeneralCode);
+        }
+        return dcmList;
     }
 
     /**

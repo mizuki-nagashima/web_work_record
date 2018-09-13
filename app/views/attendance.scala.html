@@ -1,108 +1,14 @@
-@(statusAndWorkForm:Form[models.form.StatusAndWorkForm], inputForm: Form[models.form.AttendanceInputFormList], date: List[models.form.DateList], year: String, month: String, existsDefaultValue: Boolean, empNo: String, hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
+@(statusAndWorkForm:Form[models.form.StatusAndWorkForm], inputForm: Form[models.form.AttendanceInputFormList], date: List[models.form.DateList], year: String, month: String, existsDefaultValue: Boolean, empNo: String, departList: List[models.MsGeneralCode],hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
 @import play.i18n._
 @import helper._
 @main(Messages.get("attendance.title")) {
-<style>
-media screen and (max-width: 767px)
-.table-responsive {
-    width: 100%;
-    margin-bottom: 15px;
-    overflow-y: hidden;
-    -ms-overflow-style: -ms-autohiding-scrollbar;
-    border: 1px solid #ddd;
-}
-.table-responsive {
-    min-height: .01%;
-    overflow-x: auto;
-}
-#page-save {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    font-size: 14px;
-    z-index: 99;
-}
-#page-save a {
-    text-decoration: none;
-    color: #fff;
-    width: 120px;
-    padding: 20px 5px;
-    text-align: center;
-    display: block;
-    border-radius: 5px;
-    background-color:rgba(65,150,65,0.8);
-}
-.warn-msg{
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    text-decoration: none;
-    color: #fff;
-    padding: 20px 10px;
-    display: block;
-    border-radius: 5px;
-    background-color:rgba(169,68,66,0.9);
-}
-.warn-msg-forSmartPhone{
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    text-decoration: none;
-    color: #fff;
-    padding: 20px 10px;
-    display: block;
-    border-radius: 5px;
-    background-color:rgba(169,68,66,0.9);
-}
-#page-save a:hover {
-    text-decoration: none;
-    background-color:rgba(65,150,65,1);
-}
 
-tbody tr:nth-child(6n),
-tbody tr:nth-child(6n-1),
-tbody tr:nth-child(6n-2) {
-    background: #f2f2f2;
-}
-tbody tr:nth-child(6n-3),
-tbody tr:nth-child(6n-4),
-tbody tr:nth-child(6n-5){
-    background: #fff;
-}
-.hidden {
-    visibility : hidden;
-}
-.none-form-warning{
-    display: none;
-    font-size: 22px;
-}
-.form-warning{
-    display: block;
-    font-size: 22px;
-}
-.success-msg{
-    display: none; /* 初期状態は非表示 */
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    text-decoration: none;
-    color: #fff;
-    padding: 20px 30px;
-    border-radius: 5px;
-    background-color:rgba(65,150,65,1);
-}
-</style>
+<link rel="stylesheet" href="/main.css">
 <section class="content">
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <div class="col-md-10 col-sm-10 col-xs-12">
         <h2><i class="fa fa-pencil-square-o"></i> @Messages.get("attendance.titleDate",year,month)</h2>
-      </div>
-      <div class="col-md-2 col-sm-2 col-xs-12">
-        <button type="button" id="logoutBtn" class="btn btn-default pull-right" style="margin-top: 20px; margin-bottom: 10px">
-          <span class="glyphicon glyphicon-log-out"></span>
-          ログアウト
-        </button>
       </div>
       @form(action = routes.AttendanceCtl.statusAndWorkSave, 'id -> "statusAndWorkForm") {
       <div class="col-md-12 col-sm-12 col-xs-12">
@@ -148,7 +54,12 @@ tbody tr:nth-child(6n-5){
                     @Messages.get("attendance.department")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text" name="department" class="form-control" value="@statusAndWorkForm.get().departmentName">
+                    <select id="department" name="department" class="form-control">
+	                  <option value="0"></option>
+	                  @departList.map{ list =>
+	                    <option value="@list.code">@list.codeName</option>
+	                  }
+	                </select>
                   </div>
                 </div>
               </div>
@@ -300,16 +211,16 @@ tbody tr:nth-child(6n-5){
         <table class="table table-bordered">
           <thead style="background: #d3e5ff;">
           <tr>
-            <th rowspan="2" width="4%">@Messages.get("attendance.form.date")</th>
-            <th colspan="2" width="8%">@Messages.get("attendance.form.workTime")</th>
-            <th class="hidden-xs" colspan="4" width="16%">@Messages.get("attendance.form.workingContents")</th>
-            <th class="hidden-xs" colspan="2" width="8%">@Messages.get("attendance.form.deduction")</th>
-            <th class="hidden-xs" rowspan="2" width="3%">@Messages.get("attendance.form.total")</th>
-            <th class="hidden-xs" rowspan="2" width="3%">@Messages.get("attendance.form.nightWork")</th>
-            <th class="hidden-xs" rowspan="2" width="3%">@Messages.get("attendance.form.salaried")</th>
-            <th class="hidden-xs" rowspan="2" width="9%">@Messages.get("attendance.form.holidayClassCode")</th>
+            <th rowspan="2" width="1%">@Messages.get("attendance.form.date")</th>
+            <th colspan="2" width="10%">@Messages.get("attendance.form.workTime")</th>
+            <th class="hidden-xs" colspan="4" width="18%">@Messages.get("attendance.form.workingContents")</th>
+            <th class="hidden-xs" colspan="2" width="9%">@Messages.get("attendance.form.deduction")</th>
+            <th rowspan="2" width="4.5%">@Messages.get("attendance.form.total")</th>
+            <th class="hidden-xs" rowspan="2" width="4.5%">@Messages.get("attendance.form.nightWork")</th>
+            <th class="hidden-xs" rowspan="2" width="4.5%">@Messages.get("attendance.form.salaried")</th>
+            <th class="hidden-xs" rowspan="2" width="5%">@Messages.get("attendance.form.holidayClassCode")</th>
             <th class="hidden-xs" rowspan="2" width="5%">@Messages.get("attendance.form.shiftClassCode")</th>
-            <th class="hidden-xs" rowspan="2" width="10%">@Messages.get("attendance.form.remarks")</th>
+            <th class="hidden-xs" rowspan="2" width="8%">@Messages.get("attendance.form.remarks")</th>
           </tr>
           <tr>
             <th>@Messages.get("attendance.form.start")</th>
@@ -322,9 +233,9 @@ tbody tr:nth-child(6n-5){
             <th class="hidden-xs">@Messages.get("attendance.form.other")</th>
           </tr>
           </thead>
-          <tbody style="font-size: 16px;">
+          <tbody style="font-size: 14px;">
             @date.zipWithIndex.map{ case(d, idx) =>
-            <tr class="attendanceForm tableDeta" id="@d.dateId" data-monthsYears="@d.monthsYears" data-date="@d.date" string-date="@d.stringDate">
+            <tr class="attendanceForm tableDeta" id="@d.dateId" data-monthsYears="@d.monthsYears" data-date="@d.date" string-date="@d.stringDate" @if(d.isHoliday){background="#f2f2f2"}>
               <input type="hidden" name="attendanceInputFormList[@idx].employeeNo" value="@empNo">
               <input type="hidden" name="attendanceInputFormList[@idx].monthsYears" value="@d.monthsYears">
               <input type="hidden" name="attendanceInputFormList[@idx].date" value="@d.date">
@@ -338,22 +249,21 @@ tbody tr:nth-child(6n-5){
                 @if(existsDefaultValue && (inputForm.get().attendanceInputFormList.get(idx).openingTime != "" || inputForm.get().attendanceInputFormList.get(idx).holidayClassCode != "00")){
                   <span style="margin-bottom: 3px" class="label label-success fa fa-check"> @Messages.get("attendance.form.alreadySave")</span>
                 }
-                <i class="fa fa-exclamation-circle none-form-warning text-danger" id="form-warning"></i>
               </td>
               <td valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.start") id="openingTime" name="attendanceInputFormList[@idx].openingTime" class="form-control timePicker openingTime changeEventForm" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).openingTime"}> </td>
               <td valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.end") id="closingTime" name="attendanceInputFormList[@idx].closingTime" class="form-control timePicker closingTime changeEventForm" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).closingTime" }> </td>
-              <td class="hidden-xs" valign="middle"> <input type="number" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")1 id="breakdown1" name="attendanceInputFormList[@idx].breakdown1" class="breakdown1 form-control breakdown1-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown1"}else{"0.0"}> </td>
-              <td class="hidden-xs" valign="middle"> <input type="number" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")2 id="breakdown2" name="attendanceInputFormList[@idx].breakdown2" class="breakdown2 form-control breakdown2-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown2"}else{"0.0"}> </td>
-              <td class="hidden-xs" valign="middle"> <input type="number" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")3 id="breakdown3" name="attendanceInputFormList[@idx].breakdown3" class="breakdown3 form-control breakdown3-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown3"}else{"0.0"}> </td>
-              <td class="hidden-xs" valign="middle"> <input type="number" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")4 id="breakdown4" name="attendanceInputFormList[@idx].breakdown4" class="breakdown4 form-control breakdown4-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown4"}else{"0.0"}> </td>
-              <td class="hidden-xs" valign="middle"> <input type="number" data-toggle="popover" data-content=@Messages.get("attendance.form.lateNight")控除 id="deductionNight" name="attendanceInputFormList[@idx].deductionNight" class="deductionNight form-control changeEventForm deductionNight-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).deductionNight"}else{"0.0"}> </td>
-              <td class="hidden-xs" valign="middle"> <input type="number" data-toggle="popover" data-content=@Messages.get("attendance.form.other")控除 id="deductionOther" name="attendanceInputFormList[@idx].deductionOther" class="deductionOther form-control changeEventForm deductionOther-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).deductionOther"}else{"0.0"}> </td>
-              <td class="hidden-xs" valign="middle"> <input type="number" readonly="readonly" id="performanceTime" name="attendanceInputFormList[@idx].performanceTime" class="performanceTime form-control performanceTime-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).performanceTime"}else{"0.0"}></td>
-              <td class="hidden-xs" valign="middle"> <input type="number" readonly="readonly" id="nightWork" class="form-control nightWork" value="0.0"></td>
-              <td class="hidden-xs" valign="middle"> <input type="number" readonly="readonly" id="salaried" class="form-control salaried" value="0.0"></td>
+              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")1 id="breakdown1" name="attendanceInputFormList[@idx].breakdown1" class="breakdown1 form-control breakdown1-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown1"}else{"0.0"}> </td>
+              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")2 id="breakdown2" name="attendanceInputFormList[@idx].breakdown2" class="breakdown2 form-control breakdown2-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown2"}else{"0.0"}> </td>
+              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")3 id="breakdown3" name="attendanceInputFormList[@idx].breakdown3" class="breakdown3 form-control breakdown3-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown3"}else{"0.0"}> </td>
+              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")4 id="breakdown4" name="attendanceInputFormList[@idx].breakdown4" class="breakdown4 form-control breakdown4-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown4"}else{"0.0"}> </td>
+              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.lateNight")控除 id="deductionNight" name="attendanceInputFormList[@idx].deductionNight" class="deductionNight form-control changeEventForm deductionNight-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).deductionNight"}else{"0.0"}> </td>
+              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.other")控除 id="deductionOther" name="attendanceInputFormList[@idx].deductionOther" class="deductionOther form-control changeEventForm deductionOther-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).deductionOther"}else{"0.0"}> </td>
+              <td valign="middle"> <input readonly="readonly" id="performanceTime" name="attendanceInputFormList[@idx].performanceTime" class="performanceTime form-control performanceTime-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).performanceTime"}else{"0.0"}></td>
+              <td class="hidden-xs" valign="middle"> <input readonly="readonly" id="nightWork" class="form-control nightWork" value="0.0"></td>
+              <td class="hidden-xs" valign="middle"> <input readonly="readonly" id="salaried" class="form-control salaried" value="0.0"></td>
               <td class="hidden-xs" valign="middle">
                 <select id="holidayClass@d.dateId" name="attendanceInputFormList[@idx].holidayClassCode" class="form-control holidayClass changeEventForm holidayClass-@d.dateId">
-                  <option value="00"></option>
+                   <option value="00"></option>
                   @hcmList.map{ hcm =>
                     <option value="@hcm.code">@hcm.codeName</option>
                   }
@@ -369,14 +279,14 @@ tbody tr:nth-child(6n-5){
                 </select>
               </td>
               <td class="hidden-xs" valign="middle">
-                <select id="holidayClass@d.dateId" name="attendanceInputFormList[@idx].shifｔClassCode" class="form-control shifｔClass changeEventForm shifｔClass-@d.dateId">
+                <select id="holidayClass@d.dateId" name="attendanceInputFormList[@idx].shiftClassCode" class="form-control shiftClass changeEventForm shiftClass-@d.dateId">
                   <option value="00"></option>
                   @shiftList.map{ shift =>
                     <option value="@shift.code">@shift.codeName</option>
                   }
                   @if(existsDefaultValue){
                     <script>
-                    var shiftClass = '@inputForm.get().attendanceInputFormList.get(idx).shifｔClassCode';
+                    var shiftClass = '@inputForm.get().attendanceInputFormList.get(idx).shiftClassCode';
                     if(shiftClass != 00){
                       var targetShiftClass = "#shiftClass@d.dateId"
                       $(targetShiftClass).val(shiftClass)
@@ -413,6 +323,12 @@ tbody tr:nth-child(6n-5){
                     <input type="number" id="deductionNight-modal-@d.dateId" class="form-control" step="0.5" min="0" >
                     <label>@Messages.get("attendance.form.other")控除</label>
                     <input type="number" id="deductionOther-modal-@d.dateId" class="form-control" step="0.5" min="0" >
+                    <label>@Messages.get("attendance.form.total")</label>
+                    <input type="number" readonly="readonly" id="performanceTime-modal-@d.dateId" class="form-control" step="0.5" min="0">
+                    <label>@Messages.get("attendance.form.nightWork")</label>
+                    <input type="number" readonly="readonly" id="nightWork-model-@d.dateId" class="form-control" step="0.5" min="0">
+            		<label>@Messages.get("attendance.form.salaried")</label>
+            		<input type="number" readonly="readonly" id="salaried-model-@d.dateId" class="form-control" step="0.5" min="0">
                     <label>@Messages.get("attendance.form.holidayClassCode")</label>
                     <select id="holidayClass-modal-@d.dateId" class="form-control changeEventForm" >
                       <option value="0"></option>
@@ -429,8 +345,6 @@ tbody tr:nth-child(6n-5){
                     </select>
                     <label>@Messages.get("attendance.form.remarks")</label>
                     <input type="text" id="remarks-modal-@d.dateId" class="form-control">
-                    <label>@Messages.get("attendance.form.total")</label>
-                    <input type="number" readonly="readonly" id="performanceTime-modal-@d.dateId" class="form-control" step="0.5" min="0">
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary otherInputModalCloseBtn" data-dismiss="modal" date-id="@d.dateId">値をセットして閉じる</button>
@@ -442,13 +356,13 @@ tbody tr:nth-child(6n-5){
             }
             <tr>
               <td colspan="3">TOTAL</td>
-              <td class="hidden-xs"> <input type="number" readonly="readonly" id="sumBreakdown1" class="form-control"></td>
-              <td class="hidden-xs"> <input type="number" readonly="readonly" id="sumBreakdown2" class="form-control"></td>
-              <td class="hidden-xs"> <input type="number" readonly="readonly" id="sumBreakdown3" class="form-control"></td>
-              <td class="hidden-xs"> <input type="number" readonly="readonly" id="sumBreakdown4" class="form-control"></td>
-              <td class="hidden-xs"> <input type="number" readonly="readonly" id="sumDeductionNight" class="form-control"></td>
-              <td class="hidden-xs"> <input type="number" readonly="readonly" id="sumDeductionOther" class="form-control"></td>
-              <td> <input type="number" readonly="readonly" id="sumPerformanceTime" class="form-control"></td>
+              <td class="hidden-xs"> <input type="text" readonly="readonly" id="sumBreakdown1" class="form-control"></td>
+              <td class="hidden-xs"> <input type="text" readonly="readonly" id="sumBreakdown2" class="form-control"></td>
+              <td class="hidden-xs"> <input type="text" readonly="readonly" id="sumBreakdown3" class="form-control"></td>
+              <td class="hidden-xs"> <input type="text" readonly="readonly" id="sumBreakdown4" class="form-control"></td>
+              <td class="hidden-xs"> <input type="text" readonly="readonly" id="sumDeductionNight" class="form-control"></td>
+              <td class="hidden-xs"> <input type="text" readonly="readonly" id="sumDeductionOther" class="form-control"></td>
+              <td> <input type="text" readonly="readonly" id="sumPerformanceTime" class="form-control"></td>
             </tr>
           </tbody>
         </table>
@@ -497,8 +411,8 @@ tbody tr:nth-child(6n-5){
     <small>※クリックでこのメッセージを閉じます。</small>
   </div>
 </div>
-<div class="success-msg fa fa-thumbs-o-up">
-</div>
+<!--  <div class="success-msg fa fa-thumbs-o-up">
+</div> -->
 
 <div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -747,7 +661,7 @@ tbody tr:nth-child(6n-5){
           localStorage.saveMsg = 'ステータスと作業実績内訳詳細を保存しました。';
           location.reload();
         }else{
-          alert('エラーが発生しました。');
+          alert('ステータスと作業実績内訳詳細保存中にエラーが発生しました。');
         }
       });
     });
@@ -897,15 +811,13 @@ tbody tr:nth-child(6n-5){
          if(hiddenClosingTime != ""){
            var url = '@routes.AttendanceCtl.getNightWork("0")';
            url = url.substring(0, url.length - 1) + hiddenClosingTime;
-           endTime = ""
-           $(this).parent().parent().find(".hiddenClosingTime").val("");
            $.ajax({
              type : 'GET',
              url : url,
              success : function(data) {
                if (data.result == "ok") {
                  var value = parseFloat(data.value);
-                 $(nightWork).val(value);
+                 $(nightWork).val($.addZero(value));
                }
              }
            });
