@@ -74,7 +74,33 @@
     	</script>
        </section>
        <div id="container">
-          @content
+	       <div id="loader-bg">
+				<div id="loader">
+					<img src="@routes.Assets.versioned("images/load.gif")" width="80" height="80" alt="Loading..." />
+					<p>Loading...</p>
+				</div>
+		   </div>
+		   <script>
+			$(function() {
+				var h = $(window).height();
+				$('#contents').css('display','none');
+				$('#loader-bg ,#loader').height(h).css('display','block');
+			});
+			$(window).load(function () {
+				$('#loader-bg').delay(600).fadeOut(500);
+				$('#loader').delay(300).fadeOut(100);
+				$('#contens').css('display', 'block');
+			});
+			$(function(){
+				setTimeout('stopload()',5000);
+			});
+			function stopload(){
+				$('#contens').css('display','block');
+				$('#loader-bg').delay(600).fadeOut(500);
+				$('#loader').delay(300).fadeOut(100);
+			}
+		   </script>
+           @content
        </div>
        <footer id="footer">
          <strong>
