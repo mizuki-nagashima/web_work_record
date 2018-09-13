@@ -53,7 +53,7 @@ media screen and (max-width: 767px)
     text-decoration: none;
     background-color:rgba(65,150,65,1);
 }
-tbody tr:nth-child(6n),
+/*tbody tr:nth-child(6n),
 tbody tr:nth-child(6n-1),
 tbody tr:nth-child(6n-2) {
     background: #f2f2f2;
@@ -63,6 +63,7 @@ tbody tr:nth-child(6n-4),
 tbody tr:nth-child(6n-5){
     background: #fff;
 }
+*/
 .hidden {
     visibility : hidden;
 }
@@ -84,4 +85,32 @@ tbody tr:nth-child(6n-5){
     padding: 20px 30px;
     border-radius: 5px;
     background-color:rgba(65,150,65,1);
+}
+#loader-bg {
+	display: none;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	background: #fff;
+	z-index: 1;
+}
+#loader {
+	display: none;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 200px;
+	height: 200px;
+	margin-top: -100px;
+	margin-left: -100px;
+	text-align: center;
+	color: #fff;
+	z-index: 2;
+}
+#contents{
+	width:100%;
+	font-size:50px;
+	margin: 40px auto;
 }

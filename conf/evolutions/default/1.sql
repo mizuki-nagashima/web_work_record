@@ -92,7 +92,6 @@ create table tbl_performance (
   breakdown3                    double,
   breakdown4                    double,
   performance_time              double,
-  kms_production_tme            double,
   deduction_night               double,
   deduction_other               double,
   holiday_class                 varchar(255),
