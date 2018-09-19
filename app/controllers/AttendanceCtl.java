@@ -74,20 +74,11 @@ public class AttendanceCtl extends Controller {
         Form<StatusAndWorkForm> statusAndWorkForm = formFactory.form(StatusAndWorkForm.class).fill(sawf);
         Form<AttendanceInputFormList> inputForm = formFactory.form(AttendanceInputFormList.class).fill(aifl);
 
-        // TODO 部署リスト
-        List<MsGeneralCode> departList = MakeModelUtil.makeDepartmentCodeMst();
-
-        // TODO 課リスト
-        List<MsGeneralCode> divisionList = MakeModelUtil.makeDivisionCodeMst();
-
-        // TODO 業務名リスト
-
-        // TODO 業務チーム名リスト
-
-        // 休暇区分のリスト
-        List<MsGeneralCode> hcmList = MakeModelUtil.makeHolidayClassMst();
-        // シフト区分のリスト
-        List<MsGeneralCode> shiftList = MakeModelUtil.makeShiftClassMst();
+        //ステータスのリスト化
+        List<MsGeneralCode> hcmList = MakeModelUtil.makeCodeTypeList("HOLIDAY_CLASS");
+        List<MsGeneralCode> shiftList = MakeModelUtil.makeCodeTypeList("SHIFT_CLASS");
+        List<MsGeneralCode> departList = MakeModelUtil.makeCodeTypeList("DEPARTMENT_CODE");
+        List<MsGeneralCode> divisionList = MakeModelUtil.makeCodeTypeList("DIVISION_CODE");
 
         // 1~12(1月~12月以外がパラメータに入ってきたらエラー)
         if (MIN_MONTH <= Integer.parseInt(month) && MAX_MONTH >= Integer.parseInt(month)) {
@@ -100,6 +91,7 @@ public class AttendanceCtl extends Controller {
                     existsDefaultValue,
                     employeeNo,
                     departList,
+                    divisionList,
                     hcmList,
                     shiftList
             ));
@@ -119,9 +111,6 @@ public class AttendanceCtl extends Controller {
         // FormからEntityに詰め替え
         TblYearMonthAttribute ymat = MakeModelUtil.makeYearMonthAttributeTbl(
                 statusAndWorkForm.employeeNo, statusAndWorkForm.monthsYears, statusAndWorkForm);
-        // FIXME debug
-        System.out.println("DEBUG：" + statusAndWorkForm.employeeNo +" "+ statusAndWorkForm.monthsYears);
-        System.out.println("DEBUG：" + ymat.departmentCode +" "+ ymat.divisionCode);
 
         try {
             // 年月属性テーブル情報を取得
@@ -129,14 +118,22 @@ public class AttendanceCtl extends Controller {
                     statusAndWorkForm.employeeNo, statusAndWorkForm.monthsYears);
             // 年月属性テーブルが既に存在する場合は更新、なければ新規作成
             if (targetYearMonthAttributeTbl == null) {
+                // FIXME debug
+                System.out.println("insert！！！");
+
                 ymat.registUserId = statusAndWorkForm.employeeNo;
                 ymat.updateUserId = statusAndWorkForm.employeeNo;
                 TblYearMonthAttribute.insertYearMonthData(ymat);
             } else {
+            	// FIXME debug
+                System.out.println("update！！！");
+
                 ymat.updateUserId = statusAndWorkForm.employeeNo;
                 TblYearMonthAttribute.updateYearMonthData(ymat);
             }
         } catch (Exception e) {
+            // FIXME debug
+            System.out.println(e);
             return ok(Json.toJson(ImmutableMap.of("result", "ng")));
         }
         return ok(Json.toJson(ImmutableMap.of("result", "ok")));
