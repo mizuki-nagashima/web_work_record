@@ -411,8 +411,8 @@
     <small>※クリックでこのメッセージを閉じます。</small>
   </div>
 </div>
-<!--  <div class="success-msg fa fa-thumbs-o-up">
-</div> -->
+<div class="hidden success-msg fa fa-thumbs-o-up">
+</div>
 
 <div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -436,7 +436,8 @@
 <script>
   $(function() {
     if(localStorage.saveMsg){
-      $('.success-msg').text(localStorage.saveMsg).fadeIn(1000).delay(2000).fadeOut(2000);
+      $(".success-msg").removeClass("hidden");
+      $('.success-msg').text(" " + localStorage.saveMsg).fadeIn(1000).delay(2000).fadeOut(2000);
       localStorage.removeItem('saveMsg');
     }else if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
       $(document).ready(function () {
