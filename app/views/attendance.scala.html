@@ -1,4 +1,4 @@
-@(statusAndWorkForm:Form[models.form.StatusAndWorkForm], inputForm: Form[models.form.AttendanceInputFormList], date: List[models.form.DateList], year: String, month: String, existsDefaultValue: Boolean, empNo: String, departList: List[models.MsGeneralCode],hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
+@(statusAndWorkForm:Form[models.form.StatusAndWorkForm], inputForm: Form[models.form.AttendanceInputFormList], date: List[models.form.DateList], year: String, month: String, existsDefaultValue: Boolean, empNo: String, departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode], hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
 @import play.i18n._
 @import helper._
 @main(Messages.get("attendance.title")) {
@@ -47,31 +47,36 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-4 col-sm-4 col-xs-12">
+            <div class="col-md-3 col-sm-3 col-xs-12">
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
                     @Messages.get("attendance.department")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <select id="department" name="department" class="form-control">
-	                  <option value="0"></option>
-	                  @departList.map{ list =>
-	                    <option value="@list.code">@list.codeName</option>
-	                  }
-	                </select>
+                  <select id="department" class="department form-control" name="department" required>
+				  <option value="" class="msg" disabled selected>@statusAndWorkForm.get().departmentName</option>
+				  @departList.map{ dpl =>
+                    <option value="@dpl.code">@dpl.codeName</option>
+                  }
+				  </select>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-md-3 col-sm-3 col-xs-12">
+            <div class="col-md-4 col-sm-4 col-xs-12">
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
                     @Messages.get("attendance.division")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text" name="division" class="form-control" value="@statusAndWorkForm.get().divisionName">
+					<select id="division" class="division form-control" name="division" required>
+					 <option value="" class="msg" disabled selected>@statusAndWorkForm.get().divisionName</option>
+					 @divisionList.map{ dvl =>
+					  <option value="@dvl.code">@dvl.codeName</option>
+					 }
+					</select>
                   </div>
                 </div>
               </div>
@@ -628,7 +633,7 @@
       $('#form-warning').removeClass("form-warning");
       $.postAjax('#inputForm', function(data){
         if(data.result == "ok"){
-          localStorage.saveMsg = '勤怠を保存しました。';
+		  localStorage.saveMsg = '勤怠を保存しました。';
           location.reload();
         }else if(data.result == "ng"){
           $(".warn-msg").removeClass("hidden");
@@ -657,10 +662,34 @@
     });
 
     $("#statusAndWorksaveBtn").click(function () {
+      $(".warn-msg").addClass("hidden");
+      $('.warn-msg-contents').remove();
+      $('.save-warn-msg-contents').remove();
+      $('#form-warning').addClass("none-form-warning");
       $.postAjax('#statusAndWorkForm', function(data){
         if(data.result == "ok"){
           localStorage.saveMsg = 'ステータスと作業実績内訳詳細を保存しました。';
           location.reload();
+        }else if(data.result == "ng"){
+          $(".warn-msg").removeClass("hidden");
+          var errorMsgList = data.msg;
+          var alertMsgContents = "";
+          $.each(errorMsgList, function(key, obj) {
+            $.each(obj, function(dId, msg) {
+              var dateId = dId;
+              var dataMsg = msg;
+              var stringDate = $('#' + dateId).attr('string-date');
+              var msgContents = '<p id=' + dateId + ' class=' + 'save-warn-msg-contents' + '>' + stringDate + '&nbsp;-&nbsp;' + dataMsg + '<p>';
+              alertMsgContents = msgContents + '\n'
+              $('#' + dateId).children().children('#form-warning').removeClass("none-form-warning");
+              $('#' + dateId).children().children('#form-warning').addClass("form-warning");
+              $('#warn-msg-title').after(msgContents);
+              if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
+                $(".warn-msg").removeAttr('style');
+                $(".warn-msg").css('bottom','20px');
+              }
+            });
+          });
         }else{
           alert('ステータスと作業実績内訳詳細保存中にエラーが発生しました。');
         }
@@ -1006,5 +1035,31 @@
 
 
   });
+
+//$(function() {
+// var $division = $('.division');
+//
+// $('.department').change(function() {
+//   var val1 = $(this).val();
+//   var code = $("#department option:selected").data("type");
+//   alert(code);
+//   //var children_id = '@routes.AttendanceCtl.moveTargetYearMonth("0","0","0")';
+//   //TODO children_id(所属部署に応じた所属課)を検索で出せるようにする　、divisionListの作成
+//
+//   $division.find('option').each(function() {
+//     var val2 = $(this).data('val');
+//     if (val1 != val2) {
+//       $(this).not('.msg').remove();
+//     }
+//   });
+//
+//   if ($(this).val() === '') {
+//     $division.attr('disabled', 'disabled');
+//   } else {
+//     $division.removeAttr('disabled');
+//   }
+//
+// });
+//});
 </script>
 }
