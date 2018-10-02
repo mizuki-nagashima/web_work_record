@@ -63,7 +63,7 @@ public class AttendancePdfCtl {
         AttendanceSumForm asf = MakeModelUtil.makeAttendanceSumForm(aifl.attendanceInputFormList);
 
         //休暇区分のリスト
-        List<MsGeneralCode> hcmList = MakeModelUtil.makeHolidayClassMst();
+        List<MsGeneralCode> hcmList = MakeModelUtil.makeCodeTypeList("HOLIDAY_CLASS");
 
         ArrayList<String> fonts = new ArrayList<>();
         fonts.add("fonts/meiryo.ttc");

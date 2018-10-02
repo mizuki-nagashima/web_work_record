@@ -12,7 +12,7 @@
 ~h
 # コマンドライン 項目の履歴 (新しいものから古いものへ):
 :wq!
-|2,0,1536122682,,"wq!"
+|2,0,1538466696,,"wq!"
 :q
 |2,0,1536122635,,"q"
 :wq
@@ -29,16 +29,28 @@
 # レジスタ:
 
 # ファイルマーク:
-'0  3  40  ~/.git/COMMIT_EDITMSG
-|4,48,3,40,1536122682,"~/.git/COMMIT_EDITMSG"
+'0  1  0  ~/.git/MERGE_MSG
+|4,48,1,0,1538466696,"~/.git/MERGE_MSG"
+'1  3  40  ~/.git/COMMIT_EDITMSG
+|4,49,3,40,1536122682,"~/.git/COMMIT_EDITMSG"
 
 # ジャンプリスト (新しいものが先):
+-'  1  0  ~/.git/MERGE_MSG
+|4,39,1,0,1538466696,"~/.git/MERGE_MSG"
+-'  3  40  ~/.git/COMMIT_EDITMSG
+|4,39,3,40,1536122682,"~/.git/COMMIT_EDITMSG"
 -'  3  40  ~/.git/COMMIT_EDITMSG
 |4,39,3,40,1536122682,"~/.git/COMMIT_EDITMSG"
 -'  1  0  ~/.git/COMMIT_EDITMSG
 |4,39,1,0,1536122492,"~/.git/COMMIT_EDITMSG"
+-'  1  0  ~/.git/COMMIT_EDITMSG
+|4,39,1,0,1536122492,"~/.git/COMMIT_EDITMSG"
 
 # ファイル内マークの履歴 (新しいものから古いもの):
+
+> ~/.git/MERGE_MSG
+	*	1538466689	0
+	"	1	0
 
 > ~/.git/COMMIT_EDITMSG
 	*	1536122676	0

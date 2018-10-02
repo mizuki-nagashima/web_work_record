@@ -243,4 +243,23 @@ public class MsGeneralCode extends CommonModel {
         return salariedTime;
     }
 
+    /**
+     * 取得対象コード種別（CODE_TYPE）、年度（YEAR)、任意値2(ANY_VALUE2)を指定して汎用コードリストを取得
+     *
+     * @param codeType コード種別
+     * @param year 年度
+     * @param anyValue2 任意値2
+     */
+    public static List<SqlRow> getCodeListByAnyValue2(String codeType,String anyValue2) {
+
+        String sql = "SELECT * FROM MS_GENERAL_CODE " +
+                     "WHERE CODE_TYPE = :codeType AND ANY_VALUE2 = :anyValue2" ;
+
+        List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
+        			.setParameter("codeType",codeType)
+        			.setParameter("anyValue2",anyValue2)
+                    .findList();
+
+        return sqlRows;
+    }
 }

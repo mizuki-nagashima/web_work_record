@@ -189,64 +189,33 @@ public class MakeModelUtil {
     }
 
     /**
-     * 部署のリストを作成します。
+     * コードタイプのリストを作成します。
      * @return List<MGeneralCode>
      */
-    public static List<MsGeneralCode> makeDepartmentCodeMst(){
-        List<MsGeneralCode> dmcmList = new ArrayList<>();
-        // FIXME Const化
-        for (SqlRow dmcm : MsGeneralCode.getCodeMasterList("DEPARTMENT_CODE")) {
-            MsGeneralCode mGeneralCode = new MsGeneralCode();
-            mGeneralCode.code = dmcm.getString("code");
-            mGeneralCode.codeName = dmcm.getString("code_name");
-            dmcmList.add(mGeneralCode);
-        }
-        return dmcmList;
-    }
-
-    /**
-     * 課リストを作成します。
-     * @return List<MGeneralCode>
-     */
-    public static List<MsGeneralCode> makeDivisionCodeMst(){
-        List<MsGeneralCode> dcmList = new ArrayList<>();
-        // FIXME Const化
-        for (SqlRow dcm : MsGeneralCode.getCodeMasterList("DIVISION_CODE")) {
-            MsGeneralCode mGeneralCode = new MsGeneralCode();
-            mGeneralCode.code = dcm.getString("code");
-            mGeneralCode.codeName = dcm.getString("code_name");
-            dcmList.add(mGeneralCode);
-        }
-        return dcmList;
-    }
-
-    /**
-     * 休暇区分のリストを作成します。
-     * @return List<MGeneralCode>
-     */
-    public static List<MsGeneralCode> makeHolidayClassMst(){
-        List<MsGeneralCode> hcmList = new ArrayList<>();
-        // FIXME Const化
-        for (SqlRow hcm : MsGeneralCode.getCodeMasterList("HOLIDAY_CLASS")) {
-            MsGeneralCode mGeneralCode = new MsGeneralCode();
-            mGeneralCode.code = hcm.getString("code");
-            mGeneralCode.codeName = hcm.getString("code_name");
-            hcmList.add(mGeneralCode);
-        }
-        return hcmList;
-    }
-
-    /**
-     * シフト区分のリストを作成します。
-     * @return List<MGeneralCode>
-     */
-    public static List<MsGeneralCode> makeShiftClassMst(){
+    public static List<MsGeneralCode> makeCodeTypeList(String codeType){
         List<MsGeneralCode> mgcList = new ArrayList<>();
         // FIXME Const化
-        for (SqlRow mgc : MsGeneralCode.getCodeMasterList("SHIFT_CLASS")) {
+        for (SqlRow mgc : MsGeneralCode.getCodeMasterList(codeType)) {
             MsGeneralCode mGeneralCode = new MsGeneralCode();
             mGeneralCode.code = mgc.getString("code");
             mGeneralCode.codeName = mgc.getString("code_name");
+            mgcList.add(mGeneralCode);
+        }
+        return mgcList;
+    }
+
+    /**
+     * コードタイプのリストを作成します。
+     * @return List<MGeneralCode>
+     */
+    public static List<MsGeneralCode> makeCodeTypeList(String codeType,String anyValue2){
+        List<MsGeneralCode> mgcList = new ArrayList<>();
+        // FIXME Const化
+        for (SqlRow mgc : MsGeneralCode.getCodeListByAnyValue2(codeType,anyValue2)) {
+            MsGeneralCode mGeneralCode = new MsGeneralCode();
+            mGeneralCode.code = mgc.getString("code");
+            mGeneralCode.codeName = mgc.getString("code_name");
+            mGeneralCode.anyValue2 = mgc.getString("any_value2");
             mgcList.add(mGeneralCode);
         }
         return mgcList;
