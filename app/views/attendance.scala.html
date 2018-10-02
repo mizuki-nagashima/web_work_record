@@ -666,30 +666,15 @@
       $('.warn-msg-contents').remove();
       $('.save-warn-msg-contents').remove();
       $('#form-warning').addClass("none-form-warning");
+      $('#form-warning').removeClass("form-warning");
       $.postAjax('#statusAndWorkForm', function(data){
         if(data.result == "ok"){
           localStorage.saveMsg = 'ステータスと作業実績内訳詳細を保存しました。';
           location.reload();
         }else if(data.result == "ng"){
+          var msgContents = '<p id="warnStatusSave" class= "save-warn-msg-contents">ステータスが保存できません。 <p>';
           $(".warn-msg").removeClass("hidden");
-          var errorMsgList = data.msg;
-          var alertMsgContents = "";
-          $.each(errorMsgList, function(key, obj) {
-            $.each(obj, function(dId, msg) {
-              var dateId = dId;
-              var dataMsg = msg;
-              var stringDate = $('#' + dateId).attr('string-date');
-              var msgContents = '<p id=' + dateId + ' class=' + 'save-warn-msg-contents' + '>' + stringDate + '&nbsp;-&nbsp;' + dataMsg + '<p>';
-              alertMsgContents = msgContents + '\n'
-              $('#' + dateId).children().children('#form-warning').removeClass("none-form-warning");
-              $('#' + dateId).children().children('#form-warning').addClass("form-warning");
-              $('#warn-msg-title').after(msgContents);
-              if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
-                $(".warn-msg").removeAttr('style');
-                $(".warn-msg").css('bottom','20px');
-              }
-            });
-          });
+          $('#warn-msg-title').after(msgContents);
         }else{
           alert('ステータスと作業実績内訳詳細保存中にエラーが発生しました。');
         }

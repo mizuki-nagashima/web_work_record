@@ -420,7 +420,7 @@ public class AttendanceCtl extends Controller {
     }
 
     /**
-     * 勤怠管理画面の入力値エラーチェックをします
+     * 勤怠入力表の入力値エラーチェックをします
      * @param inputForm 勤怠入力フォーム
      * @return HashMapに詰めたエラーのメッセージ
      */
