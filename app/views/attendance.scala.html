@@ -54,10 +54,18 @@
                     @Messages.get("attendance.department")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                  <select id="department" class="department form-control" name="department" required>
+                  <select id="departmentCode@(year + month)" name="statusAndWorkForm.departmentCode" class="form-control departmentCode changeDepartmentCd departmentCode-@((year + month).toInt)" required>
 				  <option value="" class="msg" disabled selected>@statusAndWorkForm.get().departmentName</option>
 				  @departList.map{ dpl =>
                     <option value="@dpl.code">@dpl.codeName</option>
+                  }
+                  @if(existsDefaultValue){
+                    <script>
+                    var departmentCode = '@statusAndWorkForm.get().departmentCode';
+                    var monthsYears = @(year + month);
+                      var targetDepartmentCode = "#departmentCode" + monthsYears
+                      $(targetDepartmentCode).val(departmentCode)
+                    </script>
                   }
 				  </select>
                   </div>
@@ -72,10 +80,10 @@
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
 					<select id="division" class="division form-control" name="division" required>
-					 <option value="" class="msg" disabled selected>@statusAndWorkForm.get().divisionName</option>
-					 @divisionList.map{ dvl =>
-					  <option value="@dvl.code">@dvl.codeName</option>
-					 }
+					<option value="" class="msg" disabled selected>@statusAndWorkForm.get().divisionName</option>
+					@divisionList.map{ dvl =>
+                      <option value="@dvl.code">@dvl.codeName</option>
+                    }
 					</select>
                   </div>
                 </div>
@@ -578,6 +586,33 @@
       }
     });
 
+    $(".changeDepartmentCd").change(function(){
+      var targetTrId = @(year + month);
+      var departmentCode = $('#departmentCode' + targetTrId).val();
+      if(departmentCode != 00 || departmentCode != ""){
+        var url = '@routes.AttendanceCtl.getDivisionList("0")';
+        url = url.substring(0, url.length - 1) + departmentCode;
+        $.ajax({
+          type : 'GET',
+          url : url,
+          success : function(data) {
+            if(data.result == "ok"){
+            	var divisionList = data.value;
+	            $('#division').html("");
+	            $.each(divisionList, function (i, val) {
+	               $('#division').append($("<option>").val(val.code).text(val.codeName));
+                });
+            }else{
+				alert('課リスト選択中にエラーが発生しました。');
+            }
+          }
+        });
+      }else{
+        $('#division').html("");
+		$('#division').append($("<option>").val("00").text("該当なし"));
+	  }
+    });
+
     $("#inputForm input").change(function(){
       if(!$("p").hasClass('warn-msg-contents')){
         $(".saveBtn").prop('disabled', false);
@@ -871,114 +906,7 @@
 
     };
     $.totalInsert();
-/*
-    $.headerScroll = function() {
-       var $table = $(".table");          // テーブルの要素を取得
-       var $thead = $table.children("thead");  // thead取得
-       var toffset = $table.offset();          // テーブルの位置情報取得
-       // テーブル位置+テーブル縦幅 < スクロール位置 < テーブル位置
-       if(toffset.top + $table.height()< $(window).scrollTop()
-         || toffset.top > $(window).scrollTop()){
-           // クローンテーブルが存在する場合は消す
-           var $clone = $("#clonetable");
-           if($clone.length > 0){
-               $clone.css("display", "none");
-           }
-       }else if(toffset.top < $(window).scrollTop()){
-         // クローンテーブルが存在するか確認
-         var $clone = $("#clonetable");
-         if($clone.length == 0){
-             // 存在しない場合は、theadのクローンを作成
-             $clone= $thead.clone(true);
-             // idをclonetableとする
-             $clone.attr("id", "clonetable");
-             // body部に要素を追加
-             $clone.appendTo("body");
-             // theadのCSSをコピーする
-             StyleCopy($clone, $thead);
-             // theadの子要素(tr)分ループさせる
-             var ttttt = $thead.children("tr").length;;
-             for(var i = -1; i < $thead.children("tr").length; ++i)
-             {
-                 // i番目のtrを取得
-                 var $theadtr = $thead.children("tr").eq(i);
-                 var $clonetr = $clone.children("tr").eq(i);
-                 // trの子要素(th)分ループさせる
-                 for (var j = 0; j < $theadtr.eq(i).children("th").length; j++){
-                     // j番目のthを取得
-                     var $theadth = $theadtr.eq(i).children("th").eq(j);
-                     var $cloneth = $clonetr.eq(i).children("th").eq(j);
-                     // thのCSSをコピーする
-                     StyleCopy($cloneth, $theadth);
-                 }
-             }
-         }
 
-         // コピーしたtheadの表示形式をtableに変更
-         $clone.css("display", "table");
-         // positionをブラウザに対し絶対値とする
-         $clone.css("position", "fixed");
-         $clone.css("border-collapse", "collapse");
-         // positionの位置を設定(left = 元のテーブルのleftとする)
-         $clone.css("left", toffset.left - $(window).scrollLeft());
-         // positionの位置を設定(topをブラウザの一番上とする)
-         $clone.css("top", "0px");
-         $clone.css("background-color", "rgba(211, 229, 255,0.8)");
-       }
-    };
-
-    // CSSのコピー
-    function StyleCopy($copyTo, $copyFrom){
-        $copyTo.css("width",
-                    $copyFrom.css("width"));
-        $copyTo.css("height",
-                    $copyFrom.css("height"));
-
-        $copyTo.css("padding-top",
-                    $copyFrom.css("padding-top"));
-        $copyTo.css("padding-left",
-                    $copyFrom.css("padding-left"));
-        $copyTo.css("padding-bottom",
-                    $copyFrom.css("padding-bottom"));
-        $copyTo.css("padding-right",
-                    $copyFrom.css("padding-right"));
-
-        $copyTo.css("background",
-                    $copyFrom.css("background"));
-        $copyTo.css("background-color",
-                    $copyFrom.css("background-color"));
-        $copyTo.css("vertical-align",
-                    $copyFrom.css("vertical-align"));
-
-        $copyTo.css("border-top-width",
-                    $copyFrom.css("border-top-width"));
-        $copyTo.css("border-top-color",
-                    $copyFrom.css("border-top-color"));
-        $copyTo.css("border-top-style",
-                    $copyFrom.css("border-top-style"));
-
-        $copyTo.css("border-left-width",
-                    $copyFrom.css("border-left-width"));
-        $copyTo.css("border-left-color",
-                    $copyFrom.css("border-left-color"));
-        $copyTo.css("border-left-style",
-                    $copyFrom.css("border-left-style"));
-
-        $copyTo.css("border-right-width",
-                    $copyFrom.css("border-right-width"));
-        $copyTo.css("border-right-color",
-                    $copyFrom.css("border-right-color"));
-        $copyTo.css("border-right-style",
-                    $copyFrom.css("border-right-style"));
-
-        $copyTo.css("border-bottom-width",
-                    $copyFrom.css("border-bottom-width"));
-        $copyTo.css("border-bottom-color",
-                    $copyFrom.css("border-bottom-color"));
-        $copyTo.css("border-bottom-style",
-                    $copyFrom.css("border-bottom-style"));
-    };
-*/
     $('[data-toggle="popover"]').popover({
       trigger: 'focus',
       placement: 'top'
@@ -1021,30 +949,5 @@
 
   });
 
-//$(function() {
-// var $division = $('.division');
-//
-// $('.department').change(function() {
-//   var val1 = $(this).val();
-//   var code = $("#department option:selected").data("type");
-//   alert(code);
-//   //var children_id = '@routes.AttendanceCtl.moveTargetYearMonth("0","0","0")';
-//   //TODO children_id(所属部署に応じた所属課)を検索で出せるようにする　、divisionListの作成
-//
-//   $division.find('option').each(function() {
-//     var val2 = $(this).data('val');
-//     if (val1 != val2) {
-//       $(this).not('.msg').remove();
-//     }
-//   });
-//
-//   if ($(this).val() === '') {
-//     $division.attr('disabled', 'disabled');
-//   } else {
-//     $division.removeAttr('disabled');
-//   }
-//
-// });
-//});
 </script>
 }
