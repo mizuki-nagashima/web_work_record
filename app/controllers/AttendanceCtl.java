@@ -420,7 +420,7 @@ public class AttendanceCtl extends Controller {
     }
 
     /**
-     * 勤怠管理画面の入力値エラーチェックをします
+     * 勤怠入力表の入力値エラーチェックをします
      * @param inputForm 勤怠入力フォーム
      * @return HashMapに詰めたエラーのメッセージ
      */
@@ -546,4 +546,22 @@ public class AttendanceCtl extends Controller {
                         "value", salaried
                 )));
     }
+
+    /**
+     * 課リストを取得します。
+     * @return 結果
+     */
+    public Result getDivisionList(String departCode){
+
+    	if (departCode == "" || departCode.isEmpty()) {
+    		departCode = "00";
+    	}
+    	List<MsGeneralCode> divisionList = MakeModelUtil.makeCodeTypeList("DIVISION_CODE",departCode);
+        return ok(Json.toJson(
+                ImmutableMap.of(
+                        "result","ok",
+                        "value", divisionList
+                )));
+    }
+
 }

@@ -21,6 +21,7 @@ GET     /attendance/getPerformanceTime/:start/:end/:holidayClass/:deduction   co
 GET     /attendance/moveTargetYearMonth/:empNo/:yearMonth/:nowYearMonth       controllers.AttendanceCtl.moveTargetYearMonth(empNo: String, yearMonth: String, nowYearMonth: String)
 GET     /attendance/getNightWork/get/:end      controllers.AttendanceCtl.getNightWork(end: String)
 GET     /attendance/getSalaried/get/:code      controllers.AttendanceCtl.getSalaried(code: String)
+GET     /attendance/getDivisionList/get/:departmentCode      controllers.AttendanceCtl.getDivisionList(departmentCode: String)
 GET     /attendance/fix/:empNo/:yearMonth      controllers.AttendanceCtl.fix(empNo: String, yearMonth: String)
 GET     /attendancePdf/:year/:month/:pdfKind   controllers.AttendancePdfCtl.index(year: String, month: String, pdfKind: Int)
 
