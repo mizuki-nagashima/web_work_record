@@ -1,9 +1,14 @@
-@(statusAndWorkForm:Form[models.form.StatusAndWorkForm], inputForm: Form[models.form.AttendanceInputFormList], date: List[models.form.DateList], year: String, month: String, existsDefaultValue: Boolean, empNo: String, departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode], hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
+@(statusAndWorkForm:Form[models.form.StatusAndWorkForm],
+	inputForm: Form[models.form.AttendanceInputFormList],
+	date: List[models.form.DateList], year: String, month: String,
+	statusDefaultValue: Boolean,existsDefaultValue: Boolean,
+	empNo: String,
+	departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode],
+	hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
 @import play.i18n._
 @import helper._
 @main(Messages.get("attendance.title")) {
 
-<link rel="stylesheet" href="/main.css">
 <section class="content">
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -20,9 +25,6 @@
             <input type="hidden" id="monthsYears" name="monthsYears" value="@((year + month).toInt)">
             <input type="hidden" id="businessCode" name="businessCode" value="@statusAndWorkForm.get().businessCode">
             <input type="hidden" id="businessTeamCode" name="businessTeamCode" value="@statusAndWorkForm.get().businessTeamCode">
-            <input type="hidden" id="departmentCode" name="departmentCode" value="@statusAndWorkForm.get().departmentCode">
-            <input type="hidden" id="departmentCode" name="departmentCode" value="@statusAndWorkForm.get().departmentCode">
-            <input type="hidden" id="divisionCode" name="divisionCode" value="@statusAndWorkForm.get().divisionCode">
             <div class="col-md-2 col-sm-2 col-xs-12">
               <div class="form-horizontal">
                 <div class="form-group">
@@ -54,17 +56,18 @@
                     @Messages.get("attendance.department")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                  <select id="departmentCode@(year + month)" name="statusAndWorkForm.departmentCode" class="form-control departmentCode changeDepartmentCd departmentCode-@((year + month).toInt)" required>
-				  <option value="" class="msg" disabled selected>@statusAndWorkForm.get().departmentName</option>
+                  <select id="departmentCode" name="departmentCode" class="form-control departmentCode changeDepartmentCd departmentCode-@((year + month).toInt)" required>
+				  <option value="" disabled selected>@statusAndWorkForm.get().departmentName</option>
 				  @departList.map{ dpl =>
                     <option value="@dpl.code">@dpl.codeName</option>
                   }
-                  @if(existsDefaultValue){
+                  @if(statusDefaultValue){
                     <script>
                     var departmentCode = '@statusAndWorkForm.get().departmentCode';
-                    var monthsYears = @(year + month);
-                      var targetDepartmentCode = "#departmentCode" + monthsYears
-                      $(targetDepartmentCode).val(departmentCode)
+                    if(departmentCode != ""){
+                      var target = "#departmentCode"
+                      $(target).val(departmentCode)
+                    }
                     </script>
                   }
 				  </select>
@@ -79,8 +82,8 @@
                     @Messages.get("attendance.division")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-					<select id="division" class="division form-control" name="division" required>
-					<option value="" class="msg" disabled selected>@statusAndWorkForm.get().divisionName</option>
+					<select id="divisionCode" class="division form-control" name="divisionCode" required>
+					<option value="@statusAndWorkForm.get().divisionCode" class="msg" disabled selected>@statusAndWorkForm.get().divisionName</option>
 					@divisionList.map{ dvl =>
                       <option value="@dvl.code">@dvl.codeName</option>
                     }
@@ -183,7 +186,6 @@
       <input type="hidden" id="monthsYears" name="monthsYears" value="@((year + month).toInt)">
       <input type="hidden" id="businessCode" name="businessCode" value="@statusAndWorkForm.get().businessCode">
       <input type="hidden" id="businessTeamCode" name="businessTeamCode" value="@statusAndWorkForm.get().businessTeamCode">
-      <input type="hidden" id="departmentCode" name="departmentCode" value="@statusAndWorkForm.get().departmentCode">
       <input type="hidden" id="departmentCode" name="departmentCode" value="@statusAndWorkForm.get().departmentCode">
       <input type="hidden" id="divisionCode" name="divisionCode" value="@statusAndWorkForm.get().divisionCode">
       <div class="row">
@@ -292,7 +294,7 @@
                 </select>
               </td>
               <td class="hidden-xs" valign="middle">
-                <select id="holidayClass@d.dateId" name="attendanceInputFormList[@idx].shiftClassCode" class="form-control shiftClass changeEventForm shiftClass-@d.dateId">
+                <select id="shiftClass@d.dateId" name="attendanceInputFormList[@idx].shiftClassCode" class="form-control shiftClass changeEventForm shiftClass-@d.dateId">
                   <option value="00"></option>
                   @shiftList.map{ shift =>
                     <option value="@shift.code">@shift.codeName</option>
@@ -445,7 +447,7 @@
     </div>
   </div>
 </div>
-
+<!-- <script src="@routes.Assets.versioned("javascripts/attendance.js")" type="text/javascript"></script> -->
 <script>
   $(function() {
     if(localStorage.saveMsg){
@@ -587,8 +589,7 @@
     });
 
     $(".changeDepartmentCd").change(function(){
-      var targetTrId = @(year + month);
-      var departmentCode = $('#departmentCode' + targetTrId).val();
+      var departmentCode = $('#departmentCode').val();
       if(departmentCode != 00 || departmentCode != ""){
         var url = '@routes.AttendanceCtl.getDivisionList("0")';
         url = url.substring(0, url.length - 1) + departmentCode;
@@ -598,9 +599,9 @@
           success : function(data) {
             if(data.result == "ok"){
             	var divisionList = data.value;
-	            $('#division').html("");
+	            $('#divisionCode').html("");
 	            $.each(divisionList, function (i, val) {
-	               $('#division').append($("<option>").val(val.code).text(val.codeName));
+	               $('#divisionCode').append($("<option>").val(val.code).text(val.codeName));
                 });
             }else{
 				alert('課リスト選択中にエラーが発生しました。');
@@ -608,8 +609,8 @@
           }
         });
       }else{
-        $('#division').html("");
-		$('#division').append($("<option>").val("00").text("該当なし"));
+        $('#divisionCode').html("");
+		$('#divisionCode').append($("<option>").val("00").text("該当なし"));
 	  }
     });
 

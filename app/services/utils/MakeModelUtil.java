@@ -55,6 +55,7 @@ public class MakeModelUtil {
         SqlRow ymat = TblYearMonthAttribute.getYearMonthData(empNo, monthsYears);
         //渡された年月の年月属性テーブルがある場合とない場合で処理を分岐
         if (ymat != null) {
+        	try {
             sawf.monthsYears = monthsYears;
             sawf.employeeName = ymat.getString("employee_name");
             sawf.employeeNo = empNo;
@@ -69,16 +70,22 @@ public class MakeModelUtil {
             // FIXME Const化
             sawf.businessTeamName = MsGeneralCode.getCodeMaster(
                     "BUSINESS_TEAM_CODE", ymat.getString("business_team_code")).getString("CODE_NAME");
-            sawf.departmentCode = Optional.ofNullable(ymat.getString("department")).orElse("");
+            sawf.departmentCode = ymat.getString("department_code");
             // FIXME Const化
             sawf.departmentName = MsGeneralCode.getCodeMaster(
                     "DEPARTMENT_CODE", ymat.getString("department_code")).getString("CODE_NAME");
-            sawf.divisionCode = Optional.ofNullable(ymat.getString("division_code")).orElse("");
-            sawf.breakdownName1 = Optional.ofNullable(ymat.getString("breakdown_name1")).orElse("");
+            sawf.divisionCode = ymat.getString("division_code");
+            sawf.divisionName = MsGeneralCode.getCodeMaster(
+                    "DIVISION_CODE", ymat.getString("division_code")).getString("CODE_NAME");
+            sawf.breakdownName1 = ymat.getString("breakdown_name1");
             sawf.breakdownName2 = Optional.ofNullable(ymat.getString("breakdown_name2")).orElse("");
             sawf.breakdownName3 = Optional.ofNullable(ymat.getString("breakdown_name3")).orElse("");
             sawf.breakdownName4 = Optional.ofNullable(ymat.getString("breakdown_name4")).orElse("");
-            sawf.monthsYearsStatus = Optional.ofNullable(ymat.getString("months_years_status")).orElse("");
+            sawf.monthsYearsStatus = ymat.getString("months_years_status");
+        	}catch (Exception e) {
+				// TODO: handle exception
+        		System.out.println(e);
+			}
         } else {
             // 社員マスタから社員情報を取得
             SqlRow empInfo = MsEmployee.getEmployeeInfo(empNo);

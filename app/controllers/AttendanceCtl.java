@@ -1,6 +1,7 @@
 package controllers;
 
 import static models.TblPerformance.*;
+import static models.TblYearMonthAttribute.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 
 import common.Const;
+import models.MsEmployee;
 import models.MsGeneralCode;
 import models.TblPerformance;
 import models.TblYearMonthAttribute;
@@ -18,6 +20,7 @@ import models.form.AttendanceInputForm;
 import models.form.AttendanceInputFormList;
 import models.form.DateList;
 import models.form.StatusAndWorkForm;
+import models.form.StatusAndWorkFormList;
 import play.data.Form;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -57,13 +60,20 @@ public class AttendanceCtl extends Controller {
         List<DateList> dateList = getDateList(year, DateUtil.getZeroPadding(month));
 
         String monthsYears = year + DateUtil.getZeroPadding(month);
+        Boolean statusDefaultValue = false;
         Boolean existsDefaultValue = false;
+
         // 保存済実績を取得
         List<SqlRow> performanceData = getPerformanceData(employeeNo, monthsYears);
+        SqlRow monthStatusData = getYearMonthData(employeeNo, monthsYears);
 
         // 表示用Form
         AttendanceInputFormList aifl = new AttendanceInputFormList();
-        StatusAndWorkForm sawf = MakeModelUtil.makeStatusAndWorkForm(employeeNo, monthsYears);
+
+        if(monthStatusData.size() != 0) {
+        	statusDefaultValue = true;
+        	aifl.statusAndWorkFormList = MakeModelUtil.makeStatusAndWorkForm(employeeNo, monthsYears);
+        }
 
         // 指定した年月の実績データが一件でもある場合は初期値をセット
         if (performanceData.size() != 0) {
@@ -71,7 +81,7 @@ public class AttendanceCtl extends Controller {
             aifl.attendanceInputFormList = MakeModelUtil.makeAttendanceInputFormList(dateList, performanceData);
         }
 
-        Form<StatusAndWorkForm> statusAndWorkForm = formFactory.form(StatusAndWorkForm.class).fill(sawf);
+        Form<StatusAndWorkForm> statusAndWorkForm = formFactory.form(StatusAndWorkForm.class).fill(aifl.statusAndWorkFormList);
         Form<AttendanceInputFormList> inputForm = formFactory.form(AttendanceInputFormList.class).fill(aifl);
 
         //ステータスのリスト化
@@ -88,6 +98,7 @@ public class AttendanceCtl extends Controller {
                     dateList,
                     year,
                     month,
+                    statusDefaultValue,
                     existsDefaultValue,
                     employeeNo,
                     departList,
@@ -118,21 +129,23 @@ public class AttendanceCtl extends Controller {
                     statusAndWorkForm.employeeNo, statusAndWorkForm.monthsYears);
             // 年月属性テーブルが既に存在する場合は更新、なければ新規作成
             if (targetYearMonthAttributeTbl == null) {
-                // FIXME debug
+                //  debug
                 System.out.println("insert！！！");
 
+                ymat.monthsYearsStatus = Const.PERFORMANCE_STATUS_SAVE;
                 ymat.registUserId = statusAndWorkForm.employeeNo;
                 ymat.updateUserId = statusAndWorkForm.employeeNo;
                 TblYearMonthAttribute.insertYearMonthData(ymat);
             } else {
-            	// FIXME debug
+            	//  debug
                 System.out.println("update！！！");
 
+                ymat.monthsYearsStatus = Const.PERFORMANCE_STATUS_SAVE;
                 ymat.updateUserId = statusAndWorkForm.employeeNo;
                 TblYearMonthAttribute.updateYearMonthData(ymat);
             }
         } catch (Exception e) {
-            // FIXME debug
+            //  debug
             System.out.println(e);
             return ok(Json.toJson(ImmutableMap.of("result", "ng")));
         }
@@ -147,7 +160,7 @@ public class AttendanceCtl extends Controller {
      */
     public Result save(String empNo, String monthsYears) {
 
-        // FIXME debug
+        //  debug
         System.out.println("save!!!!!");
 
         // 画面からForm取得
@@ -239,17 +252,17 @@ public class AttendanceCtl extends Controller {
                             String date = DateUtil.getZeroPadding(inputForm.date);
                             // 登録しようとしている日のデータがある場合は更新、ない場合登録
                             if (performanceDataList.contains(date)) {
-                                // FIXME
+                                //
                                 pft.updateUserId = inputForm.employeeNo;
                                 TblPerformance.updatePerformanceData(pft);
                             } else {
-                                // FIXME
+                                //
                                 pft.registUserId = inputForm.employeeNo;
                                 pft.updateUserId = inputForm.employeeNo;
                                 TblPerformance.insertPerformanceData(pft);
                             }
                         } catch (Exception e) {
-                            // FIXME debug
+                            //  debug
                             System.out.println(e);
 
                             HashMap<String, String> map = new HashMap<>();
@@ -263,7 +276,7 @@ public class AttendanceCtl extends Controller {
                 }
             }
             if (!errorMsgList.isEmpty()) {
-                // FIXME debug
+                //  debug
                 System.out.println("exit save!!!!!");
 
                 return ok(Json.toJson(
@@ -273,7 +286,7 @@ public class AttendanceCtl extends Controller {
                         )
                 ));
             } else {
-                // FIXME debug
+                //  debug
                 System.out.println("exit save!!!!!");
                 return ok(Json.toJson(ImmutableMap.of("result", "ok")));
             }
@@ -288,7 +301,7 @@ public class AttendanceCtl extends Controller {
      */
     public Result fix(String empNo, String yearMonth) {
 
-        // FIXME debug
+        //  debug
         System.out.println("fix!!!!!");
 
         // 画面の入力値を取得

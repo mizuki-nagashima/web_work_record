@@ -106,7 +106,8 @@ public class MsGeneralCode extends CommonModel {
      * 取得対象コード（CODE）を指定して汎用コードを取得
      * 年度は固定で"0000"を指定
      *
-     * @param String コード
+     * @param codeType コードタイプ
+     * @param code コード
      */
     public static SqlRow getCodeMaster(String codeType, String code) {
         return getCodeMaster(codeType, code, "0000", null);
