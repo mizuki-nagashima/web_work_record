@@ -89,6 +89,8 @@ public class AttendanceCtl extends Controller {
         List<MsGeneralCode> shiftList = MakeModelUtil.makeCodeTypeList("SHIFT_CLASS");
         List<MsGeneralCode> departList = MakeModelUtil.makeCodeTypeList("DEPARTMENT_CODE");
         List<MsGeneralCode> divisionList = MakeModelUtil.makeCodeTypeList("DIVISION_CODE");
+        List<MsGeneralCode> businessList = MakeModelUtil.makeCodeTypeList("BUSINESS_CODE");
+        List<MsGeneralCode> businessTeamList = MakeModelUtil.makeCodeTypeList("BUSINESS_TEAM_CODE");
 
         // 1~12(1月~12月以外がパラメータに入ってきたらエラー)
         if (MIN_MONTH <= Integer.parseInt(month) && MAX_MONTH >= Integer.parseInt(month)) {
@@ -103,6 +105,8 @@ public class AttendanceCtl extends Controller {
                     employeeNo,
                     departList,
                     divisionList,
+                    businessList,
+                    businessTeamList,
                     hcmList,
                     shiftList
             ));
@@ -574,6 +578,20 @@ public class AttendanceCtl extends Controller {
                 ImmutableMap.of(
                         "result","ok",
                         "value", divisionList
+                )));
+    }
+
+    /**
+     * 課リストを取得します。
+     * @return 結果
+     */
+    public Result getBusinessTeamList(String businessCode){
+
+    	List<MsGeneralCode> businessTeamList = MakeModelUtil.makeCodeTypeList("BUSINESS_TEAM_CODE",businessCode);
+        return ok(Json.toJson(
+                ImmutableMap.of(
+                        "result","ok",
+                        "value", businessTeamList
                 )));
     }
 

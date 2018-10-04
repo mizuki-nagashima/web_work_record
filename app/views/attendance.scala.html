@@ -4,6 +4,7 @@
 	statusDefaultValue: Boolean,existsDefaultValue: Boolean,
 	empNo: String,
 	departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode],
+	businessList: List[models.MsGeneralCode], businessTeamList: List[models.MsGeneralCode],
 	hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
 @import play.i18n._
 @import helper._
@@ -23,8 +24,6 @@
               <h3>@Messages.get("attendance.yourStatus")</h3>
             </div>
             <input type="hidden" id="monthsYears" name="monthsYears" value="@((year + month).toInt)">
-            <input type="hidden" id="businessCode" name="businessCode" value="@statusAndWorkForm.get().businessCode">
-            <input type="hidden" id="businessTeamCode" name="businessTeamCode" value="@statusAndWorkForm.get().businessTeamCode">
             <div class="col-md-2 col-sm-2 col-xs-12">
               <div class="form-horizontal">
                 <div class="form-group">
@@ -83,9 +82,18 @@
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
 					<select id="divisionCode" class="division form-control" name="divisionCode" required>
-					<option value="@statusAndWorkForm.get().divisionCode" class="msg" disabled selected>@statusAndWorkForm.get().divisionName</option>
+					<option value="" class="msg" disabled selected>@statusAndWorkForm.get().divisionName</option>
 					@divisionList.map{ dvl =>
                       <option value="@dvl.code">@dvl.codeName</option>
+                    }
+                    @if(statusDefaultValue){
+	                    <script>
+	                    var divisionCode = '@statusAndWorkForm.get().divisionCode';
+	                    if(divisionCode != ""){
+	                      var target = "#divisionCode"
+	                      $(target).val(divisionCode)
+	                    }
+	                    </script>
                     }
 					</select>
                   </div>
@@ -99,7 +107,21 @@
                     @Messages.get("attendance.workName")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text" id="businessCd" name="businessCd" class="form-control" value="@statusAndWorkForm.get().businessCodeDisp">
+	                <select id="businessCode" name="businessCode" class="form-control businessCode changeBusinessCd businessCode-@((year + month).toInt)" required>
+					  <option value="" disabled selected>@statusAndWorkForm.get().businessName</option>
+					  @businessList.map{ dpl =>
+	                    <option value="@dpl.code">@dpl.codeName</option>
+	                  }
+	                  @if(statusDefaultValue){
+	                    <script>
+	                    var businessCode = '@statusAndWorkForm.get().businessCode';
+	                    if(businessCode != ""){
+	                      var target = "#businessCode"
+	                      $(target).val(businessCode)
+	                    }
+	                    </script>
+	                  }
+					</select>
                   </div>
                 </div>
               </div>
@@ -111,7 +133,21 @@
                     @Messages.get("attendance.workTeamName")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text" name="businessName" class="form-control" value="@statusAndWorkForm.get().businessTeamName">
+	                 <select id="businessTeamCode" class="businessTeamCode form-control" name="businessTeamCode" required>
+					  <option value="" class="msg" disabled selected>@statusAndWorkForm.get().businessTeamName</option>
+					  @businessTeamList.map{ dvl =>
+	                     <option value="@dvl.code">@dvl.codeName</option>
+	                  }
+	                  @if(statusDefaultValue){
+	                    <script>
+	                    var businessTeamCode = '@statusAndWorkForm.get().businessTeamCode';
+	                    if(businessTeamCode != ""){
+	                      var target = "#businessTeamCode"
+	                      $(target).val(businessTeamCode)
+	                    }
+	                    </script>
+                      }
+					 </select>
                   </div>
                 </div>
               </div>
@@ -611,6 +647,32 @@
       }else{
         $('#divisionCode').html("");
 		$('#divisionCode').append($("<option>").val("00").text("該当なし"));
+	  }
+    });
+
+    $(".changeBusinessCd").change(function(){
+      var businessCode = $('#businessCode').val();
+      if(businessCode != 00 || businessCode != ""){
+        var url = '@routes.AttendanceCtl.getBusinessTeamList("0")';
+        url = url.substring(0, url.length - 1) + businessCode;
+        $.ajax({
+          type : 'GET',
+          url : url,
+          success : function(data) {
+            if(data.result == "ok"){
+            	var businessTeamList = data.value;
+	            $('#businessTeamCode').html("");
+	            $.each(businessTeamList, function (i, val) {
+	               $('#businessTeamCode').append($("<option>").val(val.code).text(val.codeName));
+                });
+            }else{
+				alert('業務リスト選択中にエラーが発生しました。');
+            }
+          }
+        });
+      }else{
+        $('#businessTeamCode').html("");
+		$('#businessTeamCode').append($("<option>").val("00").text("該当なし"));
 	  }
     });
 
