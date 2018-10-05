@@ -310,8 +310,8 @@
               <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.lateNight")控除 id="deductionNight" name="attendanceInputFormList[@idx].deductionNight" class="deductionNight form-control changeEventForm deductionNight-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).deductionNight"}else{"0.0"}> </td>
               <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.other")控除 id="deductionOther" name="attendanceInputFormList[@idx].deductionOther" class="deductionOther form-control changeEventForm deductionOther-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).deductionOther"}else{"0.0"}> </td>
               <td valign="middle"> <input readonly="readonly" id="performanceTime" name="attendanceInputFormList[@idx].performanceTime" class="performanceTime form-control performanceTime-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).performanceTime"}else{"0.0"}></td>
-              <td class="hidden-xs" valign="middle"> <input readonly="readonly" id="nightWork" class="form-control nightWork" value="0.0"></td>
-              <td class="hidden-xs" valign="middle"> <input readonly="readonly" id="salaried" class="form-control salaried" value="0.0"></td>
+              <td valign="middle"> <input readonly="readonly" id="nightWork" class="form-control nightWork" value="0.0"></td>
+              <td valign="middle"> <input readonly="readonly" id="salaried" class="form-control salaried" value="0.0"></td>
               <td class="hidden-xs" valign="middle">
                 <select id="holidayClass@d.dateId" name="attendanceInputFormList[@idx].holidayClassCode" class="form-control holidayClass changeEventForm holidayClass-@d.dateId">
                    <option value="00"></option>
@@ -414,6 +414,8 @@
               <td class="hidden-xs"> <input type="text" readonly="readonly" id="sumDeductionNight" class="form-control"></td>
               <td class="hidden-xs"> <input type="text" readonly="readonly" id="sumDeductionOther" class="form-control"></td>
               <td> <input type="text" readonly="readonly" id="sumPerformanceTime" class="form-control"></td>
+              <td> <input type="text" readonly="readonly" id="sumNightWork" class="form-control"></td>
+              <td> <input type="text" readonly="readonly" id="sumSalaried" class="form-control"></td>
             </tr>
           </tbody>
         </table>
@@ -483,7 +485,25 @@
     </div>
   </div>
 </div>
-<!-- <script src="@routes.Assets.versioned("javascripts/attendance.js")" type="text/javascript"></script> -->
+
+<div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
+        <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i>確認</h4>
+      </div>
+      <div class="modal-body">
+        <p>お仕事お疲れ様です。</p>
+        <p id="saveMessageTitle">以下を確認のうえ、OKボタンを押して保存してください。</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary saveModal" data-dismiss="modal"> OK </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   $(function() {
     if(localStorage.saveMsg){
@@ -610,7 +630,7 @@
                var stringDate = targetTr.attr('string-date');
                var msgContents = '<p id=' + warnMsgId + ' class=' + 'warn-msg-contents' + '>' + stringDate + '&nbsp;-&nbsp;' + data.msg + '<p>';
                $('#warn-msg-title').after(msgContents);
-               $('#' + targetTrId).children().children('#performanceTime').val("");
+               $('#' + targetTrId).children().children('#performanceTime').val("0.0");
                $.totalInsert();
                if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
                 $(".warn-msg").css('top','initial');
@@ -620,7 +640,9 @@
           }
         });
       }else{
-        $('#' + targetTrId).children().children('#performanceTime').val("");
+        $('#' + targetTrId).children().children('.openingTime').val("");
+        $('#' + targetTrId).children().children('.closingTime').val("");
+        $('#' + targetTrId).children().children('#performanceTime').val("0.0");
       }
     });
 
@@ -724,6 +746,10 @@
     });
 
     $(".saveBtn").click(function () {
+　　　　　　$('#saveModal').modal('show');
+    });
+
+    $(".saveModal").click(function () {
       $(".warn-msg").addClass("hidden");
       $('.warn-msg-contents').remove();
       $('.save-warn-msg-contents').remove();
@@ -880,6 +906,8 @@
        var sumDeductionNight = 0.0;
        var sumDeductionOther = 0.0;
        var sumPerformanceTime = 0.0;
+       var sumNightWork = 0.0;
+       var sumSalaried = 0.0;
 
        $(".breakdown1").each(function(){
          var value = $(this).val();
@@ -935,7 +963,10 @@
              }
            });
          }
+         var value = $(this).val();
+         sumNightWork = sumNightWork + parseFloat(value);
        });
+       $("#sumNightWork").val($.addZero(sumNightWork));
 
        $(".salaried").each(function(){
          var salaried = $(this)
@@ -959,13 +990,22 @@
              }
            }
          });
+         var value = $(this).val();
+         sumSalaried = sumSalaried + parseFloat(value);
        });
+       $("#sumSalaried").val($.addZero(sumSalaried));
 
        $(".performanceTime").each(function(){
          var value = $(this).val();
          sumPerformanceTime = sumPerformanceTime + parseFloat(value);
        });
        $("#sumPerformanceTime").val($.addZero(sumPerformanceTime));
+       var msgContents = '<p id="sumMonthlyWorkTime">・今月作業実績：' + sumPerformanceTime +'時間（有休等を除く）</p>';
+       $('#saveMessageTitle').after(msgContents);
+
+		// TODO 所定労働時間取得
+//       var msgContents = '<p id="defaultWorkTime">・所定労働時間：' + value +'時間</p>';
+//       $('#saveMessageTitle').after(msgContents);
 
     };
     $.totalInsert();
