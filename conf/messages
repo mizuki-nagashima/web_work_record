@@ -48,3 +48,6 @@ attendance.form.salaried=有給割当
 attendance.form.remarks=備考
 
 attendance.form.alreadySave=保存済
+
+attendance.defaultWorkTime=所定労働時間
+attendance.sumPerformanceTime=今月作業実績

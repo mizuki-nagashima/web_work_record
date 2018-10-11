@@ -5,8 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import models.MsGeneralCode;
+import models.form.DateList;
 
 /**
  * 日付・時間に関する共通クラス
@@ -186,5 +188,44 @@ public class DateUtil {
         }
         return timeDiff;
     }
+
+    /**
+     * 月間の所定労働時間を取得します。
+     * @return 結果
+     */
+    public static double getDefaultWorkTime(String year, String month){
+    	//所定労働時間/日を取得
+    	double dailyWorkTime = MsGeneralCode.getAnyValue1ByCode("01","DEFAULT_DAILY_WORK_TIME");
+
+    	//当月の最大日付を取得
+    	Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, Integer.parseInt(year));
+        cal.set(Calendar.MONTH, Integer.parseInt(month) - 1);
+        int maxDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        //当月の平日の日数取得
+        int workDay = getWorkDay(year, month, maxDay);
+
+        //所定労働時間(日)*日数
+    	double defalutTime = dailyWorkTime * workDay;
+
+		return defalutTime;
+    }
+
+    /*
+     * 月間の平日を取得します。
+     */
+    public static int getWorkDay(String year, String month,int maxDay) {
+    	int workDay = 0;
+        // 当月の最大日付まで処理
+        for (int day = 1 ; day <= maxDay ; day++) {
+           	boolean isHoliday = isHoliday(year, month, DateUtil.getZeroPadding(String.valueOf(day)));
+           	if(!isHoliday) {
+           		workDay ++;
+           	}
+        }
+		return workDay;
+	}
+
 
 }

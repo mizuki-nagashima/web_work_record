@@ -4,6 +4,7 @@ import static models.TblPerformance.*;
 import static models.TblYearMonthAttribute.*;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -60,6 +61,7 @@ public class AttendanceCtl extends Controller {
         List<DateList> dateList = getDateList(year, DateUtil.getZeroPadding(month));
 
         String monthsYears = year + DateUtil.getZeroPadding(month);
+        Double defalutWorkTime = DateUtil.getDefaultWorkTime(year,month);
         Boolean statusDefaultValue = false;
         Boolean existsDefaultValue = false;
 
@@ -103,6 +105,7 @@ public class AttendanceCtl extends Controller {
                     statusDefaultValue,
                     existsDefaultValue,
                     employeeNo,
+                    defalutWorkTime,
                     departList,
                     divisionList,
                     businessList,
@@ -521,7 +524,7 @@ public class AttendanceCtl extends Controller {
         Double salariedTime = 0.0;
         // 休暇区分が設定されている場合休暇区分の時間を足す
         if (holidayClassCode.isEmpty()) {
-            salariedTime = MsGeneralCode.getSalariedTime(holidayClassCode);
+            salariedTime = MsGeneralCode.getAnyValue1ByCode(holidayClassCode,"HOLIDAY_CLASS");
         }
         double doubleDeduction = Double.parseDouble(deduction);
         String performanceTime = String.valueOf(time + salariedTime - doubleDeduction);
@@ -555,7 +558,7 @@ public class AttendanceCtl extends Controller {
     public Result getSalaried(String holidayClassCode){
         double salaried = 0.0;
         if (!Const.HOLIDAY_CLASS_NOTHING.equals(holidayClassCode)) {
-            salaried = MsGeneralCode.getSalariedTime(holidayClassCode);
+            salaried = MsGeneralCode.getAnyValue1ByCode(holidayClassCode,"HOLIDAY_CLASS");
         }
         return ok(Json.toJson(
                 ImmutableMap.of(
@@ -582,7 +585,7 @@ public class AttendanceCtl extends Controller {
     }
 
     /**
-     * 課リストを取得します。
+     * 業務チームリストを取得します。
      * @return 結果
      */
     public Result getBusinessTeamList(String businessCode){

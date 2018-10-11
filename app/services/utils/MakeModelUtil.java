@@ -184,7 +184,7 @@ public class MakeModelUtil {
 
             if (!"".equals(closingTime)) {
                 aif.holidayClassName = MsGeneralCode.getClassNameByCode(holidayClassCode);
-                aif.salaried = MsGeneralCode.getSalariedTime(holidayClassCode);
+                aif.salaried = MsGeneralCode.getAnyValue1ByCode(holidayClassCode,"HOLIDAY_CLASS");
             }
             if (!"".equals(closingTime) && closingTime != null) {
                 aif.nightWork = DateUtil.getLateNightWorkTime(closingTime);
@@ -212,7 +212,7 @@ public class MakeModelUtil {
     }
 
     /**
-     * コードタイプのリストを作成します。
+     * コードタイプのリストをanyvalue2から作成します。
      * @return List<MGeneralCode>
      */
     public static List<MsGeneralCode> makeCodeTypeList(String codeType,String anyValue2){

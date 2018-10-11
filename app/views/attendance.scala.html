@@ -2,7 +2,7 @@
 	inputForm: Form[models.form.AttendanceInputFormList],
 	date: List[models.form.DateList], year: String, month: String,
 	statusDefaultValue: Boolean,existsDefaultValue: Boolean,
-	empNo: String,
+	empNo: String, defaultWorkTime: Double,
 	departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode],
 	businessList: List[models.MsGeneralCode], businessTeamList: List[models.MsGeneralCode],
 	hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
@@ -295,7 +295,6 @@
                 <input type="hidden" id="beforeHolidayClass@idx" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).holidayClassCode"}else{"00"}>
               <td valign="middle">
                 <span class="calendar" style="white-space: nowrap;">@d.stringDate</span>
-                <!-- @if(d.isHoliday){<span style="margin-bottom: 3px" class="label label-warning fa fa-calendar"> 休</span>}-->
                 @if(d.isHoliday){<span style="margin-bottom: 3px" class="label label-warning fa-calendar"> 休</span>}
                 @if(existsDefaultValue && (inputForm.get().attendanceInputFormList.get(idx).openingTime != "" || inputForm.get().attendanceInputFormList.get(idx).holidayClassCode != "00")){
                   <span style="margin-bottom: 3px" class="label label-success fa fa-check"> @Messages.get("attendance.form.alreadySave")</span>
@@ -494,8 +493,8 @@
         <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i>確認</h4>
       </div>
       <div class="modal-body">
-        <p>お仕事お疲れ様です。</p>
-        <p id="saveMessageTitle">以下を確認のうえ、OKボタンを押して保存してください。</p>
+        <p>お仕事お疲れ様です。<br>以下を確認のうえ、OKボタンを押して保存してください。</p>
+        <p id="defaultWorkTime">・所定労働時間： @defaultWorkTime 時間</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary saveModal" data-dismiss="modal"> OK </button>
@@ -661,8 +660,6 @@
 	            $.each(divisionList, function (i, val) {
 	               $('#divisionCode').append($("<option>").val(val.code).text(val.codeName));
                 });
-            }else{
-				alert('課リスト選択中にエラーが発生しました。');
             }
           }
         });
@@ -687,8 +684,6 @@
 	            $.each(businessTeamList, function (i, val) {
 	               $('#businessTeamCode').append($("<option>").val(val.code).text(val.codeName));
                 });
-            }else{
-				alert('業務リスト選択中にエラーが発生しました。');
             }
           }
         });
@@ -746,6 +741,11 @@
     });
 
     $(".saveBtn").click(function () {
+       $.totalInsert();
+       $('.monthly-work-time-contents').remove();
+       var sumPerformanceTime = $("#sumPerformanceTime").val();
+       var msgContents = '<p id="sumMonthlyWorkTime" class="work-time-contents">・今月作業実績： ' + sumPerformanceTime +' 時間（有休等を除く）</p>';
+       $('#defaultWorkTime').after(msgContents);
 　　　　　　$('#saveModal').modal('show');
     });
 
@@ -1000,12 +1000,6 @@
          sumPerformanceTime = sumPerformanceTime + parseFloat(value);
        });
        $("#sumPerformanceTime").val($.addZero(sumPerformanceTime));
-       var msgContents = '<p id="sumMonthlyWorkTime">・今月作業実績：' + sumPerformanceTime +'時間（有休等を除く）</p>';
-       $('#saveMessageTitle').after(msgContents);
-
-		// TODO 所定労働時間取得
-//       var msgContents = '<p id="defaultWorkTime">・所定労働時間：' + value +'時間</p>';
-//       $('#saveMessageTitle').after(msgContents);
 
     };
     $.totalInsert();
