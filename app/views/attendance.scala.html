@@ -742,7 +742,7 @@
 
     $(".saveBtn").click(function () {
        $.totalInsert();
-       $('.monthly-work-time-contents').remove();
+       $('.work-time-contents').remove();
        var sumPerformanceTime = $("#sumPerformanceTime").val();
        var msgContents = '<p id="sumMonthlyWorkTime" class="work-time-contents">・今月作業実績： ' + sumPerformanceTime +' 時間（有休等を除く）</p>';
        $('#defaultWorkTime').after(msgContents);
