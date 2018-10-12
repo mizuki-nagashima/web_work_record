@@ -239,7 +239,7 @@
               <i class="fa fa-file-text"></i>
               @Messages.get("attendance.pdf")
             </button>
-            <button type="button" class="btn btn-danger fix" style="margin-right: 10px">
+            <button type="button" class="btn btn-danger fixBtn" style="margin-right: 10px">
               <i class="fa fa-file-text"></i>
               @Messages.get("attendance.fix")
             </button>
@@ -434,7 +434,7 @@
               <i class="fa fa-file-text"></i>
               @Messages.get("attendance.pdf")
             </button>
-            <button type="button" class="btn btn-danger fix" style="margin-right: 10px">
+            <button type="button" class="btn btn-danger fixBtn" style="margin-right: 10px">
               <i class="fa fa-file-text"></i>
               @Messages.get("attendance.fix")
             </button>
@@ -490,7 +490,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
-        <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i>確認</h4>
+        <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i>　保存</h4>
       </div>
       <div class="modal-body">
         <p>お仕事お疲れ様です。<br>以下を確認のうえ、OKボタンを押して保存してください。</p>
@@ -498,6 +498,27 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary saveModal" data-dismiss="modal"> OK </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="fixModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
+        <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i> 確定</h4>
+      </div>
+      <div class="modal-body">
+        <p>今月の勤怠情報を確定します。<br>以下を確認のうえ、OKボタンを押して確定してください。</p>
+        <p id="defaultWorkTime">・所定労働時間： @defaultWorkTime 時間</p>
+        <div align="right">
+		    <small>※</small>
+		</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary fixModal" data-dismiss="modal"> OK </button>
       </div>
     </div>
   </div>
@@ -578,6 +599,7 @@
       if(modalHolidayClass != 00){
         holidayClass = modalHolidayClass;
       }
+      //startとendがnullではない or 休暇区分が選択されている
       if(((start != "")&&(end  != "")) || holidayClass != 00){
         $('#' + targetTrId + '-closingTime').val(end);
         var url = '@routes.AttendanceCtl.getPerformanceTime("0","0","0","0")';
@@ -805,10 +827,19 @@
       });
     });
 
+    $(".fixBtn").click(function () {
+       $.totalInsert();
+       $('.fix-contents').remove();
+       var sumPerformanceTime = $("#sumPerformanceTime").val();
+       var msgContents = '<p id="sumMonthlyWorkTime" class="fix-contents">・今月作業実績： ' + sumPerformanceTime +' 時間（有休等を除く）</p>';
+       $('#defaultWorkTime').after(msgContents);
+　　　　　　$('#fixModal').modal('show');
+    });
+
     // TODO
-    $(".fix").click(function () {
+    $(".fixModal").click(function () {
       // fix処理
-      var url = '@routes.AttendanceCtl.fix(empNo, year + month)'
+      var url = '@routes.AttendanceCtl.fix(empNo, year, month)'
       $.ajax({
           type:'POST',
           url:url,

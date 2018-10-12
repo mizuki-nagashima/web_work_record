@@ -24,7 +24,7 @@ GET     /attendance/getSalaried/get/:code      controllers.AttendanceCtl.getSala
 GET     /attendance/getDivisionList/get/:code      controllers.AttendanceCtl.getDivisionList(code: String)
 GET     /attendance/getBusinessTeamList/get/:code      controllers.AttendanceCtl.getBusinessTeamList(code: String)
 
-GET     /attendance/fix/:empNo/:yearMonth      controllers.AttendanceCtl.fix(empNo: String, yearMonth: String)
+GET     /attendance/fix/:empNo/:year/:month      controllers.AttendanceCtl.fix(empNo: String, year: String, month: String)
 GET     /attendancePdf/:year/:month/:pdfKind   controllers.AttendancePdfCtl.index(year: String, month: String, pdfKind: Int)
 
 GET		/approve	controllers.ApproveCtl.index()

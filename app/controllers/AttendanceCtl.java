@@ -180,7 +180,7 @@ public class AttendanceCtl extends Controller {
         // エラーメッセージを詰め込むためのリスト
         ArrayList<HashMap> errorMsgList = new ArrayList<>();
 
-        // TODO 年月属性を取得
+        // 年月属性を取得
         SqlRow yearMonthData = TblYearMonthAttribute.getYearMonthData(empNo, monthsYears);
         // 勤怠を保存するボタン押下時に年月別ステータスが03：承認済の場合、 既に勤怠は凍結されているため、処理を実行しない。
         if (yearMonthData != null
@@ -306,7 +306,8 @@ public class AttendanceCtl extends Controller {
      * @param yearMonth 年月(yyyyMM)
      * @return 勤怠管理画面画面
      */
-    public Result fix(String empNo, String yearMonth) {
+    public Result fix(String empNo, String year, String month) {
+    	String yearMonth = year+month;
 
         //  debug
         System.out.println("fix!!!!!");
@@ -336,7 +337,6 @@ public class AttendanceCtl extends Controller {
         }
 
         // TODO 月の全ての営業日にデータが登録されているかをチェック
-        // TODO 承認依頼をするよ確認モーダル
 
         // 実績を取得して、実績別ステータスの振り分け設定
         for (AttendanceInputForm form: attendanceFormList.attendanceInputFormList) {
@@ -377,7 +377,6 @@ public class AttendanceCtl extends Controller {
             String holidayClassCode, String shiftClassCode,
             Double deductionNight, Double deductionOther) {
 
-        Boolean isNeedApprovalPerformance = false;
         // 休暇区分00:なし以外
         // シフト区分00：なし以外
         // 控除時間が既定外
@@ -396,18 +395,7 @@ public class AttendanceCtl extends Controller {
      * @return 勤怠管理画面画面
      */
     public Result moveTargetYearMonth(String empNo, String yearMonth, String nowYearMonth) {
-        SqlRow targetYearMonthAttributeTbl = TblYearMonthAttribute.getYearMonthData(empNo, yearMonth);
-        // すでに指定した月年月属性テーブルがある場合はそれを表示
-        // 存在しない場合、社員マスタの情報を取得して表示
-//        if (targetYearMonthAttributeTbl == null) {
-//            StatusAndWorkForm statusAndWorkForm = MakeModelUtil.makeStatusAndWorkForm(empNo, nowYearMonth);
-//            TYearMonthAttribute ymat = MakeModelUtil.makeYearMonthAttributeTbl(empNo, yearMonth, statusAndWorkForm);
-//            try {
-//              TYearMonthAttribute.insertYearMonthData(ymat);
-//            } catch (Exception e) {
-//
-//            }
-//        }
+
         String Year = yearMonth.substring(0,4);
         String Month = yearMonth.substring(4,6);
         return ok(Json.toJson(
@@ -498,6 +486,7 @@ public class AttendanceCtl extends Controller {
         } else if (!CheckUtil.isStartEndTime(start, end)) {
             return "始業時間は終業時間よりも早い時間を入れてください。";
         } else {
+        	//チーム名でanyvalue3(start)とanyvalue4(end)を見に行き、違ってたらエラーを返す
             return null;
         }
     }
@@ -523,7 +512,7 @@ public class AttendanceCtl extends Controller {
         }
         Double salariedTime = 0.0;
         // 休暇区分が設定されている場合休暇区分の時間を足す
-        if (holidayClassCode.isEmpty()) {
+        if (holidayClassCode != "00") {
             salariedTime = MsGeneralCode.getAnyValue1ByCode(holidayClassCode,"HOLIDAY_CLASS");
         }
         double doubleDeduction = Double.parseDouble(deduction);
@@ -568,7 +557,7 @@ public class AttendanceCtl extends Controller {
     }
 
     /**
-     * 課リストを取得します。
+     * 選択された部に応じた課リストを取得します。
      * @return 結果
      */
     public Result getDivisionList(String departCode){
@@ -585,7 +574,7 @@ public class AttendanceCtl extends Controller {
     }
 
     /**
-     * 業務チームリストを取得します。
+     *選択された業務名に応じた業務チームリストを取得します。
      * @return 結果
      */
     public Result getBusinessTeamList(String businessCode){
