@@ -269,8 +269,8 @@
             <th rowspan="2" width="4.5%">@Messages.get("attendance.form.total")</th>
             <th class="hidden-xs" rowspan="2" width="4.5%">@Messages.get("attendance.form.nightWork")</th>
             <th class="hidden-xs" rowspan="2" width="4.5%">@Messages.get("attendance.form.salaried")</th>
-            <th class="hidden-xs" rowspan="2" width="5%">@Messages.get("attendance.form.holidayClassCode")</th>
-            <th class="hidden-xs" rowspan="2" width="5%">@Messages.get("attendance.form.shiftClassCode")</th>
+            <th class="hidden-xs" rowspan="2" width="5.5%">@Messages.get("attendance.form.holidayClassCode")</th>
+            <th class="hidden-xs" rowspan="2" width="5.5%">@Messages.get("attendance.form.shiftClassCode")</th>
             <th class="hidden-xs" rowspan="2" width="8%">@Messages.get("attendance.form.remarks")</th>
           </tr>
           <tr>
@@ -309,8 +309,8 @@
               <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.lateNight")控除 id="deductionNight" name="attendanceInputFormList[@idx].deductionNight" class="deductionNight form-control changeEventForm deductionNight-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).deductionNight"}else{"0.0"}> </td>
               <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.other")控除 id="deductionOther" name="attendanceInputFormList[@idx].deductionOther" class="deductionOther form-control changeEventForm deductionOther-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).deductionOther"}else{"0.0"}> </td>
               <td valign="middle"> <input readonly="readonly" id="performanceTime" name="attendanceInputFormList[@idx].performanceTime" class="performanceTime form-control performanceTime-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).performanceTime"}else{"0.0"}></td>
-              <td valign="middle"> <input readonly="readonly" id="nightWork" class="form-control nightWork" value="0.0"></td>
-              <td valign="middle"> <input readonly="readonly" id="salaried" class="form-control salaried" value="0.0"></td>
+              <td class="hidden-xs" valign="middle"> <input readonly="readonly" id="nightWork" class="form-control nightWork" value="0.0"></td>
+              <td class="hidden-xs" valign="middle"> <input readonly="readonly" id="salaried" class="form-control salaried" value="0.0"></td>
               <td class="hidden-xs" valign="middle">
                 <select id="holidayClass@d.dateId" name="attendanceInputFormList[@idx].holidayClassCode" class="form-control holidayClass changeEventForm holidayClass-@d.dateId">
                    <option value="00"></option>
@@ -345,7 +345,7 @@
                   }
                 </select>
               </td>
-              <td class="hidden-xs" valign="middle"> <input type="text" id="remarks" name="attendanceInputFormList[@idx].remarks" class="form-control  remarks-@d.dateId" @if(existsDefaultValue){ value="@inputForm.get().attendanceInputFormList.get(idx).remarks" }> </td>
+              <td class="hidden-xs" valign="middle"> <textarea rows="1" id="remarks" name="attendanceInputFormList[@idx].remarks" class="form-control  remarks-@d.dateId">@if(existsDefaultValue){@inputForm.get().attendanceInputFormList.get(idx).remarks}</textarea></td>
             </tr>
             <tr class="visible-xs">
               <td colspan="3"><button class="btn btn-default col-xs-12 otherInputModalBtn" date-id="@d.dateId" type="button"><i class="fa fa-pencil"></i>その他詳細入力</button></td>
@@ -398,7 +398,6 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary otherInputModalCloseBtn" data-dismiss="modal" date-id="@d.dateId">値をセットして閉じる</button>
-                    <!--<button type="button" class="btn btn-primary">Save changes</button>-->
                   </div>
                 </div>
               </div>
@@ -413,8 +412,8 @@
               <td class="hidden-xs"> <input type="text" readonly="readonly" id="sumDeductionNight" class="form-control"></td>
               <td class="hidden-xs"> <input type="text" readonly="readonly" id="sumDeductionOther" class="form-control"></td>
               <td> <input type="text" readonly="readonly" id="sumPerformanceTime" class="form-control"></td>
-              <td> <input type="text" readonly="readonly" id="sumNightWork" class="form-control"></td>
-              <td> <input type="text" readonly="readonly" id="sumSalaried" class="form-control"></td>
+              <td class="hidden-xs"> <input type="text" readonly="readonly" id="sumNightWork" class="form-control"></td>
+              <td class="hidden-xs"> <input type="text" readonly="readonly" id="sumSalaried" class="form-control"></td>
             </tr>
           </tbody>
         </table>
@@ -627,6 +626,11 @@
               if((breakdown1 + breakdown2 + breakdown3 + breakdown4 == 0) ||
                  (breakdown2 + breakdown3 + breakdown4 == 0)){
                 target.children('#breakdown1').val(data.workTime);
+              }
+              // worktimeが0だったらstartとendも初期化
+              if(parseFloat(data.workTime) == 0){
+              	$('#' + targetTrId).children().children('.openingTime').val("");
+        		$('#' + targetTrId).children().children('.closingTime').val("");
               }
               target.children('#performanceTime').val(data.performanceTime);
               $('#performanceTime-modal-' + targetTrId).val(data.performanceTime);

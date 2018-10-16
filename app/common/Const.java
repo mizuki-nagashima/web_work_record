@@ -12,8 +12,10 @@ public class Const {
     public static final String HOLIDAY_CLASS_NOTHING = "00";
     /** 休暇区分：休日出勤 */
     public static final String HOLIDAY_CLASS_HOLIDAY_WORK = "01";
+    /** 休暇区分：代休**/
+    public static final String HOLIDAY_CLASS_CUMP_DAY = "02";
     /** 休暇区分：半休 */
-    public static final String HOLIDAY_CLSS_HALF_HOLIDAY = "10";
+    public static final String HOLIDAY_CLASS_HALF_HOLIDAY = "10";
 
     /** シフト区分：なし */
     public static final String SHIFT_CLASS_NOTHING = "00";

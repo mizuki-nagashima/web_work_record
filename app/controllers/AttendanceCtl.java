@@ -495,6 +495,8 @@ public class AttendanceCtl extends Controller {
      * 勤怠合計を取得します。
      * @param start 開始(hh:mm)
      * @param end 終了(hh:mm)
+     * @param holidayClassCode 休暇区分コード
+     * @param deducation 控除時間
      * @return 結果
      */
     public Result getPerformanceTime(String start, String end, String holidayClassCode, String deduction) {
@@ -511,13 +513,19 @@ public class AttendanceCtl extends Controller {
             time = DateUtil.getPerformanceTime(start,end);
         }
         Double salariedTime = 0.0;
-        // 休暇区分が設定されている場合休暇区分の時間を足す
-        if (holidayClassCode != "00") {
+        // 休暇区分が設定されている場合休暇区分の時間を取得
+        if (!holidayClassCode.equals(Const.HOLIDAY_CLASS_NOTHING)) {
             salariedTime = MsGeneralCode.getAnyValue1ByCode(holidayClassCode,"HOLIDAY_CLASS");
         }
         double doubleDeduction = Double.parseDouble(deduction);
         String performanceTime = String.valueOf(time + salariedTime - doubleDeduction);
         String workTime = String.valueOf(time);
+        // TODO 休暇時間が有給割当時間以上の場合、合計時間と勤務時間を0にする
+        Double vacTime = MsGeneralCode.getAnyValue1ByCode("01", "PAID_VACATION_ASSIGN_TIME");
+        if(salariedTime >= vacTime) {
+        	performanceTime = "0.0";
+        	workTime = "0.0";
+        }
         return ok(Json.toJson(
                 ImmutableMap.of(
                         "result","ok",

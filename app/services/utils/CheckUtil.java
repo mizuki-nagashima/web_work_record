@@ -123,7 +123,7 @@ public class CheckUtil {
             // 平日かつ休暇等区分が選択されているかつ01:休日出勤以外が選択されているかつ始業、終業時間に値がある場合、エラー
             } else if (!Const.HOLIDAY_CLASS_NOTHING.equals(holidayClassCode)
                     && !Const.HOLIDAY_CLASS_HOLIDAY_WORK.equals(holidayClassCode)
-                    && !Const.HOLIDAY_CLSS_HALF_HOLIDAY.equals(holidayClassCode)
+                    && !Const.HOLIDAY_CLASS_HALF_HOLIDAY.equals(holidayClassCode)
                     && (startTime != null || endTime != null)) {
                 return "【休暇等区分：" + MsGeneralCode.getClassNameByCode(holidayClassCode) +
                         "】が選択されていますが、始業時間と終業時間が入力されています。";
