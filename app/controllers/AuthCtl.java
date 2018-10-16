@@ -39,6 +39,15 @@ public class AuthCtl extends Controller {
     }
 
     /**
+     * ログイン画面を表示します。
+     * @return ログイン画面
+     */
+    public Result menu() {
+//        Form<LoginForm> loginForm = formFactory.form(LoginForm.class);
+        return ok(menu.render());
+    }
+
+    /**
      * ログイン処理を行います。
      * @return 結果
      */
@@ -76,12 +85,12 @@ public class AuthCtl extends Controller {
 
             // TODO 権限が05：自陣のみ閲覧以外の場合はメニュー画面に遷移
             SqlRow result = MsEmployee.getEmployeeInfo(employeeNo);
-            result.getString("authority_class");
+            String authority = result.getString("authority_class");
 
             // FIXME debug
-            System.out.println("authority_class ===== " + result.getString("authority_class"));
+            System.out.println("authority_class ===== " + authority);
 
-            if (!Const.AUTHORITY_CLASS_SELF.equals(result.getString("authority_class"))) {
+            if (!Const.AUTHORITY_CLASS_SELF.equals(authority)) {
                 return ok(
                         menu.render()
                 );
@@ -89,6 +98,7 @@ public class AuthCtl extends Controller {
                 return ok(Json.toJson(
                         ImmutableMap.of(
                                 "result", "ok",
+                                "authority",authority,
                                 "link", java.lang.String.valueOf(routes.AttendanceCtl.index(Year, Month))
                         )));
             }
@@ -107,6 +117,7 @@ public class AuthCtl extends Controller {
                             "msg2","社員番号とパスワードをお確かめの上、もう一度お試しください。"
                     )));
         }
+//        return notFound();
     }
 
     /**

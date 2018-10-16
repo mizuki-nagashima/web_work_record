@@ -14,6 +14,8 @@ GET     /                                      controllers.AuthCtl.index()
 POST    /login                                 controllers.AuthCtl.login()
 GET     /logout                                controllers.AuthCtl.logout()
 
+GET     /menu                                  controllers.AuthCtl.menu()
+
 POST     /attendance/save                      controllers.AttendanceCtl.save(empNo: String, monthsYears: String)
 POST     /attendance/statusAndWorkSave         controllers.AttendanceCtl.statusAndWorkSave()
 GET     /attendance/:year/:month               controllers.AttendanceCtl.index(year: String, month: String)

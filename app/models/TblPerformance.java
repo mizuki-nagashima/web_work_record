@@ -243,13 +243,22 @@ public class TblPerformance extends CommonModel {
      */
     public static void deletePerformanceData(String empNo, String yearMonth, String date) {
         String sql = "DELETE FROM TBL_PERFORMANCE WHERE EMPLOYEE_NO = :emp AND MONTHS_YEARS = :yearmonth AND PERFORMANCE_DATE = :date";
-
-        SqlUpdate create = Ebean.createSqlUpdate(sql)
-                .setParameter("emp",empNo)
-                .setParameter("yearmonth",yearMonth)
-                .setParameter("date",date);
-
-        Ebean.execute(create);
+        Ebean.beginTransaction();
+        try {
+	        SqlUpdate create = Ebean.createSqlUpdate(sql)
+	                .setParameter("emp",empNo)
+	                .setParameter("yearmonth",yearMonth)
+	                .setParameter("date",date);
+	        Ebean.execute(create);
+	        Ebean.commitTransaction();
+	    } catch (Exception e) {
+	        // FIXME debug
+	        System.out.println("実績データ削除失敗："+ e);
+	        Ebean.rollbackTransaction();
+	        throw e;
+	    } finally {
+	        Ebean.endTransaction();
+	    }
     }
 
     /**
@@ -285,17 +294,24 @@ public class TblPerformance extends CommonModel {
     public static void updateApprove(String empNo, String yearMonth, String date, String perStatus, String appemp) {
     	String sql = "update tbl_performance set performance_status = :perStatus, approval_employee_no = :appEmp, approval_date = Now() " +
     				 "where employee_no = :emp and months_years = :yearmonth and performance_date = :date";
-
-    	SqlUpdate create = Ebean.createSqlUpdate(sql)
-    		.setParameter("perStatus",perStatus)
-    		.setParameter("appEmp",appemp)
-	        .setParameter("emp",empNo)
-	        .setParameter("yearmonth",yearMonth)
-	        .setParameter("date",date);
-
-    	Logger.debug("sql:" + String.valueOf(sql));
-
-    	Ebean.execute(create);
+        Ebean.beginTransaction();
+        try {
+	    	SqlUpdate create = Ebean.createSqlUpdate(sql)
+	    		.setParameter("perStatus",perStatus)
+	    		.setParameter("appEmp",appemp)
+		        .setParameter("emp",empNo)
+		        .setParameter("yearmonth",yearMonth)
+		        .setParameter("date",date);
+	        Ebean.execute(create);
+	        Ebean.commitTransaction();
+	    } catch (Exception e) {
+	        // FIXME debug
+	        System.out.println("承認処理失敗："+ e);
+	        Ebean.rollbackTransaction();
+	        throw e;
+	    } finally {
+	        Ebean.endTransaction();
+	    }
     }
 
     /**
