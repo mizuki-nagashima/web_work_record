@@ -1,10 +1,7 @@
 footer = Copyright © 2017 （株）キーマネジメントソリューションズ.
 
 title=KMS勤怠管理【WEB】
-approve.title=承認一覧 - KMS勤怠管理【WEB】
-attendance.title=勤怠入力 - KMS勤怠管理【WEB】
-menu.title=メニュー - KMS勤怠管理【WEB】
-login.title=ログイン - KMS勤怠管理【WEB】
+header.title={0} - KMS勤怠管理【WEB】
 
 attendance.titleDate={0}年{1}月度実績表
 
