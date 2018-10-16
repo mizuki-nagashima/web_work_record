@@ -1,8 +1,10 @@
 package controllers;
 
 import static models.TblPerformance.*;
+import static models.TblYearMonthAttribute.*;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 
 import common.Const;
+import models.MsEmployee;
 import models.MsGeneralCode;
 import models.TblPerformance;
 import models.TblYearMonthAttribute;
@@ -18,6 +21,7 @@ import models.form.AttendanceInputForm;
 import models.form.AttendanceInputFormList;
 import models.form.DateList;
 import models.form.StatusAndWorkForm;
+import models.form.StatusAndWorkFormList;
 import play.data.Form;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -57,13 +61,21 @@ public class AttendanceCtl extends Controller {
         List<DateList> dateList = getDateList(year, DateUtil.getZeroPadding(month));
 
         String monthsYears = year + DateUtil.getZeroPadding(month);
+        Double defalutWorkTime = DateUtil.getDefaultWorkTime(year,month);
+        Boolean statusDefaultValue = false;
         Boolean existsDefaultValue = false;
+
         // 保存済実績を取得
         List<SqlRow> performanceData = getPerformanceData(employeeNo, monthsYears);
+        SqlRow monthStatusData = getYearMonthData(employeeNo, monthsYears);
 
         // 表示用Form
         AttendanceInputFormList aifl = new AttendanceInputFormList();
-        StatusAndWorkForm sawf = MakeModelUtil.makeStatusAndWorkForm(employeeNo, monthsYears);
+
+        if(monthStatusData.size() != 0) {
+        	statusDefaultValue = true;
+        	aifl.statusAndWorkFormList = MakeModelUtil.makeStatusAndWorkForm(employeeNo, monthsYears);
+        }
 
         // 指定した年月の実績データが一件でもある場合は初期値をセット
         if (performanceData.size() != 0) {
@@ -71,7 +83,7 @@ public class AttendanceCtl extends Controller {
             aifl.attendanceInputFormList = MakeModelUtil.makeAttendanceInputFormList(dateList, performanceData);
         }
 
-        Form<StatusAndWorkForm> statusAndWorkForm = formFactory.form(StatusAndWorkForm.class).fill(sawf);
+        Form<StatusAndWorkForm> statusAndWorkForm = formFactory.form(StatusAndWorkForm.class).fill(aifl.statusAndWorkFormList);
         Form<AttendanceInputFormList> inputForm = formFactory.form(AttendanceInputFormList.class).fill(aifl);
 
         //ステータスのリスト化
@@ -79,6 +91,8 @@ public class AttendanceCtl extends Controller {
         List<MsGeneralCode> shiftList = MakeModelUtil.makeCodeTypeList("SHIFT_CLASS");
         List<MsGeneralCode> departList = MakeModelUtil.makeCodeTypeList("DEPARTMENT_CODE");
         List<MsGeneralCode> divisionList = MakeModelUtil.makeCodeTypeList("DIVISION_CODE");
+        List<MsGeneralCode> businessList = MakeModelUtil.makeCodeTypeList("BUSINESS_CODE");
+        List<MsGeneralCode> businessTeamList = MakeModelUtil.makeCodeTypeList("BUSINESS_TEAM_CODE");
 
         // 1~12(1月~12月以外がパラメータに入ってきたらエラー)
         if (MIN_MONTH <= Integer.parseInt(month) && MAX_MONTH >= Integer.parseInt(month)) {
@@ -88,10 +102,14 @@ public class AttendanceCtl extends Controller {
                     dateList,
                     year,
                     month,
+                    statusDefaultValue,
                     existsDefaultValue,
                     employeeNo,
+                    defalutWorkTime,
                     departList,
                     divisionList,
+                    businessList,
+                    businessTeamList,
                     hcmList,
                     shiftList
             ));
@@ -118,21 +136,23 @@ public class AttendanceCtl extends Controller {
                     statusAndWorkForm.employeeNo, statusAndWorkForm.monthsYears);
             // 年月属性テーブルが既に存在する場合は更新、なければ新規作成
             if (targetYearMonthAttributeTbl == null) {
-                // FIXME debug
+                //  debug
                 System.out.println("insert！！！");
 
+                ymat.monthsYearsStatus = Const.PERFORMANCE_STATUS_SAVE;
                 ymat.registUserId = statusAndWorkForm.employeeNo;
                 ymat.updateUserId = statusAndWorkForm.employeeNo;
                 TblYearMonthAttribute.insertYearMonthData(ymat);
             } else {
-            	// FIXME debug
+            	//  debug
                 System.out.println("update！！！");
 
+                ymat.monthsYearsStatus = Const.PERFORMANCE_STATUS_SAVE;
                 ymat.updateUserId = statusAndWorkForm.employeeNo;
                 TblYearMonthAttribute.updateYearMonthData(ymat);
             }
         } catch (Exception e) {
-            // FIXME debug
+            //  debug
             System.out.println(e);
             return ok(Json.toJson(ImmutableMap.of("result", "ng")));
         }
@@ -147,7 +167,7 @@ public class AttendanceCtl extends Controller {
      */
     public Result save(String empNo, String monthsYears) {
 
-        // FIXME debug
+        //  debug
         System.out.println("save!!!!!");
 
         // 画面からForm取得
@@ -160,7 +180,7 @@ public class AttendanceCtl extends Controller {
         // エラーメッセージを詰め込むためのリスト
         ArrayList<HashMap> errorMsgList = new ArrayList<>();
 
-        // TODO 年月属性を取得
+        // 年月属性を取得
         SqlRow yearMonthData = TblYearMonthAttribute.getYearMonthData(empNo, monthsYears);
         // 勤怠を保存するボタン押下時に年月別ステータスが03：承認済の場合、 既に勤怠は凍結されているため、処理を実行しない。
         if (yearMonthData != null
@@ -239,17 +259,17 @@ public class AttendanceCtl extends Controller {
                             String date = DateUtil.getZeroPadding(inputForm.date);
                             // 登録しようとしている日のデータがある場合は更新、ない場合登録
                             if (performanceDataList.contains(date)) {
-                                // FIXME
+                                //
                                 pft.updateUserId = inputForm.employeeNo;
                                 TblPerformance.updatePerformanceData(pft);
                             } else {
-                                // FIXME
+                                //
                                 pft.registUserId = inputForm.employeeNo;
                                 pft.updateUserId = inputForm.employeeNo;
                                 TblPerformance.insertPerformanceData(pft);
                             }
                         } catch (Exception e) {
-                            // FIXME debug
+                            //  debug
                             System.out.println(e);
 
                             HashMap<String, String> map = new HashMap<>();
@@ -263,7 +283,7 @@ public class AttendanceCtl extends Controller {
                 }
             }
             if (!errorMsgList.isEmpty()) {
-                // FIXME debug
+                //  debug
                 System.out.println("exit save!!!!!");
 
                 return ok(Json.toJson(
@@ -273,7 +293,7 @@ public class AttendanceCtl extends Controller {
                         )
                 ));
             } else {
-                // FIXME debug
+                //  debug
                 System.out.println("exit save!!!!!");
                 return ok(Json.toJson(ImmutableMap.of("result", "ok")));
             }
@@ -286,9 +306,10 @@ public class AttendanceCtl extends Controller {
      * @param yearMonth 年月(yyyyMM)
      * @return 勤怠管理画面画面
      */
-    public Result fix(String empNo, String yearMonth) {
+    public Result fix(String empNo, String year, String month) {
+    	String yearMonth = year+month;
 
-        // FIXME debug
+        //  debug
         System.out.println("fix!!!!!");
 
         // 画面の入力値を取得
@@ -316,7 +337,6 @@ public class AttendanceCtl extends Controller {
         }
 
         // TODO 月の全ての営業日にデータが登録されているかをチェック
-        // TODO 承認依頼をするよ確認モーダル
 
         // 実績を取得して、実績別ステータスの振り分け設定
         for (AttendanceInputForm form: attendanceFormList.attendanceInputFormList) {
@@ -357,7 +377,6 @@ public class AttendanceCtl extends Controller {
             String holidayClassCode, String shiftClassCode,
             Double deductionNight, Double deductionOther) {
 
-        Boolean isNeedApprovalPerformance = false;
         // 休暇区分00:なし以外
         // シフト区分00：なし以外
         // 控除時間が既定外
@@ -376,18 +395,7 @@ public class AttendanceCtl extends Controller {
      * @return 勤怠管理画面画面
      */
     public Result moveTargetYearMonth(String empNo, String yearMonth, String nowYearMonth) {
-        SqlRow targetYearMonthAttributeTbl = TblYearMonthAttribute.getYearMonthData(empNo, yearMonth);
-        // すでに指定した月年月属性テーブルがある場合はそれを表示
-        // 存在しない場合、社員マスタの情報を取得して表示
-//        if (targetYearMonthAttributeTbl == null) {
-//            StatusAndWorkForm statusAndWorkForm = MakeModelUtil.makeStatusAndWorkForm(empNo, nowYearMonth);
-//            TYearMonthAttribute ymat = MakeModelUtil.makeYearMonthAttributeTbl(empNo, yearMonth, statusAndWorkForm);
-//            try {
-//              TYearMonthAttribute.insertYearMonthData(ymat);
-//            } catch (Exception e) {
-//
-//            }
-//        }
+
         String Year = yearMonth.substring(0,4);
         String Month = yearMonth.substring(4,6);
         return ok(Json.toJson(
@@ -478,6 +486,7 @@ public class AttendanceCtl extends Controller {
         } else if (!CheckUtil.isStartEndTime(start, end)) {
             return "始業時間は終業時間よりも早い時間を入れてください。";
         } else {
+        	//チーム名でanyvalue3(start)とanyvalue4(end)を見に行き、違ってたらエラーを返す
             return null;
         }
     }
@@ -486,6 +495,8 @@ public class AttendanceCtl extends Controller {
      * 勤怠合計を取得します。
      * @param start 開始(hh:mm)
      * @param end 終了(hh:mm)
+     * @param holidayClassCode 休暇区分コード
+     * @param deducation 控除時間
      * @return 結果
      */
     public Result getPerformanceTime(String start, String end, String holidayClassCode, String deduction) {
@@ -502,13 +513,19 @@ public class AttendanceCtl extends Controller {
             time = DateUtil.getPerformanceTime(start,end);
         }
         Double salariedTime = 0.0;
-        // 休暇区分が設定されている場合休暇区分の時間を足す
-        if (holidayClassCode.isEmpty()) {
-            salariedTime = MsGeneralCode.getSalariedTime(holidayClassCode);
+        // 休暇区分が設定されている場合休暇区分の時間を取得
+        if (!holidayClassCode.equals(Const.HOLIDAY_CLASS_NOTHING)) {
+            salariedTime = MsGeneralCode.getAnyValue1ByCode(holidayClassCode,"HOLIDAY_CLASS");
         }
         double doubleDeduction = Double.parseDouble(deduction);
         String performanceTime = String.valueOf(time + salariedTime - doubleDeduction);
         String workTime = String.valueOf(time);
+        // TODO 休暇時間が有給割当時間以上の場合、合計時間と勤務時間を0にする
+        Double vacTime = MsGeneralCode.getAnyValue1ByCode("01", "PAID_VACATION_ASSIGN_TIME");
+        if(salariedTime >= vacTime) {
+        	performanceTime = "0.0";
+        	workTime = "0.0";
+        }
         return ok(Json.toJson(
                 ImmutableMap.of(
                         "result","ok",
@@ -538,7 +555,7 @@ public class AttendanceCtl extends Controller {
     public Result getSalaried(String holidayClassCode){
         double salaried = 0.0;
         if (!Const.HOLIDAY_CLASS_NOTHING.equals(holidayClassCode)) {
-            salaried = MsGeneralCode.getSalariedTime(holidayClassCode);
+            salaried = MsGeneralCode.getAnyValue1ByCode(holidayClassCode,"HOLIDAY_CLASS");
         }
         return ok(Json.toJson(
                 ImmutableMap.of(
@@ -548,7 +565,7 @@ public class AttendanceCtl extends Controller {
     }
 
     /**
-     * 課リストを取得します。
+     * 選択された部に応じた課リストを取得します。
      * @return 結果
      */
     public Result getDivisionList(String departCode){
@@ -561,6 +578,20 @@ public class AttendanceCtl extends Controller {
                 ImmutableMap.of(
                         "result","ok",
                         "value", divisionList
+                )));
+    }
+
+    /**
+     *選択された業務名に応じた業務チームリストを取得します。
+     * @return 結果
+     */
+    public Result getBusinessTeamList(String businessCode){
+
+    	List<MsGeneralCode> businessTeamList = MakeModelUtil.makeCodeTypeList("BUSINESS_TEAM_CODE",businessCode);
+        return ok(Json.toJson(
+                ImmutableMap.of(
+                        "result","ok",
+                        "value", businessTeamList
                 )));
     }
 

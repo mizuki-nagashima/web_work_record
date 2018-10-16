@@ -75,6 +75,7 @@ create table tbl_login_info (
   password                      varchar(255) not null,
   login_ng_count                varchar(255) not null,
   is_account_lock               varchar(255) not null,
+  is_delete                     varchar(255) not null,
   regist_date                   datetime(6) not null,
   update_date                   datetime(6) not null
 );

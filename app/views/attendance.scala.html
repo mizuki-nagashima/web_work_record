@@ -1,9 +1,15 @@
-@(statusAndWorkForm:Form[models.form.StatusAndWorkForm], inputForm: Form[models.form.AttendanceInputFormList], date: List[models.form.DateList], year: String, month: String, existsDefaultValue: Boolean, empNo: String, departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode], hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
+@(statusAndWorkForm:Form[models.form.StatusAndWorkForm],
+	inputForm: Form[models.form.AttendanceInputFormList],
+	date: List[models.form.DateList], year: String, month: String,
+	statusDefaultValue: Boolean,existsDefaultValue: Boolean,
+	empNo: String, defaultWorkTime: Double,
+	departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode],
+	businessList: List[models.MsGeneralCode], businessTeamList: List[models.MsGeneralCode],
+	hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
 @import play.i18n._
 @import helper._
 @main(Messages.get("attendance.title")) {
 
-<link rel="stylesheet" href="/main.css">
 <section class="content">
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -18,11 +24,6 @@
               <h3>@Messages.get("attendance.yourStatus")</h3>
             </div>
             <input type="hidden" id="monthsYears" name="monthsYears" value="@((year + month).toInt)">
-            <input type="hidden" id="businessCode" name="businessCode" value="@statusAndWorkForm.get().businessCode">
-            <input type="hidden" id="businessTeamCode" name="businessTeamCode" value="@statusAndWorkForm.get().businessTeamCode">
-            <input type="hidden" id="departmentCode" name="departmentCode" value="@statusAndWorkForm.get().departmentCode">
-            <input type="hidden" id="departmentCode" name="departmentCode" value="@statusAndWorkForm.get().departmentCode">
-            <input type="hidden" id="divisionCode" name="divisionCode" value="@statusAndWorkForm.get().divisionCode">
             <div class="col-md-2 col-sm-2 col-xs-12">
               <div class="form-horizontal">
                 <div class="form-group">
@@ -54,17 +55,18 @@
                     @Messages.get("attendance.department")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                  <select id="departmentCode@(year + month)" name="statusAndWorkForm.departmentCode" class="form-control departmentCode changeDepartmentCd departmentCode-@((year + month).toInt)" required>
-				  <option value="" class="msg" disabled selected>@statusAndWorkForm.get().departmentName</option>
+                  <select id="departmentCode" name="departmentCode" class="form-control departmentCode changeDepartmentCd departmentCode-@((year + month).toInt)" required>
+				  <option value="" disabled selected>@statusAndWorkForm.get().departmentName</option>
 				  @departList.map{ dpl =>
                     <option value="@dpl.code">@dpl.codeName</option>
                   }
-                  @if(existsDefaultValue){
+                  @if(statusDefaultValue){
                     <script>
                     var departmentCode = '@statusAndWorkForm.get().departmentCode';
-                    var monthsYears = @(year + month);
-                      var targetDepartmentCode = "#departmentCode" + monthsYears
-                      $(targetDepartmentCode).val(departmentCode)
+                    if(departmentCode != ""){
+                      var target = "#departmentCode"
+                      $(target).val(departmentCode)
+                    }
                     </script>
                   }
 				  </select>
@@ -79,10 +81,19 @@
                     @Messages.get("attendance.division")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-					<select id="division" class="division form-control" name="division" required>
+					<select id="divisionCode" class="division form-control" name="divisionCode" required>
 					<option value="" class="msg" disabled selected>@statusAndWorkForm.get().divisionName</option>
 					@divisionList.map{ dvl =>
                       <option value="@dvl.code">@dvl.codeName</option>
+                    }
+                    @if(statusDefaultValue){
+	                    <script>
+	                    var divisionCode = '@statusAndWorkForm.get().divisionCode';
+	                    if(divisionCode != ""){
+	                      var target = "#divisionCode"
+	                      $(target).val(divisionCode)
+	                    }
+	                    </script>
                     }
 					</select>
                   </div>
@@ -96,7 +107,21 @@
                     @Messages.get("attendance.workName")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text" id="businessCd" name="businessCd" class="form-control" value="@statusAndWorkForm.get().businessCodeDisp">
+	                <select id="businessCode" name="businessCode" class="form-control businessCode changeBusinessCd businessCode-@((year + month).toInt)" required>
+					  <option value="" disabled selected>@statusAndWorkForm.get().businessName</option>
+					  @businessList.map{ dpl =>
+	                    <option value="@dpl.code">@dpl.codeName</option>
+	                  }
+	                  @if(statusDefaultValue){
+	                    <script>
+	                    var businessCode = '@statusAndWorkForm.get().businessCode';
+	                    if(businessCode != ""){
+	                      var target = "#businessCode"
+	                      $(target).val(businessCode)
+	                    }
+	                    </script>
+	                  }
+					</select>
                   </div>
                 </div>
               </div>
@@ -108,7 +133,21 @@
                     @Messages.get("attendance.workTeamName")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text" name="businessName" class="form-control" value="@statusAndWorkForm.get().businessTeamName">
+	                 <select id="businessTeamCode" class="businessTeamCode form-control" name="businessTeamCode" required>
+					  <option value="" class="msg" disabled selected>@statusAndWorkForm.get().businessTeamName</option>
+					  @businessTeamList.map{ dvl =>
+	                     <option value="@dvl.code">@dvl.codeName</option>
+	                  }
+	                  @if(statusDefaultValue){
+	                    <script>
+	                    var businessTeamCode = '@statusAndWorkForm.get().businessTeamCode';
+	                    if(businessTeamCode != ""){
+	                      var target = "#businessTeamCode"
+	                      $(target).val(businessTeamCode)
+	                    }
+	                    </script>
+                      }
+					 </select>
                   </div>
                 </div>
               </div>
@@ -184,7 +223,6 @@
       <input type="hidden" id="businessCode" name="businessCode" value="@statusAndWorkForm.get().businessCode">
       <input type="hidden" id="businessTeamCode" name="businessTeamCode" value="@statusAndWorkForm.get().businessTeamCode">
       <input type="hidden" id="departmentCode" name="departmentCode" value="@statusAndWorkForm.get().departmentCode">
-      <input type="hidden" id="departmentCode" name="departmentCode" value="@statusAndWorkForm.get().departmentCode">
       <input type="hidden" id="divisionCode" name="divisionCode" value="@statusAndWorkForm.get().divisionCode">
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
@@ -201,7 +239,7 @@
               <i class="fa fa-file-text"></i>
               @Messages.get("attendance.pdf")
             </button>
-            <button type="button" class="btn btn-danger fix" style="margin-right: 10px">
+            <button type="button" class="btn btn-danger fixBtn" style="margin-right: 10px">
               <i class="fa fa-file-text"></i>
               @Messages.get("attendance.fix")
             </button>
@@ -231,8 +269,8 @@
             <th rowspan="2" width="4.5%">@Messages.get("attendance.form.total")</th>
             <th class="hidden-xs" rowspan="2" width="4.5%">@Messages.get("attendance.form.nightWork")</th>
             <th class="hidden-xs" rowspan="2" width="4.5%">@Messages.get("attendance.form.salaried")</th>
-            <th class="hidden-xs" rowspan="2" width="5%">@Messages.get("attendance.form.holidayClassCode")</th>
-            <th class="hidden-xs" rowspan="2" width="5%">@Messages.get("attendance.form.shiftClassCode")</th>
+            <th class="hidden-xs" rowspan="2" width="5.5%">@Messages.get("attendance.form.holidayClassCode")</th>
+            <th class="hidden-xs" rowspan="2" width="5.5%">@Messages.get("attendance.form.shiftClassCode")</th>
             <th class="hidden-xs" rowspan="2" width="8%">@Messages.get("attendance.form.remarks")</th>
           </tr>
           <tr>
@@ -257,7 +295,6 @@
                 <input type="hidden" id="beforeHolidayClass@idx" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).holidayClassCode"}else{"00"}>
               <td valign="middle">
                 <span class="calendar" style="white-space: nowrap;">@d.stringDate</span>
-                <!-- @if(d.isHoliday){<span style="margin-bottom: 3px" class="label label-warning fa fa-calendar"> 休</span>}-->
                 @if(d.isHoliday){<span style="margin-bottom: 3px" class="label label-warning fa-calendar"> 休</span>}
                 @if(existsDefaultValue && (inputForm.get().attendanceInputFormList.get(idx).openingTime != "" || inputForm.get().attendanceInputFormList.get(idx).holidayClassCode != "00")){
                   <span style="margin-bottom: 3px" class="label label-success fa fa-check"> @Messages.get("attendance.form.alreadySave")</span>
@@ -292,7 +329,7 @@
                 </select>
               </td>
               <td class="hidden-xs" valign="middle">
-                <select id="holidayClass@d.dateId" name="attendanceInputFormList[@idx].shiftClassCode" class="form-control shiftClass changeEventForm shiftClass-@d.dateId">
+                <select id="shiftClass@d.dateId" name="attendanceInputFormList[@idx].shiftClassCode" class="form-control shiftClass changeEventForm shiftClass-@d.dateId">
                   <option value="00"></option>
                   @shiftList.map{ shift =>
                     <option value="@shift.code">@shift.codeName</option>
@@ -308,7 +345,7 @@
                   }
                 </select>
               </td>
-              <td class="hidden-xs" valign="middle"> <input type="text" id="remarks" name="attendanceInputFormList[@idx].remarks" class="form-control  remarks-@d.dateId" @if(existsDefaultValue){ value="@inputForm.get().attendanceInputFormList.get(idx).remarks" }> </td>
+              <td class="hidden-xs" valign="middle"> <textarea rows="1" id="remarks" name="attendanceInputFormList[@idx].remarks" class="form-control  remarks-@d.dateId">@if(existsDefaultValue){@inputForm.get().attendanceInputFormList.get(idx).remarks}</textarea></td>
             </tr>
             <tr class="visible-xs">
               <td colspan="3"><button class="btn btn-default col-xs-12 otherInputModalBtn" date-id="@d.dateId" type="button"><i class="fa fa-pencil"></i>その他詳細入力</button></td>
@@ -361,7 +398,6 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary otherInputModalCloseBtn" data-dismiss="modal" date-id="@d.dateId">値をセットして閉じる</button>
-                    <!--<button type="button" class="btn btn-primary">Save changes</button>-->
                   </div>
                 </div>
               </div>
@@ -376,6 +412,8 @@
               <td class="hidden-xs"> <input type="text" readonly="readonly" id="sumDeductionNight" class="form-control"></td>
               <td class="hidden-xs"> <input type="text" readonly="readonly" id="sumDeductionOther" class="form-control"></td>
               <td> <input type="text" readonly="readonly" id="sumPerformanceTime" class="form-control"></td>
+              <td class="hidden-xs"> <input type="text" readonly="readonly" id="sumNightWork" class="form-control"></td>
+              <td class="hidden-xs"> <input type="text" readonly="readonly" id="sumSalaried" class="form-control"></td>
             </tr>
           </tbody>
         </table>
@@ -395,7 +433,7 @@
               <i class="fa fa-file-text"></i>
               @Messages.get("attendance.pdf")
             </button>
-            <button type="button" class="btn btn-danger fix" style="margin-right: 10px">
+            <button type="button" class="btn btn-danger fixBtn" style="margin-right: 10px">
               <i class="fa fa-file-text"></i>
               @Messages.get("attendance.fix")
             </button>
@@ -441,6 +479,45 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
+        <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i>　保存</h4>
+      </div>
+      <div class="modal-body">
+        <p>お仕事お疲れ様です。<br>以下を確認のうえ、OKボタンを押して保存してください。</p>
+        <p id="defaultWorkTime">・所定労働時間： @defaultWorkTime 時間</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary saveModal" data-dismiss="modal"> OK </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="fixModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
+        <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i> 確定</h4>
+      </div>
+      <div class="modal-body">
+        <p>今月の勤怠情報を確定します。<br>以下を確認のうえ、OKボタンを押して確定してください。</p>
+        <p id="defaultWorkTime">・所定労働時間： @defaultWorkTime 時間</p>
+        <div align="right">
+		    <small>※</small>
+		</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary fixModal" data-dismiss="modal"> OK </button>
       </div>
     </div>
   </div>
@@ -521,6 +598,7 @@
       if(modalHolidayClass != 00){
         holidayClass = modalHolidayClass;
       }
+      //startとendがnullではない or 休暇区分が選択されている
       if(((start != "")&&(end  != "")) || holidayClass != 00){
         $('#' + targetTrId + '-closingTime').val(end);
         var url = '@routes.AttendanceCtl.getPerformanceTime("0","0","0","0")';
@@ -549,6 +627,11 @@
                  (breakdown2 + breakdown3 + breakdown4 == 0)){
                 target.children('#breakdown1').val(data.workTime);
               }
+              // worktimeが0だったらstartとendも初期化
+              if(parseFloat(data.workTime) == 0){
+              	$('#' + targetTrId).children().children('.openingTime').val("");
+        		$('#' + targetTrId).children().children('.closingTime').val("");
+              }
               target.children('#performanceTime').val(data.performanceTime);
               $('#performanceTime-modal-' + targetTrId).val(data.performanceTime);
               target.children('#form-warning').removeClass("form-warning");
@@ -572,7 +655,7 @@
                var stringDate = targetTr.attr('string-date');
                var msgContents = '<p id=' + warnMsgId + ' class=' + 'warn-msg-contents' + '>' + stringDate + '&nbsp;-&nbsp;' + data.msg + '<p>';
                $('#warn-msg-title').after(msgContents);
-               $('#' + targetTrId).children().children('#performanceTime').val("");
+               $('#' + targetTrId).children().children('#performanceTime').val("0.0");
                $.totalInsert();
                if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
                 $(".warn-msg").css('top','initial');
@@ -582,13 +665,14 @@
           }
         });
       }else{
-        $('#' + targetTrId).children().children('#performanceTime').val("");
+        $('#' + targetTrId).children().children('.openingTime').val("");
+        $('#' + targetTrId).children().children('.closingTime').val("");
+        $('#' + targetTrId).children().children('#performanceTime').val("0.0");
       }
     });
 
     $(".changeDepartmentCd").change(function(){
-      var targetTrId = @(year + month);
-      var departmentCode = $('#departmentCode' + targetTrId).val();
+      var departmentCode = $('#departmentCode').val();
       if(departmentCode != 00 || departmentCode != ""){
         var url = '@routes.AttendanceCtl.getDivisionList("0")';
         url = url.substring(0, url.length - 1) + departmentCode;
@@ -598,18 +682,40 @@
           success : function(data) {
             if(data.result == "ok"){
             	var divisionList = data.value;
-	            $('#division').html("");
+	            $('#divisionCode').html("");
 	            $.each(divisionList, function (i, val) {
-	               $('#division').append($("<option>").val(val.code).text(val.codeName));
+	               $('#divisionCode').append($("<option>").val(val.code).text(val.codeName));
                 });
-            }else{
-				alert('課リスト選択中にエラーが発生しました。');
             }
           }
         });
       }else{
-        $('#division').html("");
-		$('#division').append($("<option>").val("00").text("該当なし"));
+        $('#divisionCode').html("");
+		$('#divisionCode').append($("<option>").val("00").text("該当なし"));
+	  }
+    });
+
+    $(".changeBusinessCd").change(function(){
+      var businessCode = $('#businessCode').val();
+      if(businessCode != 00 || businessCode != ""){
+        var url = '@routes.AttendanceCtl.getBusinessTeamList("0")';
+        url = url.substring(0, url.length - 1) + businessCode;
+        $.ajax({
+          type : 'GET',
+          url : url,
+          success : function(data) {
+            if(data.result == "ok"){
+            	var businessTeamList = data.value;
+	            $('#businessTeamCode').html("");
+	            $.each(businessTeamList, function (i, val) {
+	               $('#businessTeamCode').append($("<option>").val(val.code).text(val.codeName));
+                });
+            }
+          }
+        });
+      }else{
+        $('#businessTeamCode').html("");
+		$('#businessTeamCode').append($("<option>").val("00").text("該当なし"));
 	  }
     });
 
@@ -661,6 +767,15 @@
     });
 
     $(".saveBtn").click(function () {
+       $.totalInsert();
+       $('.work-time-contents').remove();
+       var sumPerformanceTime = $("#sumPerformanceTime").val();
+       var msgContents = '<p id="sumMonthlyWorkTime" class="work-time-contents">・今月作業実績： ' + sumPerformanceTime +' 時間（有休等を除く）</p>';
+       $('#defaultWorkTime').after(msgContents);
+　　　　　　$('#saveModal').modal('show');
+    });
+
+    $(".saveModal").click(function () {
       $(".warn-msg").addClass("hidden");
       $('.warn-msg-contents').remove();
       $('.save-warn-msg-contents').remove();
@@ -716,10 +831,19 @@
       });
     });
 
+    $(".fixBtn").click(function () {
+       $.totalInsert();
+       $('.fix-contents').remove();
+       var sumPerformanceTime = $("#sumPerformanceTime").val();
+       var msgContents = '<p id="sumMonthlyWorkTime" class="fix-contents">・今月作業実績： ' + sumPerformanceTime +' 時間（有休等を除く）</p>';
+       $('#defaultWorkTime').after(msgContents);
+　　　　　　$('#fixModal').modal('show');
+    });
+
     // TODO
-    $(".fix").click(function () {
+    $(".fixModal").click(function () {
       // fix処理
-      var url = '@routes.AttendanceCtl.fix(empNo, year + month)'
+      var url = '@routes.AttendanceCtl.fix(empNo, year, month)'
       $.ajax({
           type:'POST',
           url:url,
@@ -817,6 +941,8 @@
        var sumDeductionNight = 0.0;
        var sumDeductionOther = 0.0;
        var sumPerformanceTime = 0.0;
+       var sumNightWork = 0.0;
+       var sumSalaried = 0.0;
 
        $(".breakdown1").each(function(){
          var value = $(this).val();
@@ -872,7 +998,10 @@
              }
            });
          }
+         var value = $(this).val();
+         sumNightWork = sumNightWork + parseFloat(value);
        });
+       $("#sumNightWork").val($.addZero(sumNightWork));
 
        $(".salaried").each(function(){
          var salaried = $(this)
@@ -896,7 +1025,10 @@
              }
            }
          });
+         var value = $(this).val();
+         sumSalaried = sumSalaried + parseFloat(value);
        });
+       $("#sumSalaried").val($.addZero(sumSalaried));
 
        $(".performanceTime").each(function(){
          var value = $(this).val();

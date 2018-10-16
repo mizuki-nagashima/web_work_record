@@ -11,6 +11,6 @@ import java.util.List;
  */
 public class AttendanceInputFormList {
 
-    public StatusAndWorkForm statusAndWorkForm;
+    public StatusAndWorkForm statusAndWorkFormList;
     public List<AttendanceInputForm> attendanceInputFormList;
 }

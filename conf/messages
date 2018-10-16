@@ -1,6 +1,10 @@
 footer = Copyright © 2017 （株）キーマネジメントソリューションズ.
 
-attendance.title=KMS勤怠管理【WEB】
+title=KMS勤怠管理【WEB】
+approve.title=承認一覧 - KMS勤怠管理【WEB】
+attendance.title=勤怠入力 - KMS勤怠管理【WEB】
+menu.title=メニュー - KMS勤怠管理【WEB】
+login.title=ログイン - KMS勤怠管理【WEB】
 
 attendance.titleDate={0}年{1}月度実績表
 
@@ -48,3 +52,6 @@ attendance.form.salaried=有給割当
 attendance.form.remarks=備考
 
 attendance.form.alreadySave=保存済
+
+attendance.defaultWorkTime=所定労働時間
+attendance.sumPerformanceTime=今月作業実績

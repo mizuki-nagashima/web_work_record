@@ -14,6 +14,8 @@ GET     /                                      controllers.AuthCtl.index()
 POST    /login                                 controllers.AuthCtl.login()
 GET     /logout                                controllers.AuthCtl.logout()
 
+GET     /menu                                  controllers.AuthCtl.menu()
+
 POST     /attendance/save                      controllers.AttendanceCtl.save(empNo: String, monthsYears: String)
 POST     /attendance/statusAndWorkSave         controllers.AttendanceCtl.statusAndWorkSave()
 GET     /attendance/:year/:month               controllers.AttendanceCtl.index(year: String, month: String)
@@ -21,8 +23,10 @@ GET     /attendance/getPerformanceTime/:start/:end/:holidayClass/:deduction   co
 GET     /attendance/moveTargetYearMonth/:empNo/:yearMonth/:nowYearMonth       controllers.AttendanceCtl.moveTargetYearMonth(empNo: String, yearMonth: String, nowYearMonth: String)
 GET     /attendance/getNightWork/get/:end      controllers.AttendanceCtl.getNightWork(end: String)
 GET     /attendance/getSalaried/get/:code      controllers.AttendanceCtl.getSalaried(code: String)
-GET     /attendance/getDivisionList/get/:departmentCode      controllers.AttendanceCtl.getDivisionList(departmentCode: String)
-GET     /attendance/fix/:empNo/:yearMonth      controllers.AttendanceCtl.fix(empNo: String, yearMonth: String)
+GET     /attendance/getDivisionList/get/:code      controllers.AttendanceCtl.getDivisionList(code: String)
+GET     /attendance/getBusinessTeamList/get/:code      controllers.AttendanceCtl.getBusinessTeamList(code: String)
+
+GET     /attendance/fix/:empNo/:year/:month      controllers.AttendanceCtl.fix(empNo: String, year: String, month: String)
 GET     /attendancePdf/:year/:month/:pdfKind   controllers.AttendancePdfCtl.index(year: String, month: String, pdfKind: Int)
 
 GET		/approve	controllers.ApproveCtl.index()

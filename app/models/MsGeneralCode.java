@@ -106,7 +106,8 @@ public class MsGeneralCode extends CommonModel {
      * 取得対象コード（CODE）を指定して汎用コードを取得
      * 年度は固定で"0000"を指定
      *
-     * @param String コード
+     * @param codeType コードタイプ
+     * @param code コード
      */
     public static SqlRow getCodeMaster(String codeType, String code) {
         return getCodeMaster(codeType, code, "0000", null);
@@ -222,25 +223,26 @@ public class MsGeneralCode extends CommonModel {
     }
 
     /**
-     * 有給割当時間取得
+     * コードタイプから時間(any_value1)取得
      *
      * @param code コード
-     * @return double 有給割当時間
+     * @return double 時間
      */
-    public static double getSalariedTime(String code) {
-        String sql = "SELECT ANY_VALUE1 as salaried FROM MS_GENERAL_CODE " +
-                     "WHERE CODE_TYPE = 'HOLIDAY_CLASS' AND CODE = :code";
+    public static double getAnyValue1ByCode(String code,String codeType) {
+        String sql = "SELECT ANY_VALUE1 as any_value1 FROM MS_GENERAL_CODE " +
+                     "WHERE CODE_TYPE = :codeType AND CODE = :code";
 
-        double salariedTime = 0.0;
+        double anyValue1 = 0.0;
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
+        		.setParameter("codeType", codeType)
                 .setParameter("code", code)
                 .findList();
 
         for (SqlRow o : sqlRows) {
-            salariedTime = o.getInteger("salaried");
+        	anyValue1 = o.getInteger("any_value1");
         }
-        return salariedTime;
+        return anyValue1;
     }
 
     /**

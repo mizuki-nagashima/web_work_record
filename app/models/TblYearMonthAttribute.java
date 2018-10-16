@@ -101,21 +101,24 @@ public class TblYearMonthAttribute extends CommonModel {
      * @param yearMonthData 年月属性テーブル
      */
     public static void updateYearMonthData(TblYearMonthAttribute yearMonthData) {
-        String sql = "UPDATE TBL_YEAR_MONTH_ATTRIBUTE SET BUSINESS_CODE = :bus, DEPARTMENT_CODE = :dep," +
-                     "DIVISION_CODE = :div, MONTH_YEARS_STATUS = :status, BREAKDOWN_NAME1 = :break1," +
+        String sql = "UPDATE TBL_YEAR_MONTH_ATTRIBUTE SET BUSINESS_CODE = :bus, BUSINESS_TEAM_CODE = :busteam,"
+        		   + "DEPARTMENT_CODE = :dep," +
+                     "DIVISION_CODE = :divi, MONTHS_YEARS_STATUS = :sta, BREAKDOWN_NAME1 = :break1," +
                      "BREAKDOWN_NAME2 = :break2, BREAKDOWN_NAME3 = :break3, BREAKDOWN_NAME4 = :break4 " +
                      "WHERE EMPLOYEE_NO = :empNo AND MONTHS_YEARS = :yearmonth";
         Ebean.beginTransaction();
         try {
         SqlUpdate create = Ebean.createSqlUpdate(sql)
                 .setParameter("bus",yearMonthData.businessCode)
+                .setParameter("busteam",yearMonthData.businessTeamCode)
                 .setParameter("dep",yearMonthData.departmentCode)
-                .setParameter("div",yearMonthData.divisionCode)
+                .setParameter("divi",yearMonthData.divisionCode)
+                .setParameter("sta",yearMonthData.monthsYearsStatus)
                 .setParameter("break1",yearMonthData.breakdownName1)
                 .setParameter("break2",yearMonthData.breakdownName2)
                 .setParameter("break3",yearMonthData.breakdownName3)
                 .setParameter("break4",yearMonthData.breakdownName4)
-                .setParameter("emp",yearMonthData.employeeNo)
+                .setParameter("empNo",yearMonthData.employeeNo)
                 .setParameter("yearmonth",yearMonthData.monthsYears);
             Ebean.execute(create);
             Ebean.commitTransaction();
