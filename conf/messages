@@ -3,6 +3,7 @@ footer = Copyright © 2017 （株）キーマネジメントソリューショ�
 title=KMS勤怠管理【WEB】
 header.title={0} - KMS勤怠管理【WEB】
 
+attendance=勤怠入力
 attendance.titleDate={0}年{1}月度実績表
 
 attendance.yourStatus=ステータス
@@ -19,8 +20,6 @@ attendance.work2=2:
 attendance.work3=3:
 attendance.work4=4:
 attendance.statusSave=上記内容を保存
-
-
 
 attendance.save=勤怠を保存
 attendance.pdf=PDF出力
@@ -47,8 +46,8 @@ attendance.form.shiftClassCode=シフト区分
 attendance.form.nightWork=深夜作業
 attendance.form.salaried=有給割当
 attendance.form.remarks=備考
-
 attendance.form.alreadySave=保存済
-
 attendance.defaultWorkTime=所定労働時間
 attendance.sumPerformanceTime=今月作業実績
+
+approve=承認一覧
