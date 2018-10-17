@@ -1,5 +1,6 @@
-@import helper._
+@(loginForm: Form[models.form.LoginForm])
 @import play.i18n._
+@import helper._
 @main(Messages.get("header.title","管理者メニュー")) {
 <style>
 body {
@@ -10,22 +11,20 @@ background-color:#f8f8f8;
  <div class="login-box">
   <div class="login-box-body">
    <h2>メニュー</h2>
-   <button type="button" class="btn btn-info" id="loginBtn">勤怠入力</button>
+   @form(action = routes.AuthCtl.menu, 'id -> "loginForm") {
+      <input class="form-control" type="hidden" id="employeeNo" name="employeeNo" value="@loginForm.get().employeeNo">
+      <input class="form-control" type="hidden" id="password" name="password" value="@loginForm.get().password">
+   	  <button type="button" class="btn btn-info" id="loginBtn">勤怠入力画面</button>
+ 　　}
   </div>
  </div>
 </section>
 <script>
   $(function() {
     $("#loginBtn").click(function () {
-      $(".error").empty();
       $.postAjax('#loginForm', function(data){
         if(data.result == "ok"){
           window.location.href = data.link;
-        }else{
-          $(".errorMsg").text(data.msg1);
-          $(".errorMsg2").text(data.msg2);
-          $(".errorEmployeeNo").text(data.errorEmployeeNo);
-          $(".errorPassword").text(data.errorPassword);
         }
       });
     });
