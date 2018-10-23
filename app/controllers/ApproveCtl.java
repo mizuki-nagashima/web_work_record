@@ -25,10 +25,8 @@ import play.mvc.Result;
 import services.utils.DateUtil;
 import services.utils.MakeModelUtil;
 import views.html.index;
-import views.html.login;
 import play.data.validation.*;
 import views.html.*;
-import views.html.approve;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -46,13 +44,13 @@ public class ApproveCtl extends Controller {
      * 承認画面を表示します。
      * @return 承認画面
      */
-    public Result index() {
+    public Result index(String year,String month) {
     	ApproveFormList apfl = new ApproveFormList();
     	List<ApproveForm> approveFormList = new ArrayList<>();
     	MsGeneralCode msGeneralCode = new MsGeneralCode();
 
-    	String yearmonth = "201804";
-    	String emp = "00000"; 
+    	String yearmonth = year+month;
+    	String emp = session("employeeNo");
     	// 業務チームコード取得SQL
     	List<SqlRow> sqlBusinessTeamCodeList = getBusinessTeamCode();
     	List<String> businessTeamCodeList = new ArrayList<>();
@@ -61,8 +59,8 @@ public class ApproveCtl extends Controller {
     	}
     	// 承認一覧データ取得SQL
     	List<SqlRow> sqlList = TblPerformance.getApproveList(businessTeamCodeList, yearmonth);
-    	
-    	
+
+
     	String business_code = "";
     	String employee_no = "";
     	String employee_name = "";
@@ -77,11 +75,11 @@ public class ApproveCtl extends Controller {
         String approval_position_code = "";
         String approval_employee_name = "";
         String months_years_status = "";
-    	
+
     	for(SqlRow appList : sqlList){
     		// 業務コード(BUSINESS_CODE)の名称を取得
     		SqlRow bs_code = null;
-    		bs_code = msGeneralCode.getCodeMaster("BUSINESS_CODE", appList.getString("bs_code"));    		
+    		bs_code = MsGeneralCode.getCodeMaster("BUSINESS_CODE", appList.getString("bs_code"));
     		business_code = bs_code.getString("code_name");
     		// 社員番号
     		employee_no = appList.getString("emp_no");
@@ -94,7 +92,7 @@ public class ApproveCtl extends Controller {
     		// 休暇区分
     		SqlRow ho_cl = null;
     		if (appList.getString("ho_cl") != null && appList.getString("ho_cl") != "") {
-	    		ho_cl = msGeneralCode.getCodeMaster("HOLIDAY_CLASS", appList.getString("ho_cl"));
+	    		ho_cl = MsGeneralCode.getCodeMaster("HOLIDAY_CLASS", appList.getString("ho_cl"));
 	    		holiday_class = ho_cl.getString("code_name");
     		} else {
     			holiday_class = appList.getString("code_name");
@@ -102,7 +100,7 @@ public class ApproveCtl extends Controller {
     		// シフト区分
     		SqlRow shi_cl = null;
     		if (appList.getString("shi_cl") != null && appList.getString("shi_cl") != "") {
-	    		shi_cl = msGeneralCode.getCodeMaster("SHIFT_CLASS", appList.getString("shi_cl"));
+	    		shi_cl = MsGeneralCode.getCodeMaster("SHIFT_CLASS", appList.getString("shi_cl"));
 	    		shift_class = shi_cl.getString("code_name");
     		} else {
     			shift_class = appList.getString("code_name");
@@ -111,7 +109,7 @@ public class ApproveCtl extends Controller {
     		remarks = appList.getString("rem");
     		// 状況(実績ステータス)
     		SqlRow per_st = null;
-    		per_st = msGeneralCode.getCodeMaster("PERFORMANCE_STATUS", appList.getString("per_st"));
+    		per_st = MsGeneralCode.getCodeMaster("PERFORMANCE_STATUS", appList.getString("per_st"));
     		performance_status = per_st.getString("code_name");
     		// 承認者社員番号
     		approval_employee_no = appList.getString("app_emp_no");
@@ -120,7 +118,7 @@ public class ApproveCtl extends Controller {
     		// 承認者役職
     		SqlRow app_emp_position = null;
     		if (appList.getString("app_emp_position") != null && appList.getString("app_emp_position") != "") {
-    			app_emp_position = msGeneralCode.getCodeMaster("POSITION_CODE", appList.getString("app_emp_position"));
+    			app_emp_position = MsGeneralCode.getCodeMaster("POSITION_CODE", appList.getString("app_emp_position"));
     			approval_position_code = app_emp_position.getString("code_name");
     		} else {
     			approval_position_code = appList.getString("app_emp_position");
@@ -129,39 +127,39 @@ public class ApproveCtl extends Controller {
     		approval_employee_name = appList.getString("app_emp_name");
     		// 年月別ステータス
     		months_years_status = appList.getString("mon_yr_st");
-    	
+
 	    	ApproveForm approveForm = new ApproveForm();
-	    	approveForm.bs_code = business_code;
-	    	approveForm.employee_no = employee_no;
-	    	approveForm.employee_name = employee_name;
-	    	approveForm.months_years = months_years;
-	    	approveForm.performance_date = performance_date;
-	    	approveForm.holiday_class = holiday_class;
-	    	approveForm.shift_class = shift_class;
+	    	approveForm.bsCode = business_code;
+	    	approveForm.employeeNo = employee_no;
+	    	approveForm.employeeName = employee_name;
+	    	approveForm.monthsYears = months_years;
+	    	approveForm.performanceDate = performance_date;
+	    	approveForm.holidayClass = holiday_class;
+	    	approveForm.shiftClass = shift_class;
 	    	approveForm.remarks = remarks;
-	    	approveForm.performance_status = performance_status;
-	    	approveForm.approval_employee_no = approval_employee_no;
-	    	approveForm.approval_date = approval_date;
-	    	approveForm.approval_position_code = approval_position_code;
-	    	approveForm.approval_employee_name = approval_employee_name;
-	    	approveForm.months_years_status = months_years_status;
-	    	
+	    	approveForm.performanceStatus = performance_status;
+	    	approveForm.approvalEmployeeNo = approval_employee_no;
+	    	approveForm.approvalDate = approval_date;
+	    	approveForm.approvalPositionCode = approval_position_code;
+	    	approveForm.approvalEmployeeName = approval_employee_name;
+	    	approveForm.monthsYearsStatus = months_years_status;
+
 	    	approveFormList.add(approveForm);
     	}
 
     	apfl.approveFormList = approveFormList;
-    	
+
     	Form<ApproveFormList> appForm = formFactory.form(ApproveFormList.class).fill(apfl);
 
     	// 年度リスト取得
 //    	List<SqlRow> sqlGetApproveYearMonthList = getApproveYearMonth();
-    	
-    	
-    	
+
+
+
         return ok(approve.render("承認画面",
         		approveFormList));
     }
-    
+
     /**
      * 承認処理
      * @param 実績ステータス
@@ -172,19 +170,20 @@ public class ApproveCtl extends Controller {
     	String perStatus = "04";	// 実績ステータス
     	String appEmp = "00000";	// 承認者社員番号
     	String emp = "00229";	// 社員番号
-    	String yearmonth = "201804";
+    	String year = "2018";
+    	String month = "04";
     	String date = "02";
     	// 承認したときに更新
-    	TblPerformance.updateApprove(emp, yearmonth, date, perStatus, appEmp);
-    	
-    	
-    	
+    	TblPerformance.updateApprove(emp, year+month, date, perStatus, appEmp);
+
+
+
     	return ok(Json.toJson(ImmutableMap.of(
                 "result", "ok",
-                "link",String.valueOf(routes.ApproveCtl.index())
+                "link",String.valueOf(routes.ApproveCtl.index(year,month))
         )));
     }
-    
+
     /**
      * 承認不可処理
      * @param 実績ステータス
@@ -193,17 +192,18 @@ public class ApproveCtl extends Controller {
     public Result updateNotApprove(String perStatus) {
     	//String perStatus = "05";	// 実績ステータス
     	String emp = "00229";	// 社員番号
-    	String yearmonth = "201804";
+    	String year = "2018";
+    	String month = "04";
     	String date = "02";
-    	
-    	TblPerformance.updateNotApprove(emp, yearmonth, date, perStatus);
-    	
+
+    	TblPerformance.updateApprove(emp, year+month, date, perStatus);
+
     	return ok(Json.toJson(ImmutableMap.of(
                 "result", "ok",
-                "link", String.valueOf(routes.ApproveCtl.index()))
+                "link", String.valueOf(routes.ApproveCtl.index(year,month)))
         ));
     }
-    
+
     /**
      * 業務チームコード取得処理
      * @param 承認者社員番号
@@ -212,12 +212,12 @@ public class ApproveCtl extends Controller {
      */
     public List<SqlRow> getBusinessTeamCode() {
     	List<SqlRow> resultList = new ArrayList<>();
-    
+
     	resultList = MsPerformanceManage.getBusinessTeamCode();
-    
+
     	return resultList;
     }
-    
+
 //    /**
 //     * 承認画面年度リスト取得処理
 //     * @param 承認者社員番号
@@ -227,7 +227,7 @@ public class ApproveCtl extends Controller {
 //    	List<SqlRow> resultList = new ArrayList<>();
 //        String emp = "00000";
 //    	resultList = MsPerformanceManage.getApproveYearMonth(emp);
-//    
+//
 //    	return resultList;
 //    }
 }
