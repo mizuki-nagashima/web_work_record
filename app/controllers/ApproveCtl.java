@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 //import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
-
+import common.Const;
 import models.form.LoginForm;
 import models.form.StatusAndWorkForm;
 import models.MsGeneralCode;
@@ -24,7 +24,6 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import services.utils.DateUtil;
 import services.utils.MakeModelUtil;
-import views.html.index;
 import play.data.validation.*;
 import views.html.*;
 
@@ -50,7 +49,7 @@ public class ApproveCtl extends Controller {
     	MsGeneralCode msGeneralCode = new MsGeneralCode();
 
     	String yearmonth = year+month;
-    	String emp = session("employeeNo");
+    	String appEmp = session("employeeNo");
     	// 業務チームコード取得SQL
     	List<SqlRow> sqlBusinessTeamCodeList = getBusinessTeamCode();
     	List<String> businessTeamCodeList = new ArrayList<>();
@@ -61,88 +60,88 @@ public class ApproveCtl extends Controller {
     	List<SqlRow> sqlList = TblPerformance.getApproveList(businessTeamCodeList, yearmonth);
 
 
-    	String business_code = "";
-    	String employee_no = "";
-    	String employee_name = "";
-    	String months_years = "";
-        String performance_date = "";
-        String holiday_class = "";
-        String shift_class = "";
+    	String businessCode = "";
+    	String employeeNo = "";
+    	String employeeName = "";
+    	String monthsYears = "";
+        String performanceDate = "";
+        String holidayClass = "";
+        String shiftClass = "";
         String remarks = "";
-        String performance_status = "";
-        String approval_employee_no = "";
-        String approval_date = "";
-        String approval_position_code = "";
-        String approval_employee_name = "";
-        String months_years_status = "";
+        String performanceStatus = "";
+        String approvalEmployeeNo = "";
+        String approvalDate = "";
+        String approvalPositionCode = "";
+        String approvalEmployeeName = "";
+        String monthsYears_status = "";
 
     	for(SqlRow appList : sqlList){
     		// 業務コード(BUSINESS_CODE)の名称を取得
-    		SqlRow bs_code = null;
-    		bs_code = MsGeneralCode.getCodeMaster("BUSINESS_CODE", appList.getString("bs_code"));
-    		business_code = bs_code.getString("code_name");
+    		SqlRow bsCode = null;
+    		bsCode = MsGeneralCode.getCodeMaster("BUSINESS_CODE", appList.getString("bs_code"));
+    		businessCode = bsCode.getString("code_name");
     		// 社員番号
-    		employee_no = appList.getString("emp_no");
+    		employeeNo = appList.getString("emp_no");
     		// 社員氏名
-    		employee_name = appList.getString("emp_name");
+    		employeeName = appList.getString("emp_name");
     		// 年月
-    		months_years = appList.getString("mon_yr");
+    		monthsYears = appList.getString("mon_yr");
     		// 日
-    		performance_date = appList.getString("per_date");
+    		performanceDate = appList.getString("per_date");
     		// 休暇区分
-    		SqlRow ho_cl = null;
+    		SqlRow hocl = null;
     		if (appList.getString("ho_cl") != null && appList.getString("ho_cl") != "") {
-	    		ho_cl = MsGeneralCode.getCodeMaster("HOLIDAY_CLASS", appList.getString("ho_cl"));
-	    		holiday_class = ho_cl.getString("code_name");
+    			hocl = MsGeneralCode.getCodeMaster("HOLIDAY_CLASS", appList.getString("ho_cl"));
+	    		holidayClass = hocl.getString("code_name");
     		} else {
-    			holiday_class = appList.getString("code_name");
+    			holidayClass = appList.getString("code_name");
     		}
     		// シフト区分
-    		SqlRow shi_cl = null;
+    		SqlRow shicl = null;
     		if (appList.getString("shi_cl") != null && appList.getString("shi_cl") != "") {
-	    		shi_cl = MsGeneralCode.getCodeMaster("SHIFT_CLASS", appList.getString("shi_cl"));
-	    		shift_class = shi_cl.getString("code_name");
+    			shicl = MsGeneralCode.getCodeMaster("SHIFT_CLASS", appList.getString("shi_cl"));
+	    		shiftClass = shicl.getString("code_name");
     		} else {
-    			shift_class = appList.getString("code_name");
+    			shiftClass = appList.getString("code_name");
     		}
     		// 備考欄
     		remarks = appList.getString("rem");
     		// 状況(実績ステータス)
-    		SqlRow per_st = null;
-    		per_st = MsGeneralCode.getCodeMaster("PERFORMANCE_STATUS", appList.getString("per_st"));
-    		performance_status = per_st.getString("code_name");
+    		SqlRow perst = null;
+    		perst = MsGeneralCode.getCodeMaster("PERFORMANCE_STATUS", appList.getString("per_st"));
+    		performanceStatus = perst.getString("code_name");
     		// 承認者社員番号
-    		approval_employee_no = appList.getString("app_emp_no");
+    		approvalEmployeeNo = appList.getString("app_emp_no");
     		// 承認日
-    		approval_date = appList.getString("app_date");
+    		approvalDate = appList.getString("app_date");
     		// 承認者役職
-    		SqlRow app_emp_position = null;
+    		SqlRow appEmpPosition = null;
     		if (appList.getString("app_emp_position") != null && appList.getString("app_emp_position") != "") {
-    			app_emp_position = MsGeneralCode.getCodeMaster("POSITION_CODE", appList.getString("app_emp_position"));
-    			approval_position_code = app_emp_position.getString("code_name");
+    			appEmpPosition = MsGeneralCode.getCodeMaster("POSITION_CODE", appList.getString("app_emp_position"));
+    			approvalPositionCode = appEmpPosition.getString("code_name");
     		} else {
-    			approval_position_code = appList.getString("app_emp_position");
+    			approvalPositionCode = appList.getString("app_emp_position");
     		}
     		// 承認者社員氏名
-    		approval_employee_name = appList.getString("app_emp_name");
+    		approvalEmployeeName = appList.getString("app_emp_name");
     		// 年月別ステータス
-    		months_years_status = appList.getString("mon_yr_st");
+    		monthsYears_status = appList.getString("mon_yr_st");
 
 	    	ApproveForm approveForm = new ApproveForm();
-	    	approveForm.bsCode = business_code;
-	    	approveForm.employeeNo = employee_no;
-	    	approveForm.employeeName = employee_name;
-	    	approveForm.monthsYears = months_years;
-	    	approveForm.performanceDate = performance_date;
-	    	approveForm.holidayClass = holiday_class;
-	    	approveForm.shiftClass = shift_class;
+	    	approveForm.bsCode = businessCode;
+	    	approveForm.employeeNo = employeeNo;
+	    	approveForm.employeeName = employeeName;
+	    	approveForm.monthsYears = monthsYears;
+	    	approveForm.performanceDate = performanceDate;
+	    	approveForm.holidayClass = holidayClass;
+	    	approveForm.holidayClass = shiftClass;
 	    	approveForm.remarks = remarks;
-	    	approveForm.performanceStatus = performance_status;
-	    	approveForm.approvalEmployeeNo = approval_employee_no;
-	    	approveForm.approvalDate = approval_date;
-	    	approveForm.approvalPositionCode = approval_position_code;
-	    	approveForm.approvalEmployeeName = approval_employee_name;
-	    	approveForm.monthsYearsStatus = months_years_status;
+	    	approveForm.performanceStatus = performanceStatus;
+	    	approveForm.approvalEmployeeNo = approvalEmployeeNo;
+	    	approveForm.approvalDate = approvalDate;
+	    	approveForm.approvalPositionCode = approvalPositionCode;
+	    	approveForm.approvalEmployeeName = approvalEmployeeName;
+	    	approveForm.monthsYearsStatus = monthsYears_status;
 
 	    	approveFormList.add(approveForm);
     	}
@@ -157,7 +156,10 @@ public class ApproveCtl extends Controller {
 
 
         return ok(approve.render("承認画面",
-        		approveFormList));
+        		appEmp,
+         		year,month,
+        		approveFormList
+        		));
     }
 
     /**
@@ -166,17 +168,12 @@ public class ApproveCtl extends Controller {
      * @param 承認者社員番号
      * @return 承認画面
      */
-    public Result updateApprove() {
-    	String perStatus = "04";	// 実績ステータス
-    	String appEmp = "00000";	// 承認者社員番号
-    	String emp = "00229";	// 社員番号
-    	String year = "2018";
-    	String month = "04";
-    	String date = "02";
+    public Result updateApprove(String emp, String year, String month , String date) {
+    	System.out.println("承認処理開始");
+    	String perStatus = Const.PERFORMANCE_STATUS_APPROVED;	// 実績ステータス
+    	String appEmp = session("employeeNo");	// 承認者社員番号
     	// 承認したときに更新
     	TblPerformance.updateApprove(emp, year+month, date, perStatus, appEmp);
-
-
 
     	return ok(Json.toJson(ImmutableMap.of(
                 "result", "ok",
@@ -189,14 +186,13 @@ public class ApproveCtl extends Controller {
      * @param 実績ステータス
      * @return 承認画面
      */
-    public Result updateNotApprove(String perStatus) {
-    	//String perStatus = "05";	// 実績ステータス
-    	String emp = "00229";	// 社員番号
-    	String year = "2018";
-    	String month = "04";
-    	String date = "02";
+    public Result updateNotApprove(String emp, String year,String month,String date) {
+    	System.out.println("承認不可処理開始");
 
-    	TblPerformance.updateApprove(emp, year+month, date, perStatus);
+    	String preStatus = Const.PERFORMANCE_STATUS_APPROVAL_NOT;
+    	String appEmp = session("employeeNo");
+
+    	TblPerformance.updateApprove(emp, year+month, date, preStatus,appEmp);
 
     	return ok(Json.toJson(ImmutableMap.of(
                 "result", "ok",
@@ -230,4 +226,21 @@ public class ApproveCtl extends Controller {
 //
 //    	return resultList;
 //    }
+
+    /**
+     * 勤怠管理画面で「年月を指定して移動」時の処理をします。
+     * @param empNo 社員番号
+     * @param yearMonth 年月(yyyyMM)
+     * @return 勤怠管理画面画面
+     */
+    public Result moveTargetYearMonth(String empNo, String yearMonth, String nowYearMonth) {
+
+        String Year = yearMonth.substring(0,4);
+        String Month = yearMonth.substring(4,6);
+        return ok(Json.toJson(
+                ImmutableMap.of(
+                        "result", "ok",
+                        "link",String.valueOf(routes.ApproveCtl.index(Year,Month))
+                )));
+    }
 }
