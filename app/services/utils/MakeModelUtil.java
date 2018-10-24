@@ -60,18 +60,18 @@ public class MakeModelUtil {
             sawf.employeeName = ymat.getString("employee_name");
             sawf.employeeNo = empNo;
             sawf.businessCode = Optional.ofNullable(ymat.getString("business_code")).orElse("");
-            // FIXME Const化
+
             sawf.businessCodeDisp = MsGeneralCode.getCodeMaster(
                     "BUSINESS_CODE", ymat.getString("business_code")).getString("ANY_VALUE1");
-            // FIXME Const化
+
             sawf.businessName = MsGeneralCode.getCodeMaster(
                     "BUSINESS_CODE", ymat.getString("business_code")).getString("CODE_NAME");
             sawf.businessTeamCode = Optional.ofNullable(ymat.getString("business_team_code")).orElse("");
-            // FIXME Const化
+
             sawf.businessTeamName = MsGeneralCode.getCodeMaster(
                     "BUSINESS_TEAM_CODE", ymat.getString("business_team_code")).getString("CODE_NAME");
             sawf.departmentCode = ymat.getString("department_code");
-            // FIXME Const化
+
             sawf.departmentName = MsGeneralCode.getCodeMaster(
                     "DEPARTMENT_CODE", ymat.getString("department_code")).getString("CODE_NAME");
             sawf.divisionCode = ymat.getString("division_code");
@@ -83,7 +83,7 @@ public class MakeModelUtil {
             sawf.breakdownName4 = Optional.ofNullable(ymat.getString("breakdown_name4")).orElse("");
             sawf.monthsYearsStatus = ymat.getString("months_years_status");
         	}catch (Exception e) {
-				// TODO: handle exception
+
         		System.out.println(e);
 			}
         } else {
@@ -94,22 +94,22 @@ public class MakeModelUtil {
             sawf.employeeName = empInfo.getString("employee_name");
             sawf.employeeNo = empNo;
             sawf.businessCode = empInfo.getString("business_code");
-            // FIXME Const化
+
             sawf.businessCodeDisp = MsGeneralCode.getCodeMaster(
                     "BUSINESS_CODE", empInfo.getString("business_code")).getString("ANY_VALUE1");
-            // FIXME Const化
+
             sawf.businessName = MsGeneralCode.getCodeMaster(
                     "BUSINESS_CODE", empInfo.getString("business_code")).getString("CODE_NAME");
             sawf.businessTeamCode = empInfo.getString("business_team_code");
-            // FIXME Const化
+
             sawf.businessTeamName = MsGeneralCode.getCodeMaster(
                     "BUSINESS_TEAM_CODE", empInfo.getString("business_team_code")).getString("CODE_NAME");
             sawf.departmentCode = empInfo.getString("department_code");
-            // FIXME Const化
+
             sawf.departmentName = MsGeneralCode.getCodeMaster(
                     "DEPARTMENT_CODE", empInfo.getString("department_code")).getString("CODE_NAME");
             sawf.divisionCode = empInfo.getString("division_code");
-            // FIXME Const化
+
             sawf.divisionName = MsGeneralCode.getCodeMaster(
                     "DIVISION_CODE", empInfo.getString("division_code")).getString("CODE_NAME");
             sawf.breakdownName1 = empInfo.getString("breakdown_name1");
@@ -180,6 +180,8 @@ public class MakeModelUtil {
             aif.holidayClassCode = holidayClassCode;
             aif.shiftClassCode = shiftClassCode;
             aif.otherApprovalClass = otherApprovalClass;
+
+            // TODO 勤怠入力用フォームのステータス変更処理
             aif.performanceStatus = performanceStatus;
 
             if (!"".equals(closingTime)) {
@@ -201,7 +203,7 @@ public class MakeModelUtil {
      */
     public static List<MsGeneralCode> makeCodeTypeList(String codeType){
         List<MsGeneralCode> mgcList = new ArrayList<>();
-        // FIXME Const化
+
         for (SqlRow mgc : MsGeneralCode.getCodeMasterList(codeType)) {
             MsGeneralCode mGeneralCode = new MsGeneralCode();
             mGeneralCode.code = mgc.getString("code");
@@ -217,7 +219,7 @@ public class MakeModelUtil {
      */
     public static List<MsGeneralCode> makeCodeTypeList(String codeType,String anyValue2){
         List<MsGeneralCode> mgcList = new ArrayList<>();
-        // FIXME Const化
+
         for (SqlRow mgc : MsGeneralCode.getCodeListByAnyValue2(codeType,anyValue2)) {
             MsGeneralCode mGeneralCode = new MsGeneralCode();
             mGeneralCode.code = mgc.getString("code");
