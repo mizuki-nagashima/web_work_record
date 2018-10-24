@@ -161,7 +161,7 @@ public class AuthCtl extends Controller {
     	        return ok(Json.toJson(
     	                ImmutableMap.of(
     	                        "result", "ok",
-    	                        "link", java.lang.String.valueOf(routes.ApproveCtl.index())
+    	                        "link", java.lang.String.valueOf(routes.ApproveCtl.index(Year,Month))
     	                )));
 		} catch (Exception e) {
 			return notFound();

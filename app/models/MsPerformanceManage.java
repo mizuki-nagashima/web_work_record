@@ -7,12 +7,15 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
+import org.omg.CORBA.Current;
+
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
 import com.avaje.ebean.SqlUpdate;
 
 import models.form.ApproveFormList;
 import play.Logger;
+import services.utils.DateUtil;
 
 /**
  * 実績テーブル
@@ -59,18 +62,19 @@ public class MsPerformanceManage extends CommonModel {
      * @param yearMonth 年月
      * @return sqlRows
      */
-    public static List<SqlRow> getBusinessTeamCode() {
+    public static List<SqlRow> getBusinessTeamCode(String empNo) {
         String sql = "select * from ms_performance_manage " +
-                     "where employee_no = '00000' and start_date <= '2018/04/22'";
+                     "where employee_no = :emp and start_date <= current_timestamp";
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
+        		.setParameter("emp" ,empNo)
                 .findList();
-        
+
         Logger.debug("sql:" + String.valueOf(sql));
 
         return sqlRows;
     }
-    
+
     /**
      * 承認画面年月リスト取得SQL
      * @param empNo 社員番号
@@ -84,10 +88,10 @@ public class MsPerformanceManage extends CommonModel {
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
         		.setParameter("empNo", emp)
                 .findList();
-        
+
         Logger.debug("sql:" + String.valueOf(sql));
 
         return sqlRows;
     }
-    
+
 }

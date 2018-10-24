@@ -183,7 +183,7 @@ public class TblPerformance extends CommonModel {
             performanceData.insert();
             Ebean.commitTransaction();
         } catch (Exception e) {
-            // FIXME debug
+            // debug
             System.out.println("実績データ登録失敗："+ e);
             Ebean.rollbackTransaction();
             throw e;
@@ -226,7 +226,7 @@ public class TblPerformance extends CommonModel {
             Ebean.execute(create);
             Ebean.commitTransaction();
         } catch (Exception e) {
-            // FIXME debug
+            // debug
             System.out.println("実績データ更新失敗："+ e);
             Ebean.rollbackTransaction();
             throw e;
@@ -252,7 +252,7 @@ public class TblPerformance extends CommonModel {
 	        Ebean.execute(create);
 	        Ebean.commitTransaction();
 	    } catch (Exception e) {
-	        // FIXME debug
+	        // debug
 	        System.out.println("実績データ削除失敗："+ e);
 	        Ebean.rollbackTransaction();
 	        throw e;
@@ -284,7 +284,7 @@ public class TblPerformance extends CommonModel {
     }
 
     /**
-     * 承認する
+     * 属性変更（承認等）
      * @param empNo 社員番号　
      * @param yearMonth 年月
      * @param date 日
@@ -305,7 +305,7 @@ public class TblPerformance extends CommonModel {
 	        Ebean.execute(create);
 	        Ebean.commitTransaction();
 	    } catch (Exception e) {
-	        // FIXME debug
+	        // debug
 	        System.out.println("承認処理失敗："+ e);
 	        Ebean.rollbackTransaction();
 	        throw e;
@@ -313,27 +313,4 @@ public class TblPerformance extends CommonModel {
 	        Ebean.endTransaction();
 	    }
     }
-
-    /**
-     * 承認しない(確認中とする)
-     * @param empNo 社員番号　
-     * @param yearMonth 年月
-     * @param date 日
-     * @param perStatus 実績ステータス　
-     */
-    public static void updateNotApprove(String empNo, String yearMonth, String date, String perStatus) {
-    	String sql = "update tbl_performance set performance_status = :perStatus " +
-    				 "where employee_no = :emp and months_years = :yearmonth and performance_date = :date";
-
-    	SqlUpdate create = Ebean.createSqlUpdate(sql)
-    		.setParameter("perStatus",perStatus)
-	        .setParameter("emp",empNo)
-	        .setParameter("yearmonth",yearMonth)
-	        .setParameter("date",date);
-
-    	Logger.debug("sql:" + String.valueOf(sql));
-
-    	Ebean.execute(create);
-    }
-
 }
