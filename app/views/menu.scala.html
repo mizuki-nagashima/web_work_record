@@ -1,5 +1,7 @@
+@(loginForm: Form[models.form.LoginForm])
+@import play.i18n._
 @import helper._
-@main("メニュー - KMS勤怠管理【WEB】") {
+@main(Messages.get("header.title","管理者メニュー")) {
 <style>
 body {
 background-color:#f8f8f8;
@@ -7,27 +9,34 @@ background-color:#f8f8f8;
 </style>
 <section class="content">
  <div class="login-box">
+    <h2>管理者メニュー</h2>
   <div class="login-box-body">
-   <h2>メニュー</h2>
-   <button type="button" class="btn btn-info" id="loginBtn">勤怠入力</button>
+   @form(action = routes.AuthCtl.menuAttendance, 'id -> "attendance") {
+   	  <h4><p>・<a id="attendanceBtn" class="cp_link">@Messages.get("attendance")</a></p></h4>
+ 　　}
+   @form(action = routes.AuthCtl.menuApprove, 'id -> "approve") {
+ 	  <h4><p>・<a id="approveBtn" class="cp_link">@Messages.get("approve")</a></p></h4>
+   }
   </div>
  </div>
 </section>
 <script>
   $(function() {
-    $("#loginBtn").click(function () {
-      $(".error").empty();
-      $.postAjax('#loginForm', function(data){
+	$("#attendanceBtn").click(function () {
+      $.postAjax('#attendance', function(data){
         if(data.result == "ok"){
           window.location.href = data.link;
-        }else{
-          $(".errorMsg").text(data.msg1);
-          $(".errorMsg2").text(data.msg2);
-          $(".errorEmployeeNo").text(data.errorEmployeeNo);
-          $(".errorPassword").text(data.errorPassword);
         }
       });
     });
+
+	$("#approveBtn").click(function () {
+	  $.postAjax('#approve', function(data){
+	    if(data.result == "ok"){
+	      window.location.href = data.link;
+	    }
+	  });
+	});
 
     $.postAjax = function(formId, callBack, url) {
       var form = (typeof formId == "string" ? $(formId) : formId);

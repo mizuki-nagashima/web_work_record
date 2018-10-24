@@ -114,3 +114,14 @@ tbody tr:nth-child(6n-5){
 	font-size:50px;
 	margin: 40px auto;
 }
+.cp_link {
+	display: inline-block;
+	padding: 0.1em 0.3em;
+	transition: all .3s;
+}
+.cp_link:hover {
+	color: #fff;
+	background-color: #00BCD4;
+	text-decoration: none;
+	cursor: pointer;
+}

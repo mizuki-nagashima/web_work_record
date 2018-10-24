@@ -1,6 +1,7 @@
 @(loginForm: Form[models.form.LoginForm])
+@import play.i18n._
 @import helper._
-@main("ログイン - KMS勤怠管理【WEB】") {
+@main(Messages.get("header.title","ログイン")) {
 <style>
 body {
 background-color:#f8f8f8;

@@ -2,6 +2,7 @@ package controllers;
 
 import models.TblLoginInfo;
 import models.TblYearMonthAttribute;
+import models.form.AttendanceInputFormList;
 import models.form.LoginForm;
 import models.form.StatusAndWorkForm;
 import play.data.Form;
@@ -16,6 +17,7 @@ import services.utils.MakeModelUtil;
 import com.avaje.ebean.SqlRow;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
+import com.mysql.jdbc.Messages;
 
 import common.Const;
 import models.MsEmployee;
@@ -39,12 +41,13 @@ public class AuthCtl extends Controller {
     }
 
     /**
-     * ログイン画面を表示します。
-     * @return ログイン画面
+     * メニュー画面を表示します。
+     * @return メニュー画面
      */
     public Result menu() {
-//        Form<LoginForm> loginForm = formFactory.form(LoginForm.class);
-        return ok(menu.render());
+    	LoginForm lForm = new LoginForm();
+    	Form<LoginForm> loginForm = formFactory.form(LoginForm.class).fill(lForm);
+        return ok(menu.render(loginForm));
     }
 
     /**
@@ -83,22 +86,25 @@ public class AuthCtl extends Controller {
             String Year = yyyyMM.substring(0,4);
             String Month = yyyyMM.substring(4,6);
 
-            // TODO 権限が05：自陣のみ閲覧以外の場合はメニュー画面に遷移
+            // 社員情報を取得し権限情報をセッションへ
             SqlRow result = MsEmployee.getEmployeeInfo(employeeNo);
             String authority = result.getString("authority_class");
+            session("authorityClass", result.getString("authority_class"));
 
             // FIXME debug
             System.out.println("authority_class ===== " + authority);
 
+           // 権限が05：自陣のみ閲覧以外の場合はメニュー画面に遷移
             if (!Const.AUTHORITY_CLASS_SELF.equals(authority)) {
-                return ok(
-                        menu.render()
-                );
+            	return ok(Json.toJson(
+                        ImmutableMap.of(
+                                "result", "ok",
+                                "link", java.lang.String.valueOf(routes.AuthCtl.menu())
+                        )));
             } else {
                 return ok(Json.toJson(
                         ImmutableMap.of(
                                 "result", "ok",
-                                "authority",authority,
                                 "link", java.lang.String.valueOf(routes.AttendanceCtl.index(Year, Month))
                         )));
             }
@@ -118,6 +124,48 @@ public class AuthCtl extends Controller {
                     )));
         }
 //        return notFound();
+    }
+
+    /*
+     * メニュー画面から勤怠入力画面への遷移です。
+     * @param name 移動画面名
+     * @return 勤怠入力画面
+     */
+    public Result menuAttendance() {
+    	Form<LoginForm> form = formFactory.form(LoginForm.class).bindFromRequest();
+    	try {
+		    	String yyyyMM = DateUtil.getNowYYYYMM();
+		        String Year = yyyyMM.substring(0,4);
+		        String Month = yyyyMM.substring(4,6);
+    	        return ok(Json.toJson(
+    	                ImmutableMap.of(
+    	                        "result", "ok",
+    	                        "link", java.lang.String.valueOf(routes.AttendanceCtl.index(Year,Month))
+    	                )));
+		} catch (Exception e) {
+			return notFound();
+		}
+    }
+
+    /*
+     * メニュー画面から承認一覧画面への遷移です。
+     * @param name 移動画面名
+     * @return 承認一覧画面
+     */
+    public Result menuApprove() {
+    	Form<LoginForm> form = formFactory.form(LoginForm.class).bindFromRequest();
+    	try {
+		    	String yyyyMM = DateUtil.getNowYYYYMM();
+		        String Year = yyyyMM.substring(0,4);
+		        String Month = yyyyMM.substring(4,6);
+    	        return ok(Json.toJson(
+    	                ImmutableMap.of(
+    	                        "result", "ok",
+    	                        "link", java.lang.String.valueOf(routes.ApproveCtl.index())
+    	                )));
+		} catch (Exception e) {
+			return notFound();
+		}
     }
 
     /**
