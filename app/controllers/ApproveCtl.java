@@ -1,5 +1,6 @@
 package controllers;
 
+import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
@@ -27,8 +28,9 @@ import services.utils.MakeModelUtil;
 import play.data.validation.*;
 import views.html.*;
 
-import java.util.ArrayList;
-import java.util.Optional;
+import static models.TblPerformance.*;
+import static models.TblYearMonthAttribute.*;
+
 import java.util.*;
 
 /**
@@ -44,20 +46,24 @@ public class ApproveCtl extends Controller {
      * @return 承認画面
      */
     public Result index(String year,String month) {
-    	ApproveFormList apfl = new ApproveFormList();
-    	List<ApproveForm> approveFormList = new ArrayList<>();
-    	MsGeneralCode msGeneralCode = new MsGeneralCode();
+    	if(!session("authorityClass").equals(Const.AUTHORITY_CLASS_CHECK) ||
+    			!session("authorityClass").equals(Const.AUTHORITY_CLASS_SELF)) {
 
-    	String yearmonth = year+month;
+    	String yearMonth = year + DateUtil.getZeroPadding(month);
     	String appEmp = session("employeeNo");
-    	// 業務チームコード取得SQL
+
+    	// 業務チームコード取得
     	List<SqlRow> sqlBusinessTeamCodeList = getBusinessTeamCode();
     	List<String> businessTeamCodeList = new ArrayList<>();
     	for(SqlRow sqlrow :sqlBusinessTeamCodeList) {
     		businessTeamCodeList.add(sqlrow.getString("business_team_code"));
     	}
-    	// 承認一覧データ取得SQL
-    	List<SqlRow> sqlList = TblPerformance.getApproveList(businessTeamCodeList, yearmonth);
+    	// 保存済実績を取得
+    	List<SqlRow> sqlList = TblPerformance.getApproveList(businessTeamCodeList, yearMonth);
+
+        // 表示用フォーム
+    	ApproveFormList apfl = new ApproveFormList();
+    	List<ApproveForm> approveFormList = new ArrayList<>();
 
 
     	String businessCode = "";
@@ -74,7 +80,7 @@ public class ApproveCtl extends Controller {
         String approvalPositionCode = "";
         String approvalEmployeeName = "";
         String monthsYears_status = "";
-
+    	try {
     	for(SqlRow appList : sqlList){
     		// 業務コード(BUSINESS_CODE)の名称を取得
     		SqlRow bsCode = null;
@@ -160,6 +166,20 @@ public class ApproveCtl extends Controller {
          		year,month,
         		approveFormList
         		));
+
+        } catch (Exception e) {
+            // FIXME debug
+            System.out.println("ぬるぽ？:" +e);
+            throw e;
+        } finally {
+        	return notFound();
+        }
+    	} else {
+        	return ok(Json.toJson(ImmutableMap.of(
+                    "result", "ok",
+                    "link",String.valueOf(routes.AttendanceCtl.index(year,month))
+            )));
+    	}
     }
 
     /**
@@ -209,7 +229,7 @@ public class ApproveCtl extends Controller {
     public List<SqlRow> getBusinessTeamCode() {
     	List<SqlRow> resultList = new ArrayList<>();
 
-    	resultList = MsPerformanceManage.getBusinessTeamCode();
+    	resultList = MsPerformanceManage.getBusinessTeamCode(session("employeeNo"));
 
     	return resultList;
     }

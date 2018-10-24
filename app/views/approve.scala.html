@@ -1,35 +1,44 @@
-@(message: String, appFormList: List[models.form.ApproveForm])
+@(message: String, appEmp:String, year:String, month:String, appFormList: List[models.form.ApproveForm])
 @import play.i18n._
 @import helper._
 @main(Messages.get("header.title","承認一覧")) {
-<br>
-◆@message
-
 <!-- PDFボタン用script start -->
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="jquery.extablefilter-latest.js"></script>
 <!-- PDFボタン用script end -->
-
 <section class="content">
-
-<!-- ためしでべた書きテーブルを作成 2018.04.04 -->
-2018年4月
-	<br>年度
-	<select name="year">
-		<option value="2018">2018年度</option>
-		<option value="2017">2017年度</option>
-		<option value="2016">2016年度</option>
-	</select>
-	<button type="button" id="updateButton">
-	 	更新
-	</button>
-    <button type="Button" id="pdfButton" class="btn btn-primary pdf" style="margin-right: 10px">
-		<i class="fa fa-file-text"></i>
-              PDF出力
-    </button>
-	<br>
-	<br>
-
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="col-md-10 col-sm-10 col-xs-12">
+        <h2><i class="fa fa-pencil-square-o"></i> @Messages.get("attendance.titleDate",year,month)</h2>
+      </div>
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
+          <div class="col-md-12 col-sm-12 col-xs-12 visible-xs form-inline margin-bottom">
+            <label>年月を指定して移動：</label>
+            <input value="" class="form-control datepicker moveYearMonth" style="display: inline; width: 75%;">
+          </div>
+          <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
+            <button type="button" class="btn btn-info pdf" style="margin-right: 10px">
+              <i class="fa fa-file-text"></i>
+              @Messages.get("attendance.pdf")
+            </button>
+            <div class="pull-right hidden-xs">
+              <label>年月を指定して移動：</label>
+              <input value="" class="form-control datepicker moveYearMonth">
+            </div>
+          </div>
+          <!--
+          <label>始業:</label>
+          <input value="" class="form-control clockpicker" >
+          <label>終業:</label>
+          <input value="" class="form-control clockpicker" >
+          <button type="button" class="btn btn-default">すべての勤怠に定時入力</button>
+          -->
+        </div>
+      </div>
+   </div>
+</div>
 	<div>
         <table id="tabelData" class="table table-bordered">
           <thead style="background: #d3e5ff;">
@@ -56,16 +65,16 @@
           @for(app <- appFormList ){
  			<tr>
             <td>1</td>
-            <td>@app.bs_code</td>
-            <td>@app.employee_no</td>
-            <td>@app.employee_name</td>
-            <td>@app.months_years / @app.performance_date</td>
-            <td>@app.shift_class</td>
+            <td>@app.bsCode</td>
+            <td>@app.employeeNo</td>
+            <td>@app.employeeName</td>
+            <td>@app.monthsYears / @app.performanceDate</td>
+            <td>@app.shiftClass</td>
             <td>@app.remarks</td>
-            <td>@app.performance_status</td>
-            <td>@app.approval_position_code</td>
-            <td>@app.approval_employee_name</td>
-            <td>@app.approval_date</td>
+            <td>@app.performanceStatus</td>
+            <td>@app.approvalPositionCode</td>
+            <td>@app.approvalEmployeeName</td>
+            <td>@app.approvalDate</td>
             <td>
             	<button type="button" id="approveButton" class="btn btn-primary pdf" style="margin-right: 10px">
 					<!-- <i class="fa fa-file-text"></i> -->
@@ -89,7 +98,8 @@
 <script>
   $(function(){
   	$(".updateButton").click(function () {
-      var url = '@routes.ApproveCtl.index'
+      var url = '@routes.ApproveCtl.index("","")'
+
       $.ajax({
         type : 'GET',
         url : url
@@ -97,7 +107,8 @@
     });
 
     $(".approveButton").click(function () {
-      var url = '@routes.ApproveCtl.updateApprove'
+      var url = '@routes.ApproveCtl.updateApprove("0","0","0","0")'
+   //   url = url.substring(0, url.length - 7) + hiddensalaried;
       $.ajax({
         type : 'GET',
         url : url,
@@ -110,7 +121,7 @@
     });
 
     $(".notApproveButton").click(function () {
-      var url = '@routes.ApproveCtl.updateNotApprove("05")'
+      var url = '@routes.ApproveCtl.updateNotApprove("0","0","0","0")'
       $.ajax({
         type : 'GET',
         url : url,
@@ -121,6 +132,31 @@
           }
         }
       });
+    });
+
+    $('.datepicker').datepicker({
+      format: 'yyyy/mm',
+      language: 'ja',
+      autoclose: true,
+      minViewMode: 'months'
+    }).on({
+      changeDate : function(){
+        var yearMonth = $(this).val();
+        alert(yearMonth);
+        var nowYearMonth = $('#monthsYears').val();
+        var empNum = '@appEmp';
+        var url = '@routes.ApproveCtl.moveTargetYearMonth("0","0","0")';
+        url = url.substring(0, url.length - 5) + empNum + '/' + yearMonth.replace("/","") + '/' + nowYearMonth;
+        $.ajax({
+          type : 'GET',
+          url : url,
+          success : function(data) {
+            if (data.result == "ok") {
+              window.location.href = data.link;
+            }
+          }
+        });
+      }
     });
   });
 </script>
