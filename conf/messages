@@ -4,7 +4,7 @@ title=KMS勤怠管理【WEB】
 header.title={0} - KMS勤怠管理【WEB】
 
 attendance=勤怠入力
-attendance.titleDate={0}年{1}月度実績表
+attendance.titleDate={0}年{1}月度
 
 attendance.yourStatus=ステータス
 attendance.workCode=業務コード
