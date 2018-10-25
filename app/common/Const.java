@@ -41,12 +41,10 @@ public class Const {
 
     /** 実績別ステータス：保存済（未確定） */
     public static final String PERFORMANCE_STATUS_SAVE = "01";
-    /** 実績別ステータス：確定（承認不要） */
-    public static final String PERFORMANCE_STATUS_NON_NEED_APPROVAL = "02";
     /** 実績別ステータス：承認依頼済 */
-    public static final String PERFORMANCE_STATUS_NEED_APPROVAL = "03";
-    /** 実績別ステータス：承認済 */
-    public static final String PERFORMANCE_STATUS_APPROVED = "04";
+    public static final String PERFORMANCE_STATUS_NEED_APPROVAL = "02";
+    /** 実績別ステータス： 承認済*/
+    public static final String PERFORMANCE_STATUS_APPROVED = "03";
     /** 実績別ステータス：承認不可（要修正） */
-    public static final String PERFORMANCE_STATUS_APPROVAL_NOT = "05";
+    public static final String PERFORMANCE_STATUS_APPROVAL_NOT = "04";
 }

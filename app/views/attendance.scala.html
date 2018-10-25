@@ -511,7 +511,7 @@
       </div>
       <div class="modal-body">
         <p>今月の勤怠情報を確定します。<br>以下を確認のうえ、OKボタンを押して確定してください。</p>
-        <p id="defaultWorkTime">・所定労働時間： @defaultWorkTime 時間</p>
+        <p id="approveTitle">--承認依頼一覧--</p>
         <div align="right">
 		    <small>※</small>
 		</div>
@@ -834,14 +834,18 @@
     $(".fixBtn").click(function () {
        $.totalInsert();
        $('.fix-contents').remove();
-       var sumPerformanceTime = $("#sumPerformanceTime").val();
-       var msgContents = '<p id="sumMonthlyWorkTime" class="fix-contents">・今月作業実績： ' + sumPerformanceTime +' 時間（有休等を除く）</p>';
-       $('#defaultWorkTime').after(msgContents);
+       var msgContents = '<p id="approveBody" class="fix-contents">てすと</p>';
+       $('#approveTitle').after(msgContents);
 　　　　　　$('#fixModal').modal('show');
     });
 
     // TODO
     $(".fixModal").click(function () {
+      $(".warn-msg").addClass("hidden");
+      $('.warn-msg-contents').remove();
+      $('.save-warn-msg-contents').remove();
+      $('#form-warning').addClass("none-form-warning");
+      $('#form-warning').removeClass("form-warning");
       // fix処理
       var url = '@routes.AttendanceCtl.fix(empNo, year, month)'
       $.ajax({
@@ -849,33 +853,41 @@
           url:url,
           success:function(data) {
             if(data.result == "ok"){
-              window.location.href = data.link;
+              var yearMonth = @year + '年' + @month + '月';
+              localStorage.saveMsg = yearMonth +'の勤怠情報を確定しました。';
+          	  location.reload();
             }else if(data.result == "ng"){
-              $(".warn-msg").removeClass("hidden");
-              var errorMsgList = data.msg;
-              var alertMsgContents = "";
-              $.each(errorMsgList, function(key, obj) {
-                $.each(obj, function(dId, msg) {
-                  var dateId = dId;
-                  var dataMsg = msg;
-                  var stringDate = $('#' + dateId).attr('string-date');
-                  var msgContents = '<p id=' + dateId + ' class=' + 'save-warn-msg-contents' + '>' + stringDate + '&nbsp;-&nbsp;' + dataMsg + '<p>';
-                  alertMsgContents = msgContents + '\n'
-                  $('#' + dateId).children().children('#form-warning').removeClass("none-form-warning");
-                  $('#' + dateId).children().children('#form-warning').addClass("form-warning");
-                  $('#warn-msg-title').after(msgContents);
-                  if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
-                    $(".warn-msg").removeAttr('style');
-                    $(".warn-msg").css('bottom','20px');
-                  }
-                });
-              });
+	          $(".warn-msg").removeClass("hidden");
+	          var errorMsgList = data.msg;
+	          var alertMsgContents = "";
+	          $.each(errorMsgList, function(key, obj) {
+	            $.each(obj, function(dId, msg) {
+	              var dateId = dId;
+	              var dataMsg = msg;
+	              var stringDate = dateId + '日';
+	              var msgContents = '<p id=' + dateId + ' class=' + 'save-warn-msg-contents' + '>' + stringDate + '&nbsp;-&nbsp;' + dataMsg + '<p>';
+	              alertMsgContents = msgContents + '\n'
+	              $('#' + dateId).children().children('#form-warning').removeClass("none-form-warning");
+	              $('#' + dateId).children().children('#form-warning').addClass("form-warning");
+	              $('#warn-msg-title').after(msgContents);
+	              if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
+	                $(".warn-msg").removeAttr('style');
+	                $(".warn-msg").css('bottom','20px');
+	              }
+	            });
+	          });
+	                        if(!$("p").hasClass('warn-msg-contents')){
+                $(".saveBtn").prop('disabled', false);
+                $(".saveBtn-a").removeClass("hidden");
+                if(!$("p").hasClass('save-warn-msg-contents')){
+                  $(".warn-msg").addClass("hidden");
+                }
+              }
             }else{
                alert('エラーが発生しました。');
             }
           }
       });
-      location.reload();
     });
 
 
