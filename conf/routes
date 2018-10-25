@@ -28,7 +28,8 @@ GET     /attendance/getSalaried/get/:code      controllers.AttendanceCtl.getSala
 GET     /attendance/getDivisionList/get/:code      controllers.AttendanceCtl.getDivisionList(code: String)
 GET     /attendance/getBusinessTeamList/get/:code      controllers.AttendanceCtl.getBusinessTeamList(code: String)
 
-POST     /attendance/fix/:empNo/:year/:month      controllers.AttendanceCtl.fix(empNo: String, year: String, month: String)
+POST     /attendance/fix/:empNo/:yearMonth      controllers.AttendanceCtl.fix(empNo: String, yearMonth: String)
+POST     /attendance/fixCheck/:empNo/:year/:month      controllers.AttendanceCtl.fixCheck(empNo: String, year: String, month: String)
 GET     /attendancePdf/:year/:month/:pdfKind   controllers.AttendancePdfCtl.index(year: String, month: String, pdfKind: Int)
 
 GET		/approve/:year/:month	controllers.ApproveCtl.index(year: String, month: String)

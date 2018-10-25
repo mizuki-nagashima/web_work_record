@@ -38,6 +38,18 @@ import views.html.attendance;
  * 勤怠管理画面用コントローラです。
  */
 //セッション管理用のクラス
+/**
+ * @author nagashima-mizuki
+ *
+ */
+/**
+ * @author nagashima-mizuki
+ *
+ */
+/**
+ * @author nagashima-mizuki
+ *
+ */
 @Security.Authenticated(Secured.class)
 public class AttendanceCtl extends Controller {
 
@@ -298,47 +310,18 @@ public class AttendanceCtl extends Controller {
     /**
      * 「確定」ボタン押下処理
      * @param empNo 社員番号
-     * @param yearMonth 年月(yyyyMM)
-     * @return 勤怠管理画面画面
+     * @param year 年
+     * @param month 月
+     * @return 確定処理可否
      */
-    public Result fix(String empNo, String year, String month) {
-    	String monthsYears = year+DateUtil.getZeroPadding(month);
+    public Result fix(String empNo, String monthsYears) {
 
         //  debug
         System.out.println("fix!!!!! :" + monthsYears);
-
-        // エラーメッセージを詰め込むためのリスト
-        ArrayList<HashMap> errorMsgList = new ArrayList<>();
-
-        // 月の全ての営業日にデータが登録されているかをチェック
-        // 日付リスト取得
-        List<DateList> dateList = getDateList(year, DateUtil.getZeroPadding(month));
-        ArrayList<String> notPDataList = new ArrayList<>();
-        for(DateList dl : dateList){
-        	if (!dl.isHoliday) {
-        		// 平日の場合、実績一覧を見に行き、データが無い分をリスト化
-		        List<SqlRow>  pData=  TblPerformance.getPerformanceDataByYearMonthAndDate(empNo, monthsYears, dl.date);
-		        if (pData.isEmpty()) {
-		        	notPDataList.add(dl.date);
-		        }
-        	}
-        }
-        // 実績一覧にすべて保存されている場合→承認申請を行う
-        if(notPDataList.isEmpty()) {
+     // 実績一覧にすべて保存されている場合→承認申請を行う
         	try {
 	        	// 年月属性を取得
 	            SqlRow yearMonthData = TblYearMonthAttribute.getYearMonthData(empNo, monthsYears);
-
-	           // 確定ボタン押下時に年月別ステータスが03：承認済の場合、 既に勤怠は凍結されているため、処理を実行しない。
-	            if (yearMonthData != null
-	                    && Const.MONTHS_YEARS_STATUS_COMPLETE.equals(yearMonthData.getString("months_years_status"))) {
-	                HashMap<String, String> map = new HashMap<>();
-                    map.put("", "今月の勤怠情報は既に凍結されているため変更できません。管理部までお問い合わせください。");
-	                errorMsgList.add(map);
-
-	            // 年月別ステータスが03以外の場合は承認申請へ
-	            } else {
-
 		        	TblPerformance pft = new TblPerformance();
 		            pft.employeeNo = empNo;
 		            pft.monthsYears = monthsYears;
@@ -370,16 +353,52 @@ public class AttendanceCtl extends Controller {
 	            		//年月属性テーブル更新
 	            		TblYearMonthAttribute.updateYearMonthDataStatus(empNo,monthsYears,attrStatus);
 		            }
-		        }
+		            //  debug
+		            System.out.println("exit fix!!!!!");
+		            return ok(Json.toJson(ImmutableMap.of("result", "ok")));
 
         	} catch (Exception e) {
 	            //  debug
 	            System.out.println(e);
-	            HashMap<String, String> map = new HashMap<>();
-	            map.put("", "確定処理時エラーが発生しました。もう一度お試しください。");
-	            errorMsgList.add(map);
+	            return ok(Json.toJson(
+	                    ImmutableMap.of(
+	                            "result", "ng",
+	                            "msg", "確定処理時エラーが発生しました。もう一度お試しください。"
+	                    )));
         	}
-        } else {
+    }
+
+    /**
+     * 「確定」押下時チェック処理
+     * @param empNo 社員番号
+     * @param year	年
+     * @param month 月
+     * @return エラーチェック可否
+     */
+    public Result fixCheck(String empNo, String year, String month) {
+    	String monthsYears = year+DateUtil.getZeroPadding(month);
+
+        //  debug
+        System.out.println("fixCheck!!!!! :" + monthsYears);
+
+        // エラーメッセージを詰め込むためのリスト
+        ArrayList<HashMap> errorMsgList = new ArrayList<>();
+
+        // 月の全ての営業日にデータが登録されているかをチェック
+        // 日付リスト取得
+        List<DateList> dateList = getDateList(year, DateUtil.getZeroPadding(month));
+        ArrayList<String> notPDataList = new ArrayList<>();
+        for(DateList dl : dateList){
+        	if (!dl.isHoliday) {
+        		// 平日の場合、実績一覧を見に行き、データが無い分をリスト化
+		        List<SqlRow>  pData=  TblPerformance.getPerformanceDataByYearMonthAndDate(empNo, monthsYears, dl.date);
+		        if (pData.isEmpty()) {
+		        	notPDataList.add(dl.date);
+		        }
+        	}
+        }
+        // 実績一覧にすべて保存されている場合→承認申請を行う
+        if(!notPDataList.isEmpty()) {
             HashMap<String, String> map = new HashMap<>();
             for(String date :notPDataList) {
 //            	String week = DateUtil.getWeek(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(date));
@@ -396,15 +415,13 @@ public class AttendanceCtl extends Controller {
                             "result", "ng",
                             "datelist",notPDataList,
                             "msg", errorMsgList
-                    )
-            ));
-        } else {
-            //  debug
-            System.out.println("exit fix!!!!!");
-            return ok(Json.toJson(ImmutableMap.of("result", "ok")));
+                    )));
         }
 
         // TODO 正常時、異常時の分岐など
+        //  debug
+        System.out.println("exit fixCheck!!!!!");
+        return ok(Json.toJson(ImmutableMap.of("result", "ok")));
     }
 
     /**

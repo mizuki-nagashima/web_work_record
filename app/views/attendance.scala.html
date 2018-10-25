@@ -826,7 +826,7 @@
           $(".warn-msg").removeClass("hidden");
           $('#warn-msg-title').after(msgContents);
         }else{
-          alert('ステータスと作業実績内訳詳細保存中にエラーが発生しました。');
+          alert('エラーが発生しました。');
         }
       });
     });
@@ -834,28 +834,15 @@
     $(".fixBtn").click(function () {
        $.totalInsert();
        $('.fix-contents').remove();
-       var msgContents = '<p id="approveBody" class="fix-contents">てすと</p>';
-       $('#approveTitle').after(msgContents);
-　　　　　　$('#fixModal').modal('show');
-    });
-
-    // TODO
-    $(".fixModal").click(function () {
-      $(".warn-msg").addClass("hidden");
-      $('.warn-msg-contents').remove();
-      $('.save-warn-msg-contents').remove();
-      $('#form-warning').addClass("none-form-warning");
-      $('#form-warning').removeClass("form-warning");
-      // fix処理
-      var url = '@routes.AttendanceCtl.fix(empNo, year, month)'
-      $.ajax({
+       var url = '@routes.AttendanceCtl.fixCheck(empNo, year, month)'
+       $.ajax({
           type:'POST',
           url:url,
           success:function(data) {
             if(data.result == "ok"){
-              var yearMonth = @year + '年' + @month + '月';
-              localStorage.saveMsg = yearMonth +'の勤怠情報を確定しました。';
-          	  location.reload();
+              var msgContents = '<p id="approveBody" class="fix-contents">てすと</p>';
+		      $('#approveTitle').after(msgContents);
+		　　　　　 $('#fixModal').modal('show');
             }else if(data.result == "ng"){
 	          $(".warn-msg").removeClass("hidden");
 	          var errorMsgList = data.msg;
@@ -876,7 +863,7 @@
 	              }
 	            });
 	          });
-	                        if(!$("p").hasClass('warn-msg-contents')){
+	            if(!$("p").hasClass('warn-msg-contents')){
                 $(".saveBtn").prop('disabled', false);
                 $(".saveBtn-a").removeClass("hidden");
                 if(!$("p").hasClass('save-warn-msg-contents')){
@@ -890,6 +877,34 @@
       });
     });
 
+    // fix処理
+    $(".fixModal").click(function () {
+      $(".warn-msg").addClass("hidden");
+      $('.warn-msg-contents').remove();
+      $('.fix-warn-msg-contents').remove();
+      $('#form-warning').addClass("none-form-warning");
+      $('#form-warning').removeClass("form-warning");
+      var url = '@routes.AttendanceCtl.fix(empNo, year + month)'
+      $.ajax({
+          type:'POST',
+          url:url,
+          success:function(data) {
+            if(data.result == "ok"){
+              var yearMonth = @year + '年' + @month + '月';
+              localStorage.saveMsg = yearMonth +'の勤怠情報を確定しました。';
+          	  location.reload();
+            }else if(data.result == "ng"){
+	          $(".warn-msg").removeClass("hidden");
+	          var errorMsg = data.msg;
+		      var msgContents = '<p id="warnStatusSave" class= "save-warn-msg-contents">' + data.msg + '<p>';
+		      $(".warn-msg").removeClass("hidden");
+		       $('#warn-msg-title').after(msgContents);
+            }else{
+               alert('エラーが発生しました。');
+            }
+          }
+      });
+    });
 
     $(".pdf").click(function () {
 　　　　　$('#pdfModal').modal('show');
