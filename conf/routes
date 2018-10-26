@@ -19,6 +19,7 @@ POST     /menu/attendance                        	   controllers.AuthCtl.menuAtt
 POST     /menu/approve                        	   controllers.AuthCtl.menuApprove()
 
 POST     /attendance/save                      controllers.AttendanceCtl.save(empNo: String, monthsYears: String)
+POST     /attendance/saveCheck       		   controllers.AttendanceCtl.saveCheck(empNo: String, monthsYears: String)
 POST     /attendance/statusAndWorkSave         controllers.AttendanceCtl.statusAndWorkSave()
 GET     /attendance/:year/:month               controllers.AttendanceCtl.index(year: String, month: String)
 GET     /attendance/getPerformanceTime/:start/:end/:holidayClass/:deduction   controllers.AttendanceCtl.getPerformanceTime(start: String, end: String, holidayClass: String, deduction: String)

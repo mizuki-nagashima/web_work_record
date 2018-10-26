@@ -189,37 +189,11 @@ public class AttendanceCtl extends Controller {
         // 登録済の実績を取得
         ArrayList<String> performanceDataList = TblPerformance.getPerformanceDataList(empNo, monthsYears);
 
-        // エラーメッセージを詰め込むためのリスト
-        ArrayList<HashMap> errorMsgList = new ArrayList<>();
-
         // 年月属性を取得
         SqlRow yearMonthData = TblYearMonthAttribute.getYearMonthData(empNo, monthsYears);
-        // 勤怠を保存するボタン押下時に年月別ステータスが03：承認済の場合、 既に勤怠は凍結されているため、処理を実行しない。
+        // OKボタン押下時に年月別ステータスが03：承認済以外の場合に処理を実行する。
         if (yearMonthData != null
-                && Const.MONTHS_YEARS_STATUS_COMPLETE.equals(yearMonthData.getString("months_years_status"))) {
-
-            HashMap<String, String> map = new HashMap<>();
-            map.put("", "今月の勤怠情報は既に凍結されているため変更できません。管理部までお問い合わせください。");
-            errorMsgList.add(map);
-            return ok(Json.toJson(
-                    ImmutableMap.of(
-                            "result", "ng",
-                            "msg", errorMsgList
-                    )
-            ));
-        // 年月別ステータスが02：承認依頼済の場合、一度確定ボタン押下後であるため、確定ボタン押下時と同等の処理を行う
-//        } else if (yearMonthData != null
-//                && Const.MONTHS_YEARS_STATUS_FIX.equals(yearMonthData.getString("months_years_status"))) {
-//            String year = monthsYears.substring(0,4);
-//            String month = monthsYears.substring(4,6);
-//        	return ok(Json.toJson(
-//                    ImmutableMap.of(
-//                            "result", "ok",
-//                            "link", java.lang.String.valueOf(routes.AttendanceCtl.fix(empNo,year,month))
-//                    )));
-
-        // 年月別ステータスが01：未確定の場合、年月別ステータスがまだ保存されていない場合は自由に変更して問題なし
-        } else {
+                && !Const.MONTHS_YEARS_STATUS_COMPLETE.equals(yearMonthData.getString("months_years_status"))) {
 
             // 当月の最大の日付分フォームがあるのでその分処理(31日まである月なら31個分)
             for (AttendanceInputForm inputForm : adl){
@@ -230,15 +204,6 @@ public class AttendanceCtl extends Controller {
                 // フォームの"始業"と"終業"が入力されている または 休暇等区分が選択されているフォームのみ処理する。
                 if ((!emptyChar.equals(op) && !emptyChar.equals(cl))
                         || !Const.HOLIDAY_CLASS_NOTHING.equals(inputForm.holidayClassCode)) {
-
-                    // エラーメッセージがあるかチェック
-                    ArrayList<HashMap> errorMsg = checkAttendanceInputForm(inputForm);
-                    // エラーがある場合エラーメッセージのリストにメッセージを詰め込む、エラーがない場合は登録処理
-                    if (!errorMsg.isEmpty()) {
-                        for (HashMap msg : errorMsg) {
-                            errorMsgList.add(msg);
-                        }
-                    } else {
                         TblPerformance pft = new TblPerformance();
                         String holidayClassCode = inputForm.holidayClassCode;
                         if (holidayClassCode.isEmpty()) {
@@ -275,36 +240,97 @@ public class AttendanceCtl extends Controller {
                                 pft.updateUserId = inputForm.employeeNo;
                                 TblPerformance.insertPerformanceData(pft);
                             }
-                        } catch (Exception e) {
-                            //  debug
-                            System.out.println(e);
-
-                            HashMap<String, String> map = new HashMap<>();
-                            map.put(inputForm.dateId, "保存時エラーが発生しました。もう一度お試しください。");
-                            errorMsgList.add(map);
-                        }
-                    }
+	                    } catch (Exception e) {
+	                        //  debug
+	                        System.out.println(e);
+	        	            //  debug
+	        	            System.out.println(e);
+	        	            return ok(Json.toJson(
+	        	                    ImmutableMap.of(
+	        	                            "result", "ng",
+	        	                            "msg", "保存処理時エラーが発生しました。もう一度お試しください。"
+	        	                    )));
+	                    }
                 } else if (!TblPerformance.getPerformanceDataByYearMonthAndDate(
                         inputForm.employeeNo,inputForm.monthsYears,inputForm.date).isEmpty()){
                     TblPerformance.deletePerformanceData(inputForm.employeeNo,inputForm.monthsYears,inputForm.date);
                 }
             }
-            if (!errorMsgList.isEmpty()) {
-                //  debug
-                System.out.println("exit save!!!!!");
+        }
+        //  debug
+        System.out.println("exit save!!!!!");
+        return ok(Json.toJson(ImmutableMap.of("result", "ok")));
+    }
 
+	/**
+     * 「勤怠を保存」押下時チェック処理
+     * @param empNo
+     * @param monthsYears
+     * @return
+     */
+    public Result saveCheck(String empNo, String monthsYears) {
+
+        //  debug
+        System.out.println("saveCheck!!!!!");
+
+        // 画面からForm取得
+        AttendanceInputFormList attendanceFormList =
+                formFactory.form(AttendanceInputFormList.class).bindFromRequest().get();
+        List<AttendanceInputForm> adl = attendanceFormList.attendanceInputFormList;
+
+        // エラーメッセージを詰め込むためのリスト
+        ArrayList<HashMap> errorMsgList = new ArrayList<>();
+
+        // 年月属性を取得
+        SqlRow yearMonthData = TblYearMonthAttribute.getYearMonthData(empNo, monthsYears);
+        // 勤怠を保存するボタン押下時に年月別ステータスが03：承認済の場合、 既に勤怠は凍結されているため、処理を実行しない。
+        if (yearMonthData != null
+                && Const.MONTHS_YEARS_STATUS_COMPLETE.equals(yearMonthData.getString("months_years_status"))) {
+
+            HashMap<String, String> map = new HashMap<>();
+            map.put("", "今月の勤怠情報は既に凍結されているため変更できません。管理部までお問い合わせください。");
+            errorMsgList.add(map);
+            return ok(Json.toJson(
+                    ImmutableMap.of(
+                            "result", "ng",
+                            "msg", errorMsgList
+                    )
+            ));
+        // 年月別ステータスが承認済み以外の場合
+        } else {
+
+            // 当月の最大の日付分フォームがあるのでその分処理(31日まである月なら31個分)
+            for (AttendanceInputForm inputForm : adl){
+                String op = inputForm.openingTime;
+                String cl = inputForm.closingTime;
+                String emptyChar = "";
+
+                // フォームの"始業"と"終業"が入力されているまたは 休暇等区分が選択されているフォームのみ処理する。
+                if ((!emptyChar.equals(op) && !emptyChar.equals(cl))
+                        || !Const.HOLIDAY_CLASS_NOTHING.equals(inputForm.holidayClassCode)) {
+
+                    // エラーメッセージがあるかチェック
+                    ArrayList<HashMap> errorMsg = checkAttendanceInputForm(inputForm);
+                    // エラーがある場合エラーメッセージのリストにメッセージを詰め込む
+                    if (!errorMsg.isEmpty()) {
+                        for (HashMap msg : errorMsg) {
+                            errorMsgList.add(msg);
+                        }
+                    }
+                }
+            }
+            if (!errorMsgList.isEmpty()) {
                 return ok(Json.toJson(
                         ImmutableMap.of(
                                 "result", "ng",
                                 "msg", errorMsgList
                         )
                 ));
-            } else {
-                //  debug
-                System.out.println("exit save!!!!!");
-                return ok(Json.toJson(ImmutableMap.of("result", "ok")));
             }
         }
+        //  debug
+        System.out.println("exit saveCheck!!!!!");
+        return ok(Json.toJson(ImmutableMap.of("result", "ok")));
     }
 
     /**
@@ -418,7 +444,6 @@ public class AttendanceCtl extends Controller {
                     )));
         }
 
-        // TODO 正常時、異常時の分岐など
         //  debug
         System.out.println("exit fixCheck!!!!!");
         return ok(Json.toJson(ImmutableMap.of("result", "ok")));
@@ -556,7 +581,7 @@ public class AttendanceCtl extends Controller {
         double doubleDeduction = Double.parseDouble(deduction);
         String performanceTime = String.valueOf(time + salariedTime - doubleDeduction);
         String workTime = String.valueOf(time);
-        // TODO 休暇時間が有給割当時間以上の場合、合計時間と勤務時間を0にする
+        // 休暇時間が有給割当時間以上の場合、合計時間と勤務時間を0にする
         Double vacTime = MsGeneralCode.getAnyValue1ByCode("01", "PAID_VACATION_ASSIGN_TIME");
         if(salariedTime >= vacTime) {
         	performanceTime = "0.0";
