@@ -292,23 +292,24 @@ public class TblPerformance extends CommonModel {
      * @param yearMonth 年月
      */
     public static List<SqlRow> getApproveList(List<String> businessTeamCodeList, String yearMonth) {
-//    	String sql = "select yma.business_code as bs_code, per.employee_no as emp_no, emp.employee_name as emp_name, per.months_years as mon_yr, per.performance_date as per_date, per.holiday_class as ho_cl, per.shift_class as shi_cl , " +
-//    				 "per.remarks as rem, per.performance_status as per_st, per.approval_employee_no as app_emp_no, per.approval_date as app_date, appemp.position_code as app_emp_position, appemp.employee_name as app_emp_name, " +
-//    				 "yma.months_years_status as mon_yr_st " +
-//    				 "from tbl_performance per inner join ms_employee emp join tbl_year_month_attribute yma on per.employee_no = emp.employee_no and per.employee_no = yma.employee_no " +
-//    				 "left outer join ( select employee_no, employee_name, position_code from ms_employee ) appemp on per.approval_employee_no = appemp.employee_no " +
-//    				 "where yma.months_years_status in ('02', '03') and per.performance_status != '01' and per.months_years = :yearmonth and yma.business_team_code in (:btc)";
-    	String sql = "SELECT * FROM TBL_PERFORMANCE T " +
-    			"WHERE  T.MONTHS_YEARS = :yearmonth " +
-    			"AND T.PERFORMANCE_STATUS != :status";
+    	String sql = "select per.opening_time as opn_time, per.closing_time as clo_time, yma.business_code as bs_code, per.employee_no as emp_no, emp.employee_name as emp_name, per.months_years as mon_yr, per.performance_date as per_date, per.holiday_class as ho_cl, per.shift_class as shi_cl , " +
+    				 "per.remarks as rem, per.performance_status as per_st, per.approval_employee_no as app_emp_no, per.approval_date as app_date, appemp.position_code as app_emp_position, appemp.employee_name as app_emp_name, " +
+    				 "yma.months_years_status as mon_yr_st " +
+    				 "from tbl_performance per inner join ms_employee emp join tbl_year_month_attribute yma on per.employee_no = emp.employee_no and per.employee_no = yma.employee_no " +
+    				 "left outer join ( select employee_no, employee_name, position_code from ms_employee ) appemp on per.approval_employee_no = appemp.employee_no " +
+    				 "where yma.months_years_status in ('02', '03') and per.performance_status != :status and per.months_years = :yearmonth and yma.business_team_code in (:btc) " +
+    				 "group by per_date  order by emp_no , per_date";
+//    	String sql = "SELECT * FROM TBL_PERFORMANCE T " +
+//    			"WHERE  T.MONTHS_YEARS = :yearmonth " +
+//    			"AND T.PERFORMANCE_STATUS != :status";
 
     	List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
     			.setParameter("yearmonth" ,yearMonth)
     			.setParameter("status" ,Const.PERFORMANCE_STATUS_SAVE)
-//    			.setParameter("btc" ,businessTeamCodeList)
+    			.setParameter("btc" ,businessTeamCodeList)
     			.findList();
 
-    	Logger.debug("sql:" + String.valueOf(sql));
+//    	Logger.debug("sql:" + String.valueOf(sql));
 
     	return sqlRows;
     }

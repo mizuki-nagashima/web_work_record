@@ -1,15 +1,21 @@
 package services.utils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 import com.avaje.ebean.SqlRow;
 
+import akka.japi.Option;
 import common.Const;
 import models.MsEmployee;
 import models.MsGeneralCode;
+import models.TblPerformance;
 import models.TblYearMonthAttribute;
+import models.form.ApproveForm;
+import models.form.ApproveFormList;
 import models.form.AttendanceInputForm;
 import models.form.AttendanceSumForm;
 import models.form.DateList;
@@ -195,6 +201,115 @@ public class MakeModelUtil {
             aifList.add(aif);
         }
         return aifList;
+    }
+
+    /**
+     * 承認一覧用データを作成します。
+     * @param performanceData performanceData
+     * @return List<AttendanceInputForm>
+     */
+    public static List<ApproveForm> makeApproveInputFormList(List<SqlRow> performanceData) {
+    	//表示用フォーム
+    	List<ApproveForm> approveFormList = new ArrayList<>();
+
+    	Integer appNo =0;
+    	String businessCode = "";
+    	String employeeNo = "";
+    	String employeeName = "";
+    	String monthsYears = "";
+        String performanceDate = "";
+        String contents = "";
+        String remarks = "";
+        String performanceStatus = "";
+        String approvalEmployeeNo = "";
+        String approvalDate = "";
+        String approvalEmployeeName = "";
+        String monthsYears_status = "";
+
+    	for(SqlRow appList : performanceData){
+    		appNo ++;
+    		// 業務コード(BUSINESS_CODE)の名称を取得
+    		SqlRow bsCode = null;
+    		bsCode = MsGeneralCode.getCodeMaster("BUSINESS_CODE", appList.getString("bs_code"));
+    		businessCode = bsCode.getString("code_name");
+    		// 社員番号
+    		employeeNo = appList.getString("emp_no");
+    		// 社員氏名
+    		employeeName = appList.getString("emp_name");
+    		// 年月
+    		monthsYears = appList.getString("mon_yr");
+    		// 日
+    		performanceDate = appList.getString("per_date");
+    		// TODO 休暇区分・シフト区分・開始時間・終了時間によって表記変更
+    		// コンテンツを詰め込むためのリスト
+    		ArrayList<HashMap> contentsList = new ArrayList<>();
+    		HashMap<String, String> map = new HashMap<>();
+    		// 休暇区分
+    		String holidayClass =  appList.getString("ho_cl");
+    		contents = holidayClass;
+    		if(!holidayClass.equals(Const.HOLIDAY_CLASS_NOTHING)) {
+    			holidayClass = MsGeneralCode.getCodeMaster("HOLIDAY_CLASS",holidayClass).getString("code_name");
+    			map.put("休暇区分",holidayClass);
+    			contentsList.add(map);
+    		}
+    		// シフト区分
+    		String shiftClass =  appList.getString("shi_cl");
+    		if(!shiftClass.equals(Const.SHIFT_CLASS_NOTHING)){
+    			shiftClass = MsGeneralCode.getCodeMaster("SHIFT_CLASS",shiftClass).getString("code_name");
+    			map.put("シフト区分",shiftClass);
+    			contentsList.add(map);
+    		}
+    		//開始時間と終了時間
+    		String startTime = appList.getString("opn_time");
+    		String endTime = appList.getString("clo_time");
+    		if(!startTime.equals("") &&
+    				!endTime.equals("")){
+    			Double nightOverTime = DateUtil.getLateNightWorkTime(endTime);
+    			if (nightOverTime == 0.0) {
+    				map.put("勤務時間",startTime + "～" + endTime);
+    			} else {
+    				map.put("深夜時間超過", endTime + "("  + String.valueOf(nightOverTime) + "h)");
+    			}
+    			contentsList.add(map);
+    		}
+    		if(!contentsList.isEmpty()) {
+    			String kaigyo = System.getProperty("line.separator");
+    			contents = contents.replace(contents,map.toString().replace("=", "：").replace("{", "").replace("}", "").replace(",",kaigyo));
+    		}
+    		// 備考欄
+    		remarks = appList.getString("rem");
+    		// 状況(実績ステータス)
+    		SqlRow perst = null;
+    		perst = MsGeneralCode.getCodeMaster("PERFORMANCE_STATUS", appList.getString("per_st"));
+    		performanceStatus = perst.getString("code_name");
+    		// 承認者社員番号
+    		approvalEmployeeNo = appList.getString("app_emp_no");
+    		// TODO 日にち表記がおかしいの直す
+    		// 承認日
+    		approvalDate = appList.getString("app_date");
+    		// 承認者社員氏名
+    		approvalEmployeeName = appList.getString("app_emp_name");
+    		// 年月別ステータス
+    		monthsYears_status = appList.getString("mon_yr_st");
+
+	    	ApproveForm approveForm = new ApproveForm();
+	    	approveForm.appNo = appNo;
+	    	approveForm.bsCode = businessCode;
+	    	approveForm.employeeNo = employeeNo;
+	    	approveForm.employeeName = employeeName;
+	    	approveForm.monthsYears = monthsYears;
+	    	approveForm.performanceDate = performanceDate;
+	    	approveForm.contents = contents;
+	    	approveForm.remarks = remarks;
+	    	approveForm.performanceStatus = performanceStatus;
+	    	approveForm.approvalEmployeeNo = approvalEmployeeNo;
+	    	approveForm.approvalDate = approvalDate;
+	    	approveForm.approvalEmployeeName = approvalEmployeeName;
+	    	approveForm.monthsYearsStatus = monthsYears_status;
+
+	    	approveFormList.add(approveForm);
+    	}
+    	return approveFormList;
     }
 
     /**

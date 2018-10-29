@@ -70,7 +70,7 @@ public class MsPerformanceManage extends CommonModel {
         		.setParameter("emp" ,empNo)
                 .findList();
 
-        Logger.debug("sql:" + String.valueOf(sql));
+ //       Logger.debug("sql:" + String.valueOf(sql));
 
         return sqlRows;
     }
@@ -89,7 +89,7 @@ public class MsPerformanceManage extends CommonModel {
         		.setParameter("empNo", emp)
                 .findList();
 
-        Logger.debug("sql:" + String.valueOf(sql));
+//        Logger.debug("sql:" + String.valueOf(sql));
 
         return sqlRows;
     }

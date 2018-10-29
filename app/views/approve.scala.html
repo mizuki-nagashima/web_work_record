@@ -44,37 +44,34 @@
           <thead style="background: #d3e5ff;">
           <tr>
             <th rowspan="2">No.</th>
-            <th rowspan="2">業務コード</th>
-            <th rowspan="2">社員番号</th>
-            <th rowspan="2">社員名</th>
-            <th colspan="2">承認内容</th>
-            <th rowspan="2">備考欄</th>
+            <th colspan="3">社員ステータス</th>
+            <th colspan="3">承認内容</th>
             <th rowspan="2">状況</th>
-            <th colspan="2">承認者</th>
-            <th rowspan="2">承認日時</th>
             <th colspan="2" rowspan="2">承認</th>
+            <th rowspan="2">承認者</th>
+            <th rowspan="2">承認日時</th>
           </tr>
           <tr>
+          	<th>社員番号</th>
+            <th>社員名</th>
+            <th>業務チーム名</th>
             <th>日付</th>
             <th>内容</th>
-            <th>役職</th>
-            <th>承認者氏名</th>
+            <th>備考欄</th>
           </tr>
           </thead>
           <tbody>
+          <!-- TODO フォーム化 -->
           @for(app <- appFormList ){
  			<tr>
-            <td>1</td>
-            <td>@app.bsCode</td>
+            <td>@app.appNo</td>
             <td>@app.employeeNo</td>
             <td>@app.employeeName</td>
-            <td>@app.monthsYears / @app.performanceDate</td>
-            <td>@app.shiftClass</td>
+            <td>@app.bsCode</td>
+            <td>@year/@month/@app.performanceDate</td>
+            <td valign="middle">@app.contents</td>
             <td>@app.remarks</td>
             <td>@app.performanceStatus</td>
-            <td>@app.approvalPositionCode</td>
-            <td>@app.approvalEmployeeName</td>
-            <td>@app.approvalDate</td>
             <td>
             	<button type="button" id="approveButton" class="btn btn-primary pdf" style="margin-right: 10px">
 					<!-- <i class="fa fa-file-text"></i> -->
@@ -88,6 +85,8 @@
     			</button>
 
     		</td>
+    		<td>@app.approvalEmployeeName</td>
+            <td>@app.approvalDate</td>
           </tr>
 			}
           </tbody>
