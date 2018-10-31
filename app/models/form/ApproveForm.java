@@ -9,15 +9,16 @@ package models.form;
  * 承認一覧用のフォーム
  */
 public class ApproveForm {
+	public Integer appNo = 0;
     public String bsCode = "";
     public String employeeNo = "";
     public String employeeName = "";
     public String monthsYears = "";
     public String performanceDate = "";
-    public String holidayClass = "";
-    public String shiftClass = "";
+    public String contents = "";
     public String remarks = "";
     public String performanceStatus = "";
+    public Boolean isApprove;
     public String approvalEmployeeNo = "";
     public String approvalDate = "";
     public String approvalPositionCode = "";

@@ -150,4 +150,30 @@ public class TblYearMonthAttribute extends CommonModel {
             Ebean.endTransaction();
         }
     }
+
+    /**
+     * 年月属性データのステータス更新
+     * @param yearMonthData 年月属性テーブル
+     */
+    public static void updateYearMonthDataStatus(String employeeNo,String monthsYears,String monthsYearsStatus) {
+        String sql = "UPDATE TBL_YEAR_MONTH_ATTRIBUTE SET " +
+                     "MONTHS_YEARS_STATUS = :sta " +
+                     "WHERE EMPLOYEE_NO = :empNo AND MONTHS_YEARS = :yearmonth";
+        Ebean.beginTransaction();
+        try {
+        SqlUpdate create = Ebean.createSqlUpdate(sql)
+                .setParameter("empNo",employeeNo)
+                .setParameter("yearmonth",monthsYears)
+                .setParameter("sta",monthsYearsStatus);
+            Ebean.execute(create);
+            Ebean.commitTransaction();
+        } catch (Exception e) {
+            Ebean.rollbackTransaction();
+            // FIXME debug
+            System.out.println(e);
+            throw e;
+        } finally {
+            Ebean.endTransaction();
+        }
+    }
 }

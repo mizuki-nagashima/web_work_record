@@ -38,6 +38,18 @@ import views.html.attendance;
  * 勤怠管理画面用コントローラです。
  */
 //セッション管理用のクラス
+/**
+ * @author nagashima-mizuki
+ *
+ */
+/**
+ * @author nagashima-mizuki
+ *
+ */
+/**
+ * @author nagashima-mizuki
+ *
+ */
 @Security.Authenticated(Secured.class)
 public class AttendanceCtl extends Controller {
 
@@ -177,42 +189,11 @@ public class AttendanceCtl extends Controller {
         // 登録済の実績を取得
         ArrayList<String> performanceDataList = TblPerformance.getPerformanceDataList(empNo, monthsYears);
 
-        // エラーメッセージを詰め込むためのリスト
-        ArrayList<HashMap> errorMsgList = new ArrayList<>();
-
         // 年月属性を取得
         SqlRow yearMonthData = TblYearMonthAttribute.getYearMonthData(empNo, monthsYears);
-        // 勤怠を保存するボタン押下時に年月別ステータスが03：承認済の場合、 既に勤怠は凍結されているため、処理を実行しない。
+        // OKボタン押下時に年月別ステータスが03：承認済以外の場合に処理を実行する。
         if (yearMonthData != null
-                && Const.MONTHS_YEARS_STATUS_COMPLETE.equals(yearMonthData.getString("months_years_status"))) {
-
-            HashMap<String, String> map = new HashMap<>();
-            map.put("", "今月の勤怠情報は既に凍結されているため変更できません。管理部までお問い合わせください。");
-            errorMsgList.add(map);
-            return ok(Json.toJson(
-                    ImmutableMap.of(
-                            "result", "ng",
-                            "msg", errorMsgList
-                    )
-            ));
-        // 勤怠を保存するボタン押下時に年月別ステータスが02：承認依頼済の場合、一度確定ボタン押下後であるため、確定ボタン押下時と同等の処理を行う
-        } else if (yearMonthData != null
-                && Const.MONTHS_YEARS_STATUS_FIX.equals(yearMonthData.getString("months_years_status"))) {
-            return ok(Json.toJson(ImmutableMap.of("result", "ok")));
-
-        // 年月別ステータスが01：未確定の場合、年月別ステータスがまだ保存されていない場合は自由に変更して問題なし
-        } else {
-        // TODO 実績と月別属性のFormが異なるので、難しいため、ちょっと保留
-//        // 年月属性テーブルが既に存在する場合は更新、なければ新規作成
-//        SqlRow targetYearMonthAttributeTbl = TblYearMonthAttribute.getYearMonthData(empNo, monthsYears);
-//        if (targetYearMonthAttributeTbl == null) {
-//            // 新規作成
-//        	statusAndWorkForm
-//            TblYearMonthAttribute ymat = MakeModelUtil.makeYearMonthAttributeTbl(empNo, monthsYears, statusAndWorkForm);
-//            ymat.registUserId = empNo;
-//            ymat.updateUserId = empNo;
-//            TblYearMonthAttribute.insertYearMonthData(ymat);
-//        }
+                && !Const.MONTHS_YEARS_STATUS_COMPLETE.equals(yearMonthData.getString("months_years_status"))) {
 
             // 当月の最大の日付分フォームがあるのでその分処理(31日まである月なら31個分)
             for (AttendanceInputForm inputForm : adl){
@@ -223,15 +204,6 @@ public class AttendanceCtl extends Controller {
                 // フォームの"始業"と"終業"が入力されている または 休暇等区分が選択されているフォームのみ処理する。
                 if ((!emptyChar.equals(op) && !emptyChar.equals(cl))
                         || !Const.HOLIDAY_CLASS_NOTHING.equals(inputForm.holidayClassCode)) {
-
-                    // エラーメッセージがあるかチェック
-                    ArrayList<HashMap> errorMsg = checkAttendanceInputForm(inputForm);
-                    // エラーがある場合エラーメッセージのリストにメッセージを詰め込む、エラーがない場合は登録処理
-                    if (!errorMsg.isEmpty()) {
-                        for (HashMap msg : errorMsg) {
-                            errorMsgList.add(msg);
-                        }
-                    } else {
                         TblPerformance pft = new TblPerformance();
                         String holidayClassCode = inputForm.holidayClassCode;
                         if (holidayClassCode.isEmpty()) {
@@ -268,125 +240,214 @@ public class AttendanceCtl extends Controller {
                                 pft.updateUserId = inputForm.employeeNo;
                                 TblPerformance.insertPerformanceData(pft);
                             }
-                        } catch (Exception e) {
-                            //  debug
-                            System.out.println(e);
-
-                            HashMap<String, String> map = new HashMap<>();
-                            map.put(inputForm.dateId, "保存時エラーが発生しました。もう一度お試しください。");
-                            errorMsgList.add(map);
-                        }
-                    }
+	                    } catch (Exception e) {
+	                        //  debug
+	                        System.out.println(e);
+	        	            //  debug
+	        	            System.out.println(e);
+	        	            return ok(Json.toJson(
+	        	                    ImmutableMap.of(
+	        	                            "result", "ng",
+	        	                            "msg", "保存処理時エラーが発生しました。もう一度お試しください。"
+	        	                    )));
+	                    }
                 } else if (!TblPerformance.getPerformanceDataByYearMonthAndDate(
                         inputForm.employeeNo,inputForm.monthsYears,inputForm.date).isEmpty()){
                     TblPerformance.deletePerformanceData(inputForm.employeeNo,inputForm.monthsYears,inputForm.date);
                 }
             }
-            if (!errorMsgList.isEmpty()) {
-                //  debug
-                System.out.println("exit save!!!!!");
-
-                return ok(Json.toJson(
-                        ImmutableMap.of(
-                                "result", "ng",
-                                "msg", errorMsgList
-                        )
-                ));
-            } else {
-                //  debug
-                System.out.println("exit save!!!!!");
-                return ok(Json.toJson(ImmutableMap.of("result", "ok")));
-            }
         }
+        //  debug
+        System.out.println("exit save!!!!!");
+        return ok(Json.toJson(ImmutableMap.of("result", "ok")));
     }
 
-    /**
-     * 「確定」ボタン押下処理
-     * @param empNo 社員番号
-     * @param yearMonth 年月(yyyyMM)
-     * @return 勤怠管理画面画面
+	/**
+     * 「勤怠を保存」押下時チェック処理
+     * @param empNo
+     * @param monthsYears
+     * @return
      */
-    public Result fix(String empNo, String year, String month) {
-    	String yearMonth = year+month;
+    public Result saveCheck(String empNo, String monthsYears) {
 
         //  debug
-        System.out.println("fix!!!!!");
+        System.out.println("saveCheck!!!!!");
 
-        // 画面の入力値を取得
+        // 画面からForm取得
         AttendanceInputFormList attendanceFormList =
                 formFactory.form(AttendanceInputFormList.class).bindFromRequest().get();
+        List<AttendanceInputForm> adl = attendanceFormList.attendanceInputFormList;
 
-        // エラーがあるかチェック
+        // エラーメッセージを詰め込むためのリスト
         ArrayList<HashMap> errorMsgList = new ArrayList<>();
-        for (AttendanceInputForm form : attendanceFormList.attendanceInputFormList) {
-            ArrayList<HashMap> errorMsg = checkAttendanceInputForm(form);
-            if (!errorMsg.isEmpty()) {
-                for (HashMap msg : errorMsg) {
-                    errorMsgList.add(msg);
-                }
-            }
-        }
-        // エラーメッセージが1件以上存在する場合はエラーメッセージを返却して処理終了
-        if (!errorMsgList.isEmpty()) {
+
+        // 年月属性を取得
+        SqlRow yearMonthData = TblYearMonthAttribute.getYearMonthData(empNo, monthsYears);
+        // 勤怠を保存するボタン押下時に年月別ステータスが03：承認済の場合、 既に勤怠は凍結されているため、処理を実行しない。
+        if (yearMonthData != null
+                && Const.MONTHS_YEARS_STATUS_COMPLETE.equals(yearMonthData.getString("months_years_status"))) {
+
+            HashMap<String, String> map = new HashMap<>();
+            map.put("", "今月の勤怠情報は既に凍結されているため変更できません。管理部までお問い合わせください。");
+            errorMsgList.add(map);
             return ok(Json.toJson(
                     ImmutableMap.of(
                             "result", "ng",
                             "msg", errorMsgList
                     )
             ));
-        }
+        // 年月別ステータスが承認済み以外の場合
+        } else {
 
-        // TODO 月の全ての営業日にデータが登録されているかをチェック
+            // 当月の最大の日付分フォームがあるのでその分処理(31日まである月なら31個分)
+            for (AttendanceInputForm inputForm : adl){
+                String op = inputForm.openingTime;
+                String cl = inputForm.closingTime;
+                String emptyChar = "";
 
-        // 実績を取得して、実績別ステータスの振り分け設定
-        for (AttendanceInputForm form: attendanceFormList.attendanceInputFormList) {
-            // TODO 承認済のデータを修正した場合は、要承認状態に戻す
-            // TODO 承認済のデータ以外を修正した場合は、承認済みのデータは要承認状態に戻さない
+                // フォームの"始業"と"終業"が入力されているまたは 休暇等区分が選択されているフォームのみ処理する。
+                if ((!emptyChar.equals(op) && !emptyChar.equals(cl))
+                        || !Const.HOLIDAY_CLASS_NOTHING.equals(inputForm.holidayClassCode)) {
 
-
-            // 要承認の実績
-            if (isNeedApprovalPerformance(
-                    form.holidayClassName, form.shiftClassCode, form.deductionNight, form.deductionOther)) {
-                form.performanceStatus = Const.PERFORMANCE_STATUS_NEED_APPROVAL;
-                System.out.println(form.date + "日の実績は要承認です。");
-            // 承認不要の実績
-            } else {
-                form.performanceStatus = Const.PERFORMANCE_STATUS_NON_NEED_APPROVAL;
+                    // エラーメッセージがあるかチェック
+                    ArrayList<HashMap> errorMsg = checkAttendanceInputForm(inputForm);
+                    // エラーがある場合エラーメッセージのリストにメッセージを詰め込む
+                    if (!errorMsg.isEmpty()) {
+                        for (HashMap msg : errorMsg) {
+                            errorMsgList.add(msg);
+                        }
+                    }
+                }
+            }
+            if (!errorMsgList.isEmpty()) {
+                return ok(Json.toJson(
+                        ImmutableMap.of(
+                                "result", "ng",
+                                "msg", errorMsgList
+                        )
+                ));
             }
         }
-        // TODO 業績テーブル更新
-
-        // TODO 年月属性テーブル更新
-
-        // TODO 正常時、異常時の分岐など
-
+        //  debug
+        System.out.println("exit saveCheck!!!!!");
         return ok(Json.toJson(ImmutableMap.of("result", "ok")));
     }
 
     /**
-     * 実績別ステータスが03：承認依頼済となる実績かどうかを判定する。
-     *
-     * @param holidayClassCode 休暇区分
-     * @param shiftClassCode シフト区分
-     * @param deductionNight 控除（深夜）
-     * @param deductionOther 控除（その他）
-     *
-     * @return Boolean
+     * 「確定」ボタン押下処理
+     * @param empNo 社員番号
+     * @param year 年
+     * @param month 月
+     * @return 確定処理可否
      */
-    public Boolean isNeedApprovalPerformance(
-            String holidayClassCode, String shiftClassCode,
-            Double deductionNight, Double deductionOther) {
+    public Result fix(String empNo, String monthsYears) {
 
-        // 休暇区分00:なし以外
-        // シフト区分00：なし以外
-        // 控除時間が既定外
-        if (!holidayClassCode.equals(Const.HOLIDAY_CLASS_NOTHING)
-                || !shiftClassCode.equals(Const.SHIFT_CLASS_NOTHING)) {
-            return true;
-        }
-        return false;
+        //  debug
+        System.out.println("fix!!!!! :" + monthsYears);
+     // 実績一覧にすべて保存されている場合→承認申請を行う
+        	try {
+	        	// 年月属性を取得
+	            SqlRow yearMonthData = TblYearMonthAttribute.getYearMonthData(empNo, monthsYears);
+		        	TblPerformance pft = new TblPerformance();
+		            pft.employeeNo = empNo;
+		            pft.monthsYears = monthsYears;
+		            // 開始時間と終了時間は所属チームから規定の時間を取得
+		            String teamCode = yearMonthData.getString("business_team_code");
+		            SqlRow msGenList = MsGeneralCode.getCodeMaster("BUSINESS_TEAM_CODE",teamCode);
+		            pft.openingTime = msGenList.getString("any_value3");
+		            pft.closingTime = msGenList.getString("any_value4");
+		            // 休日区分とシフト区分は「00:なし」を入れる（sqlにて00以外とする）
+		            pft.holidayClass = Const.HOLIDAY_CLASS_NOTHING;
+		            pft.shiftClass = Const.SHIFT_CLASS_NOTHING;
+
+		            // 承認申請するデータ(全ステータス)を取得
+		            List<SqlRow> appData= TblPerformance.getApproveNecessaryData(pft);
+		            String perStatus = Const.PERFORMANCE_STATUS_NEED_APPROVAL;
+		            String attrStatus = Const.MONTHS_YEARS_STATUS_FIX;
+		            // 承認申請リスト
+		            for(SqlRow list : appData) {
+		            	String status = list.getString("performance_status");
+
+		            	// 承認申請済のデータを修正した場合は、要承認状態に戻す
+		            	if(Const.PERFORMANCE_STATUS_APPROVED.equals(status)) {
+		            		perStatus = Const.PERFORMANCE_STATUS_NEED_APPROVAL;
+		            		attrStatus = Const.MONTHS_YEARS_STATUS_FIX;
+		            	// 承認済のデータ以外を修正した場合は、承認済みのデータは要承認状態に戻さない
+		            	}
+		            	// 業績テーブル更新
+	            		TblPerformance.updateApprove(empNo, monthsYears, list.getString("performance_date"), perStatus);
+	            		//年月属性テーブル更新
+	            		TblYearMonthAttribute.updateYearMonthDataStatus(empNo,monthsYears,attrStatus);
+		            }
+		            //  debug
+		            System.out.println("exit fix!!!!!");
+		            return ok(Json.toJson(ImmutableMap.of("result", "ok")));
+
+        	} catch (Exception e) {
+	            //  debug
+	            System.out.println(e);
+	            return ok(Json.toJson(
+	                    ImmutableMap.of(
+	                            "result", "ng",
+	                            "msg", "確定処理時エラーが発生しました。もう一度お試しください。"
+	                    )));
+        	}
     }
 
+    /**
+     * 「確定」押下時チェック処理
+     * @param empNo 社員番号
+     * @param year	年
+     * @param month 月
+     * @return エラーチェック可否
+     */
+    public Result fixCheck(String empNo, String year, String month) {
+    	String monthsYears = year+DateUtil.getZeroPadding(month);
+
+        //  debug
+        System.out.println("fixCheck!!!!! :" + monthsYears);
+
+        // エラーメッセージを詰め込むためのリスト
+        ArrayList<HashMap> errorMsgList = new ArrayList<>();
+
+        // 月の全ての営業日にデータが登録されているかをチェック
+        // 日付リスト取得
+        List<DateList> dateList = getDateList(year, DateUtil.getZeroPadding(month));
+        ArrayList<String> notPDataList = new ArrayList<>();
+        for(DateList dl : dateList){
+        	if (!dl.isHoliday) {
+        		// 平日の場合、実績一覧を見に行き、データが無い分をリスト化
+		        List<SqlRow>  pData=  TblPerformance.getPerformanceDataByYearMonthAndDate(empNo, monthsYears, dl.date);
+		        if (pData.isEmpty()) {
+		        	notPDataList.add(dl.date);
+		        }
+        	}
+        }
+        // 実績一覧にすべて保存されている場合→承認申請を行う
+        if(!notPDataList.isEmpty()) {
+            HashMap<String, String> map = new HashMap<>();
+            for(String date :notPDataList) {
+//            	String week = DateUtil.getWeek(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(date));
+            	map.put(date, "実績(もしくは休暇等区分)が記入(選択)されていない可能性があります。");
+            }
+        	errorMsgList.add(map);
+        	System.out.println(errorMsgList);
+        }
+        if (!errorMsgList.isEmpty()) {
+            //  debug
+            System.out.println("exit error fix!!!!!");
+            return ok(Json.toJson(
+                    ImmutableMap.of(
+                            "result", "ng",
+                            "datelist",notPDataList,
+                            "msg", errorMsgList
+                    )));
+        }
+
+        //  debug
+        System.out.println("exit fixCheck!!!!!");
+        return ok(Json.toJson(ImmutableMap.of("result", "ok")));
+    }
 
     /**
      * 勤怠管理画面で「年月を指定して移動」時の処理をします。
@@ -395,7 +456,7 @@ public class AttendanceCtl extends Controller {
      * @return 勤怠管理画面画面
      */
     public Result moveTargetYearMonth(String empNo, String yearMonth, String nowYearMonth) {
-
+    	System.out.println("てすと"+empNo+yearMonth+nowYearMonth);
         String Year = yearMonth.substring(0,4);
         String Month = yearMonth.substring(4,6);
         return ok(Json.toJson(
@@ -520,7 +581,7 @@ public class AttendanceCtl extends Controller {
         double doubleDeduction = Double.parseDouble(deduction);
         String performanceTime = String.valueOf(time + salariedTime - doubleDeduction);
         String workTime = String.valueOf(time);
-        // TODO 休暇時間が有給割当時間以上の場合、合計時間と勤務時間を0にする
+        // 休暇時間が有給割当時間以上の場合、合計時間と勤務時間を0にする
         Double vacTime = MsGeneralCode.getAnyValue1ByCode("01", "PAID_VACATION_ASSIGN_TIME");
         if(salariedTime >= vacTime) {
         	performanceTime = "0.0";

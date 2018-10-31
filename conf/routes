@@ -19,6 +19,7 @@ POST     /menu/attendance                        	   controllers.AuthCtl.menuAtt
 POST     /menu/approve                        	   controllers.AuthCtl.menuApprove()
 
 POST     /attendance/save                      controllers.AttendanceCtl.save(empNo: String, monthsYears: String)
+POST     /attendance/saveCheck       		   controllers.AttendanceCtl.saveCheck(empNo: String, monthsYears: String)
 POST     /attendance/statusAndWorkSave         controllers.AttendanceCtl.statusAndWorkSave()
 GET     /attendance/:year/:month               controllers.AttendanceCtl.index(year: String, month: String)
 GET     /attendance/getPerformanceTime/:start/:end/:holidayClass/:deduction   controllers.AttendanceCtl.getPerformanceTime(start: String, end: String, holidayClass: String, deduction: String)
@@ -28,11 +29,12 @@ GET     /attendance/getSalaried/get/:code      controllers.AttendanceCtl.getSala
 GET     /attendance/getDivisionList/get/:code      controllers.AttendanceCtl.getDivisionList(code: String)
 GET     /attendance/getBusinessTeamList/get/:code      controllers.AttendanceCtl.getBusinessTeamList(code: String)
 
-GET     /attendance/fix/:empNo/:year/:month      controllers.AttendanceCtl.fix(empNo: String, year: String, month: String)
+POST     /attendance/fix/:empNo/:yearMonth      controllers.AttendanceCtl.fix(empNo: String, yearMonth: String)
+POST     /attendance/fixCheck/:empNo/:year/:month      controllers.AttendanceCtl.fixCheck(empNo: String, year: String, month: String)
 GET     /attendancePdf/:year/:month/:pdfKind   controllers.AttendancePdfCtl.index(year: String, month: String, pdfKind: Int)
 
 GET		/approve/:year/:month	controllers.ApproveCtl.index(year: String, month: String)
-GET		/approve/updateApprove/:emp/:year/:month/:date	controllers.ApproveCtl.updateApprove(emp: String, year:String, month: String, date:String)
+POST	/approve/updateApprove	controllers.ApproveCtl.updateApprove(emp: String, year:String, month: String, date:String, flg:Double)
 GET		/approve/updateNotApprove/:emp/:year/:month/:date controllers.ApproveCtl.updateNotApprove(emp: String, year:String, month: String, date:String)
 GET     /approve/moveTargetYearMonth/:empNo/:yearMonth/:nowYearMonth       controllers.ApproveCtl.moveTargetYearMonth(empNo: String, yearMonth: String, nowYearMonth: String)
 

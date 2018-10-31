@@ -54,24 +54,7 @@
        @import play.i18n._
 
        <section class="content-header" id="header">
-         <h1><i class="fa fa-list-alt"></i> @Messages.get("title")<button type="button" id="logoutBtn" class="btn btn-default pull-right" style="margin-bottom: 10px">
-          <span class="glyphicon glyphicon-log-out"></span>
-          ログアウト
-        </button></h1>
-        <script>
-        $("#logoutBtn").click(function () {
-	      	var url = '@routes.AuthCtl.logout'
-	      	$.ajax({
-	        	type : 'GET',
-		        url : url,
-		        success : function(data) {
-		          if (data.result == "ok") {
-		            window.location.href = data.link;
-		          }
-		        }
-	      	});
-	    });
-    	</script>
+         <h1><i class="fa fa-list-alt"></i> @Messages.get("title")
        </section>
        <div id="container">
 	       <div id="loader-bg">
@@ -99,28 +82,6 @@
 				$('#loader-bg').delay(600).fadeOut(500);
 				$('#loader').delay(300).fadeOut(100);
 			}
-			// リロード TODO: ?が無い場合対応
-			function keep_scroll_reload() {
-			    var re = /&page_x=(\d+)&page_y=(\d+)/;
-			    var position = '&page_x=' + document.body.scrollLeft + '&page_y=' + document.body.scrollTop;
-			    if(!window.location.href.match(re)) {
-			        //初回
-			        window.location.href = window.location.href + position;
-			    } else {
-			        //2回目以降
-			        window.location.href = window.location.href.replace(/&page_x=(\d+)&page_y=(\d+)/,position);
-			    }
-			}
-
-			// スクロール位置を復元
-			function restore_scroll() {
-			    var re = /&page_x=(\d+)&page_y=(\d+)/;
-			    if(window.location.href.match(re)) {
-			        var position = window.location.href.match(re)
-			        window.scrollTo(position[1],position[2]);
-			    }
-			}
-			restore_scroll();
 		   </script>
            @content
        </div>
