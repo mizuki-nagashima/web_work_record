@@ -145,6 +145,10 @@
       }
     });
 
+    $(".warn-msg").click(function () {
+      $(this).addClass("hidden");
+    });
+
     $(".approveButton").click(function () {
     var url = $(this).data('action');
       $.postAjax('#inputForm', function(data){
