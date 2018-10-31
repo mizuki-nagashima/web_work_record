@@ -2,10 +2,6 @@
 @import play.i18n._
 @import helper._
 @main(Messages.get("header.title","承認一覧")) {
-<!-- PDFボタン用script start -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src="jquery.extablefilter-latest.js"></script>
-<!-- PDFボタン用script end -->
 <section class="content">
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -28,42 +24,39 @@
               <input value="" class="form-control datepicker moveYearMonth">
             </div>
           </div>
-          <!--
-          <label>始業:</label>
-          <input value="" class="form-control clockpicker" >
-          <label>終業:</label>
-          <input value="" class="form-control clockpicker" >
-          <button type="button" class="btn btn-default">すべての勤怠に定時入力</button>
-          -->
         </div>
       </div>
-   </div>
-</div>
 	<div>
         <table id="tabelData" class="table table-bordered">
           <thead style="background: #d3e5ff;">
           <tr>
+            <th rowspan="2"></th>
             <th rowspan="2">No.</th>
             <th colspan="3">社員ステータス</th>
             <th colspan="3">承認内容</th>
             <th rowspan="2">状況</th>
             <th colspan="2" rowspan="2">承認</th>
             <th rowspan="2">承認者</th>
-            <th rowspan="2">承認日時</th>
+            <th rowspan="2" width="8%">承認日時</th>
           </tr>
           <tr>
           	<th>社員番号</th>
-            <th>社員名</th>
+            <th width="6%">社員名</th>
             <th>業務チーム名</th>
-            <th>日付</th>
-            <th>内容</th>
+            <th width="8%">日付</th>
+            <th width="15%">内容</th>
             <th>備考欄</th>
           </tr>
           </thead>
           <tbody>
-          <!-- TODO フォーム化 -->
           @for(app <- appFormList ){
+          @form(action = routes.ApproveCtl.updateApprove(app.employeeNo, year,month,app.performanceDate,0), 'id -> "inputForm") {
+          <input type="hidden" name="approveInputFormList[@app.appNo].employeeNo" value="@app.employeeNo">
+              <input type="hidden" name="approveInputFormList[@app.appNo].monthsYears" value="@app.monthsYears">
+              <input type="hidden" name="approveInputFormList[@app.appNo].date" value="@app.performanceDate">
+              <input type="hidden" name="approveInputFormList[@app.appNo].dateId" value="@app.appNo">
  			<tr>
+ 			<td><input type="checkbox" value="check[@app.appNo]"></td>
             <td>@app.appNo</td>
             <td>@app.employeeNo</td>
             <td>@app.employeeName</td>
@@ -73,65 +66,60 @@
             <td>@app.remarks</td>
             <td>@app.performanceStatus</td>
             <td>
-            	<button type="button" id="approveButton" class="btn btn-primary pdf" style="margin-right: 10px">
+            <!--  TODO 承認ボタンできた気がしたができなかった()  -->
+            	<button type="button" class="btn btn-success approveButton" style="margin-right: 10px">
 					<!-- <i class="fa fa-file-text"></i> -->
               			承認する
     			</button>
     		</td>
     		<td>
-    			<button type="button" id="notApproveButton" class="btn btn-primary pdf" style="margin-right: 10px" >
+    			<button type="button" class="btn btn-danger notApproveButton" style="margin-right: 10px" >
 					<!-- <i class="fa fa-file-text"></i> -->
               			不可
     			</button>
-
     		</td>
     		<td>@app.approvalEmployeeName</td>
             <td>@app.approvalDate</td>
           </tr>
+          }
 			}
           </tbody>
         </table>
 	</div>
-
+   </div>
+   <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
+          <div class="col-md-12 col-sm-12 col-xs-12 visible-xs form-inline margin-bottom">
+            <label>年月を指定して移動：</label>
+            <input value="" class="form-control datepicker moveYearMonth" style="display: inline; width: 75%;">
+          </div>
+          <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
+            <button type="button" class="btn btn-info pdf" style="margin-right: 10px">
+              <i class="fa fa-file-text"></i>
+              @Messages.get("attendance.pdf")
+            </button>
+            <div class="pull-right hidden-xs">
+              <label>年月を指定して移動：</label>
+              <input value="" class="form-control datepicker moveYearMonth">
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
 </section>
+<div class="hidden success-msg fa fa-thumbs-o-up">
+</div>
 <script>
   $(function(){
-  	$(".updateButton").click(function () {
-      var url = '@routes.ApproveCtl.index("","")'
-
-      $.ajax({
-        type : 'GET',
-        url : url
+    if(localStorage.saveMsg){
+      $(".success-msg").removeClass("hidden");
+      $('.success-msg').text(" " + localStorage.saveMsg).fadeIn(1000).delay(2000).fadeOut(2000);
+      localStorage.removeItem('saveMsg');
+    }else if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
+      $(document).ready(function () {
+        setTimeout(function() { window.scrollTo(0,$('#attendanceSaveTop').offset().top); }, 1);
       });
-    });
-
-    $(".approveButton").click(function () {
-      var url = '@routes.ApproveCtl.updateApprove("0","0","0","0")'
-   //   url = url.substring(0, url.length - 7) + hiddensalaried;
-      $.ajax({
-        type : 'GET',
-        url : url,
-        success : function(data) {
-          if (data.result == "ok") {
-            window.location.href = data.link;
-          }
-        }
-      });
-    });
-
-    $(".notApproveButton").click(function () {
-      var url = '@routes.ApproveCtl.updateNotApprove("0","0","0","0")'
-      $.ajax({
-        type : 'GET',
-        url : url,
-        success : function(data) {
-          if (data.result == "ok") {
-          	$(".notApproveButton").prop('disabled', true);
-            window.location.href = data.link;
-          }
-        }
-      });
-    });
+    }
 
     $('.datepicker').datepicker({
       format: 'yyyy/mm',
@@ -141,8 +129,7 @@
     }).on({
       changeDate : function(){
         var yearMonth = $(this).val();
-        alert(yearMonth);
-        var nowYearMonth = $('#monthsYears').val();
+        var nowYearMonth = @((year + month).toInt);
         var empNum = '@appEmp';
         var url = '@routes.ApproveCtl.moveTargetYearMonth("0","0","0")';
         url = url.substring(0, url.length - 5) + empNum + '/' + yearMonth.replace("/","") + '/' + nowYearMonth;
@@ -157,6 +144,60 @@
         });
       }
     });
+
+    $(".approveButton").click(function () {
+    var url = $(this).data('action');
+      $.postAjax('#inputForm', function(data){
+            if(data.result == "ok"){
+              var yearMonth = @year + '年' + @month + '月';
+              localStorage.saveMsg = yearMonth +'の承認を確定しました。';
+          	  location.reload();
+            }else{
+               alert('エラーが発生しました。');
+            }
+      });
+    });
+
+    $(".notApproveButton").click(function () {
+        var url = $(this).data('action');
+        url = url.substring(0, url.length - 1) + 1;
+        $.ajax({
+          type : 'GET',
+          url : url,
+          success : function(data) {
+            if(data.result == "ok"){
+              var yearMonth = @year + '年' + @month + '月';
+              localStorage.saveMsg = yearMonth +'の承認要請を却下しました。';
+          	  location.reload();
+            }else{
+               alert('エラーが発生しました。');
+            }
+          }
+      });
+    });
+
+    $.postAjax = function(formId, callBack, url) {
+      var form = (typeof formId == "string" ? $(formId) : formId);
+      var accessUrl = null;
+      try {
+        if(form && form[0]) {
+          accessUrl = url ? url : form.attr('action')
+          $.ajax({
+            url     : accessUrl,
+            data    : form.serialize(),
+            type    : "POST",
+            success : function(data) {
+              callBack(data);
+            },
+            complete : function() {
+            }
+          });
+        }
+      } catch(e) {
+        alert('エラーが発生しました。');
+      }
+    };
+
   });
 </script>
 }

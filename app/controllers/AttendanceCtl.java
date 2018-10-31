@@ -456,7 +456,7 @@ public class AttendanceCtl extends Controller {
      * @return 勤怠管理画面画面
      */
     public Result moveTargetYearMonth(String empNo, String yearMonth, String nowYearMonth) {
-
+    	System.out.println("てすと"+empNo+yearMonth+nowYearMonth);
         String Year = yearMonth.substring(0,4);
         String Month = yearMonth.substring(4,6);
         return ok(Json.toJson(

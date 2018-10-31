@@ -221,6 +221,7 @@ public class MakeModelUtil {
         String contents = "";
         String remarks = "";
         String performanceStatus = "";
+        Boolean isApprove;
         String approvalEmployeeNo = "";
         String approvalDate = "";
         String approvalEmployeeName = "";
@@ -273,15 +274,19 @@ public class MakeModelUtil {
     			contentsList.add(map);
     		}
     		if(!contentsList.isEmpty()) {
-    			String kaigyo = System.getProperty("line.separator");
-    			contents = contents.replace(contents,map.toString().replace("=", "：").replace("{", "").replace("}", "").replace(",",kaigyo));
+    			contents = contents.replace(contents,map.toString().replace("=", "：").replace("{", "").replace("}", ""));
     		}
     		// 備考欄
     		remarks = appList.getString("rem");
     		// 状況(実績ステータス)
-    		SqlRow perst = null;
-    		perst = MsGeneralCode.getCodeMaster("PERFORMANCE_STATUS", appList.getString("per_st"));
-    		performanceStatus = perst.getString("code_name");
+    		performanceStatus = appList.getString("per_st");
+    		String performanceStatusStr = MsGeneralCode.getCodeMaster("PERFORMANCE_STATUS", performanceStatus)
+    				.getString("code_name");
+    		if(performanceStatus.equals(Const.PERFORMANCE_STATUS_APPROVED)) {
+    			isApprove = true;
+    		} else {
+    			isApprove = false;
+    		}
     		// 承認者社員番号
     		approvalEmployeeNo = appList.getString("app_emp_no");
     		// TODO 日にち表記がおかしいの直す
@@ -301,7 +306,8 @@ public class MakeModelUtil {
 	    	approveForm.performanceDate = performanceDate;
 	    	approveForm.contents = contents;
 	    	approveForm.remarks = remarks;
-	    	approveForm.performanceStatus = performanceStatus;
+	    	approveForm.performanceStatus = performanceStatusStr;
+	    	approveForm.isApprove = isApprove;
 	    	approveForm.approvalEmployeeNo = approvalEmployeeNo;
 	    	approveForm.approvalDate = approvalDate;
 	    	approveForm.approvalEmployeeName = approvalEmployeeName;

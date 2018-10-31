@@ -18,6 +18,7 @@ public class ApproveForm {
     public String contents = "";
     public String remarks = "";
     public String performanceStatus = "";
+    public Boolean isApprove;
     public String approvalEmployeeNo = "";
     public String approvalDate = "";
     public String approvalPositionCode = "";

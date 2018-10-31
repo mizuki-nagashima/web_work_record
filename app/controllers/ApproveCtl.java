@@ -88,17 +88,28 @@ public class ApproveCtl extends Controller {
      * @param 承認者社員番号
      * @return 承認画面
      */
-    public Result updateApprove(String emp, String year, String month , String date) {
-    	System.out.println("承認処理開始");
-    	String perStatus = Const.PERFORMANCE_STATUS_APPROVED;	// 実績ステータス
+    public Result updateApprove(String emp, String year, String month , String date,Double flg) {
+    	System.out.println("きてる？");
     	String appEmp = session("employeeNo");	// 承認者社員番号
-    	// 承認したときに更新
+        try {
+    	if(flg == 0) {
+    	System.out.println("承認処理開始");
+    	String perStatus = Const.PERFORMANCE_STATUS_APPROVED;
     	TblPerformance.updateApprove(emp, year+month, date, perStatus, appEmp);
+    	} else if(flg == 1) {
+    		System.out.println("承認不可処理開始");
+        	String preStatus = Const.PERFORMANCE_STATUS_APPROVAL_NOT;
+        	TblPerformance.updateApprove(emp, year+month, date, preStatus,appEmp);
+    	} else {
+    		return ok(Json.toJson(ImmutableMap.of("result", "ng")));
+    	}
 
-    	return ok(Json.toJson(ImmutableMap.of(
-                "result", "ok",
-                "link",String.valueOf(routes.ApproveCtl.index(year,month))
-        )));
+    } catch (Exception e) {
+        //  debug
+        System.out.println(e);
+        return ok(Json.toJson(ImmutableMap.of("result", "ng")));
+    }
+    	return ok(Json.toJson(ImmutableMap.of("result", "ok")));
     }
 
     /**
@@ -154,6 +165,7 @@ public class ApproveCtl extends Controller {
      * @return 勤怠管理画面画面
      */
     public Result moveTargetYearMonth(String empNo, String yearMonth, String nowYearMonth) {
+    	System.out.println("てすと"+empNo+yearMonth+nowYearMonth);
 
         String Year = yearMonth.substring(0,4);
         String Month = yearMonth.substring(4,6);
