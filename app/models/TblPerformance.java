@@ -323,6 +323,7 @@ public class TblPerformance extends CommonModel {
      * @param appemp 承認者社員番号
      */
     public static void updateApprove(String empNo, String yearMonth, String date, String perStatus, String appemp) {
+    	System.out.println(empNo + yearMonth + date  + "：" +perStatus+ appemp);
     	String sql = "update tbl_performance set performance_status = :perStatus, approval_employee_no = :appEmp, approval_date = Now() " +
     				 "where employee_no = :emp and months_years = :yearmonth and performance_date = :date";
         Ebean.beginTransaction();

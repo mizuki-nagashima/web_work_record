@@ -30,7 +30,6 @@
         <table id="tabelData" class="table table-bordered">
           <thead style="background: #d3e5ff;">
           <tr>
-            <th rowspan="2"></th>
             <th rowspan="2">No.</th>
             <th colspan="3">社員ステータス</th>
             <th colspan="3">承認内容</th>
@@ -50,13 +49,12 @@
           </thead>
           <tbody>
           @for(app <- appFormList ){
-          @form(action = routes.ApproveCtl.updateApprove(app.employeeNo, year,month,app.performanceDate,0), 'id -> "inputForm") {
-          <input type="hidden" name="approveInputFormList[@app.appNo].employeeNo" value="@app.employeeNo">
-              <input type="hidden" name="approveInputFormList[@app.appNo].monthsYears" value="@app.monthsYears">
-              <input type="hidden" name="approveInputFormList[@app.appNo].date" value="@app.performanceDate">
-              <input type="hidden" name="approveInputFormList[@app.appNo].dateId" value="@app.appNo">
- 			<tr>
- 			<td><input type="checkbox" value="check[@app.appNo]"></td>
+          <tr>
+          @form(action = routes.ApproveCtl.updateApprove(app.employeeNo, year+month,app.performanceDate), 'id -> "inputForm") {
+          <input type="hidden" name="employeeNo" value="@app.employeeNo">
+              <input type="hidden" name="monthsYears" value="@app.monthsYears">
+              <input type="hidden" name="date" value="@app.performanceDate">
+              <input type="hidden" name="appNo" value="@app.appNo">
             <td>@app.appNo</td>
             <td>@app.employeeNo</td>
             <td>@app.employeeName</td>
@@ -66,10 +64,10 @@
             <td>@app.remarks</td>
             <td>@app.performanceStatus</td>
             <td>
-            <!--  TODO 承認ボタンできた気がしたができなかった()  -->
-            	<button type="button" class="btn btn-success approveButton" style="margin-right: 10px">
+            <!--  TODO 承認ボタンURL取得できない・・・  -->
+            	<input type="button" class="btn btn-success approveButton" style="margin-right: 10px" value="承認する">
 					<!-- <i class="fa fa-file-text"></i> -->
-              			承認する
+
     			</button>
     		</td>
     		<td>
@@ -80,8 +78,8 @@
     		</td>
     		<td>@app.approvalEmployeeName</td>
             <td>@app.approvalDate</td>
+            }
           </tr>
-          }
 			}
           </tbody>
         </table>
@@ -150,8 +148,12 @@
     });
 
     $(".approveButton").click(function () {
-    var url = $(this).data('action');
-      $.postAjax('#inputForm', function(data){
+    var url = $(this.form).attr('action');
+   	 $.ajax({
+          type : 'POST',
+          url : url,
+          data : $(this.form).serialize(),
+     	  success : function(data) {
             if(data.result == "ok"){
               var yearMonth = @year + '年' + @month + '月';
               localStorage.saveMsg = yearMonth +'の承認を確定しました。';
@@ -159,6 +161,7 @@
             }else{
                alert('エラーが発生しました。');
             }
+          }
       });
     });
 
