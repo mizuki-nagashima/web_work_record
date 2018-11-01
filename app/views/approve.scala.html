@@ -28,7 +28,7 @@
       </div>
 	<div>
 	@if(appFormList.isEmpty()){
-	          承認要請中のデータはありません。
+	          対象のデータはありません。
 	} else {
         <table id="tabelData" class="table table-bordered">
           <thead style="background: #d3e5ff;">
@@ -52,31 +52,26 @@
           </thead>
           <tbody>
           @for(app <- appFormList ){
-          <tr>
-          @form(action = routes.ApproveCtl.updateApprove(app.employeeNo, year+month,app.performanceDate,0), 'id -> "inputForm") {
-          <input type="hidden" name="employeeNo" value="@app.employeeNo">
-              <input type="hidden" name="monthsYears" value="@app.monthsYears">
-              <input type="hidden" name="date" value="@app.performanceDate">
-              <input type="hidden" name="appNo" value="@app.appNo">
-            <td>@app.appNo</td>
-            <td>@app.employeeNo</td>
-            <td>@app.employeeName</td>
-            <td>@app.bsCode</td>
-            <td>@year/@month/@app.performanceDate</td>
-            <td valign="middle">@app.contents</td>
-            <td>@app.remarks</td>
-            <td>@app.performanceStatus</td>
-            @if(app.performanceStatus != "承認済"){
-	            <td><button type="button" class="btn btn-success approveButton" style="margin-right: 10px">承認する</button></td>
-	            <td><button type="button" class="btn btn-danger notApproveButton" style="margin-right: 10px" >却下</button></td>
-            } else {
-	            <td><button type="button" class="btn btn-success approveButton btn-primary" disabled="disabled" style="margin-right: 10px">承認する</button></td>
-	            <td><button type="button" class="btn btn-danger notApproveButton btn-primary" disabled="disabled" style="margin-right: 10px" >却下</button></td>
-            }
-    		<td>@app.approvalEmployeeName</td>
-            <td>@app.approvalDate</td>
-            }
-          </tr>
+	          @form(action = routes.ApproveCtl.updateApprove(app.employeeNo, year+month,app.performanceDate,0), 'id -> "inputForm") {
+	          <tr>
+	         	 <input type="hidden" name="employeeNo" value="@app.employeeNo">
+	              <input type="hidden" name="monthsYears" value="@app.monthsYears">
+	              <input type="hidden" name="date" value="@app.performanceDate">
+	              <input type="hidden" name="appNo" value="@app.appNo">
+	            <td>@app.appNo</td>
+	            <td>@app.employeeNo</td>
+	            <td>@app.employeeName</td>
+	            <td>@app.bsCode</td>
+	            <td>@year/@month/@app.performanceDate</td>
+	            <td valign="middle">@app.contents</td>
+	            <td>@app.remarks</td>
+	            <td id="@app.appNo" class="status" valign="middle">@app.performanceStatus</td>
+		            <td><button id="approveButton-@app.appNo" type="button" class="btn btn-success approveButton" style="margin-right: 10px">承認する</button></td>
+		            <td><button id="notApproveButton-@app.appNo"type="button" class="btn btn-danger notApproveButton" style="margin-right: 10px" >却下</button></td>
+	    		<td>@app.approvalEmployeeName</td>
+	            <td>@app.approvalDate</td>
+	          </tr>
+	          }
 			}
           </tbody>
         </table>
@@ -173,7 +168,6 @@
         $('.warn-msg-contents').remove();
         $('.save-warn-msg-contents').remove();
 	    var url = $(this.form).attr('action');
-	    alert(url);
    	 	$.ajax({
           type : 'POST',
           url : url,
@@ -213,7 +207,6 @@
         $('.save-warn-msg-contents').remove();
 	    var url = $(this.form).attr('action');
 	    url = url.substring(0, url.length - 1) + 1;
-	    alert(url);
    	    $.ajax({
           type : 'POST',
           url : url,
@@ -245,6 +238,21 @@
             }
           }
       });
+    });
+
+    $(".status").each(function(){
+      var targetTrId = $(this).attr('id');
+      var text = $(this).text();
+      var value = text.substr(text.length-6);
+	　  if (value.match('未承認')){
+        $(this).css('color', 'red');
+        $(this).css('font-weight', 'bold');
+      } else if(value.match('承認済')){
+	      $('#approveButton-' + targetTrId).prop('disabled', true);
+	      $('#notApproveButton-' + targetTrId).prop('disabled', true);
+      } else {
+      	 $(this).css('font-weight', 'bold');
+      }
     });
 
     $(".pdfBtn").click(function () {
