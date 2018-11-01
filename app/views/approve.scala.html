@@ -50,7 +50,7 @@
           <tbody>
           @for(app <- appFormList ){
           <tr>
-          @form(action = routes.ApproveCtl.updateApprove(app.employeeNo, year+month,app.performanceDate), 'id -> "inputForm") {
+          @form(action = routes.ApproveCtl.updateApprove(app.employeeNo, year+month,app.performanceDate,0), 'id -> "inputForm") {
           <input type="hidden" name="employeeNo" value="@app.employeeNo">
               <input type="hidden" name="monthsYears" value="@app.monthsYears">
               <input type="hidden" name="date" value="@app.performanceDate">
@@ -63,19 +63,13 @@
             <td valign="middle">@app.contents</td>
             <td>@app.remarks</td>
             <td>@app.performanceStatus</td>
-            <td>
-            <!--  TODO 承認ボタンURL取得できない・・・  -->
-            	<input type="button" class="btn btn-success approveButton" style="margin-right: 10px" value="承認する">
-					<!-- <i class="fa fa-file-text"></i> -->
-
-    			</button>
-    		</td>
-    		<td>
-    			<button type="button" class="btn btn-danger notApproveButton" style="margin-right: 10px" >
-					<!-- <i class="fa fa-file-text"></i> -->
-              			不可
-    			</button>
-    		</td>
+            @if(app.performanceStatus != "承認済"){
+	            <td><button type="button" class="btn btn-success approveButton" style="margin-right: 10px">承認する</button></td>
+	            <td><button type="button" class="btn btn-danger notApproveButton" style="margin-right: 10px" >却下</button></td>
+            } else {
+	            <td><button type="button" class="btn btn-success approveButton btn-primary" disabled="disabled" style="margin-right: 10px">承認する</button></td>
+	            <td><button type="button" class="btn btn-danger notApproveButton btn-primary" disabled="disabled" style="margin-right: 10px" >却下</button></td>
+            }
     		<td>@app.approvalEmployeeName</td>
             <td>@app.approvalDate</td>
             }
@@ -105,6 +99,12 @@
       </div>
 </div>
 </section>
+<div class="hidden warn-msg">
+  <p id="warn-msg-title"><i class="fa fa-exclamation-circle"></i>以下の入力値が誤っているため保存できません、修正して下さい。</p>
+  <div align="right">
+    <small>※クリックでこのメッセージを閉じます。</small>
+  </div>
+</div>
 <div class="hidden success-msg fa fa-thumbs-o-up">
 </div>
 <script>
@@ -148,16 +148,37 @@
     });
 
     $(".approveButton").click(function () {
-    var url = $(this.form).attr('action');
-   	 $.ajax({
+        $(".warn-msg").addClass("hidden");
+        $('.warn-msg-contents').remove();
+        $('.save-warn-msg-contents').remove();
+	    var url = $(this.form).attr('action');
+	    alert(url);
+   	 	$.ajax({
           type : 'POST',
           url : url,
           data : $(this.form).serialize(),
      	  success : function(data) {
             if(data.result == "ok"){
-              var yearMonth = @year + '年' + @month + '月';
-              localStorage.saveMsg = yearMonth +'の承認を確定しました。';
+              localStorage.saveMsg = '承認を確定しました。';
           	  location.reload();
+          	}else if(data.result == "ng"){
+              $(".warn-msg").removeClass("hidden");
+	          var errorMsgList = data.msg;
+	          var alertMsgContents = "";
+	          $.each(errorMsgList, function(key, obj) {
+	            $.each(obj, function(dId, msg) {
+	              var dateId = dId;
+	              var dataMsg = msg;
+	              var stringDate = dateId + '日';
+	              var msgContents = '<p id=' + dateId + ' class=' + 'save-warn-msg-contents' + '>' + stringDate + '&nbsp;-&nbsp;' + dataMsg + '<p>';
+	              alertMsgContents = msgContents + '\n'
+	              $('#warn-msg-title').after(msgContents);
+	              if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
+	                $(".warn-msg").removeAttr('style');
+	                $(".warn-msg").css('bottom','20px');
+	              }
+	            });
+	          });
             }else{
                alert('エラーが発生しました。');
             }
@@ -166,16 +187,38 @@
     });
 
     $(".notApproveButton").click(function () {
-        var url = $(this).data('action');
-        url = url.substring(0, url.length - 1) + 1;
-        $.ajax({
-          type : 'GET',
+        $(".warn-msg").addClass("hidden");
+        $('.warn-msg-contents').remove();
+        $('.save-warn-msg-contents').remove();
+	    var url = $(this.form).attr('action');
+	    url = url.substring(0, url.length - 1) + 1;
+	    alert(url);
+   	    $.ajax({
+          type : 'POST',
           url : url,
-          success : function(data) {
+          data : $(this.form).serialize(),
+     	  success : function(data) {
             if(data.result == "ok"){
-              var yearMonth = @year + '年' + @month + '月';
-              localStorage.saveMsg = yearMonth +'の承認要請を却下しました。';
+              localStorage.saveMsg = '承認要請を却下しました。';
           	  location.reload();
+          	}else if(data.result == "ng"){
+              $(".warn-msg").removeClass("hidden");
+	          var errorMsgList = data.msg;
+	          var alertMsgContents = "";
+	          $.each(errorMsgList, function(key, obj) {
+	            $.each(obj, function(dId, msg) {
+	              var dateId = dId;
+	              var dataMsg = msg;
+	              var stringDate = dateId + '日';
+	              var msgContents = '<p id=' + dateId + ' class=' + 'save-warn-msg-contents' + '>' + stringDate + '&nbsp;-&nbsp;' + dataMsg + '<p>';
+	              alertMsgContents = msgContents + '\n'
+	              $('#warn-msg-title').after(msgContents);
+	              if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
+	                $(".warn-msg").removeAttr('style');
+	                $(".warn-msg").css('bottom','20px');
+	              }
+	            });
+	          });
             }else{
                alert('エラーが発生しました。');
             }
