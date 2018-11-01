@@ -69,6 +69,8 @@ public class AttendanceCtl extends Controller {
         final int MAX_MONTH = 12;
         // 社員番号
         final String employeeNo = session("employeeNo");
+        // 社員名
+        final String employeeName = session("employeeName");
         // 日付
         List<DateList> dateList = getDateList(year, DateUtil.getZeroPadding(month));
 
@@ -117,6 +119,7 @@ public class AttendanceCtl extends Controller {
                     statusDefaultValue,
                     existsDefaultValue,
                     employeeNo,
+                    employeeName,
                     defalutWorkTime,
                     departList,
                     divisionList,

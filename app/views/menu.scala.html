@@ -1,7 +1,7 @@
-@(loginForm: Form[models.form.LoginForm])
+@(loginForm: Form[models.form.LoginForm],empNo: String, empName: String)
 @import play.i18n._
 @import helper._
-@main(Messages.get("header.title","管理者メニュー")) {
+@main(Messages.get("header.title","管理者メニュー"),empNo,empName) {
 <style>
 body {
 background-color:#f8f8f8;

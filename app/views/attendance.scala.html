@@ -2,19 +2,19 @@
 	inputForm: Form[models.form.AttendanceInputFormList],
 	date: List[models.form.DateList], year: String, month: String,
 	statusDefaultValue: Boolean,existsDefaultValue: Boolean,
-	empNo: String, defaultWorkTime: Double,
+	empNo: String, empName: String,defaultWorkTime: Double,
 	departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode],
 	businessList: List[models.MsGeneralCode], businessTeamList: List[models.MsGeneralCode],
 	hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
 @import play.i18n._
 @import helper._
-@main(Messages.get("header.title","勤怠入力")) {
+@main(Messages.get("header.title","勤怠入力"),empNo,empName) {
 
 <section class="content">
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <div class="col-md-10 col-sm-10 col-xs-12">
-        <h2><i class="fa fa-pencil-square-o"></i> @Messages.get("attendance.titleDate",year,month)</h2>
+        <h2><i class="fa fa-pencil-square-o"></i> @Messages.get("titleDate",year,month)</h2>
       </div>
       @form(action = routes.AttendanceCtl.statusAndWorkSave, 'id -> "statusAndWorkForm") {
       <div class="col-md-12 col-sm-12 col-xs-12">

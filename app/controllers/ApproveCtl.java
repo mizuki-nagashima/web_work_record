@@ -51,6 +51,7 @@ public class ApproveCtl extends Controller {
 
     	String yearMonth = year + DateUtil.getZeroPadding(month);
     	String appEmp = session("employeeNo");
+    	String appName = session("employeeName");
 
     	// 業務チームコード取得
     	List<SqlRow> sqlBusinessTeamCodeList = getBusinessTeamCode();
@@ -72,6 +73,7 @@ public class ApproveCtl extends Controller {
         		appEmp,
          		year,month,
          		apfl.approveFormList
+         		,appEmp,appName
         		));
 
     	} else {
@@ -192,8 +194,6 @@ public class ApproveCtl extends Controller {
      * @return 勤怠管理画面画面
      */
     public Result moveTargetYearMonth(String empNo, String yearMonth, String nowYearMonth) {
-    	System.out.println("てすと"+empNo+yearMonth+nowYearMonth);
-
         String Year = yearMonth.substring(0,4);
         String Month = yearMonth.substring(4,6);
         return ok(Json.toJson(

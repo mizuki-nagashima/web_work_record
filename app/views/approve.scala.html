@@ -1,12 +1,12 @@
-@(message: String, appEmp:String, year:String, month:String, appFormList: List[models.form.ApproveForm])
+@(message: String, appEmp:String, year:String, month:String, appFormList: List[models.form.ApproveForm],empNo: String, empName: String)
 @import play.i18n._
 @import helper._
-@main(Messages.get("header.title","承認一覧")) {
+@main(Messages.get("header.title","承認一覧"),empNo,empName) {
 <section class="content">
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <div class="col-md-10 col-sm-10 col-xs-12">
-        <h2><i class="fa fa-pencil-square-o"></i> @Messages.get("attendance.titleDate",year,month)</h2>
+        <h2><i class="fa fa-pencil-square-o"></i> @Messages.get("titleDate",year,month)</h2>
       </div>
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
@@ -15,7 +15,7 @@
             <input value="" class="form-control datepicker moveYearMonth" style="display: inline; width: 75%;">
           </div>
           <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
-            <button type="button" class="btn btn-info pdf" style="margin-right: 10px">
+            <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
               <i class="fa fa-file-text"></i>
               @Messages.get("attendance.pdf")
             </button>
@@ -27,6 +27,9 @@
         </div>
       </div>
 	<div>
+	@if(appFormList.isEmpty()){
+	          承認要請中のデータはありません。
+	} else {
         <table id="tabelData" class="table table-bordered">
           <thead style="background: #d3e5ff;">
           <tr>
@@ -78,6 +81,7 @@
           </tbody>
         </table>
 	</div>
+	}
    </div>
    <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
@@ -86,7 +90,7 @@
             <input value="" class="form-control datepicker moveYearMonth" style="display: inline; width: 75%;">
           </div>
           <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
-            <button type="button" class="btn btn-info pdf" style="margin-right: 10px">
+            <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
               <i class="fa fa-file-text"></i>
               @Messages.get("attendance.pdf")
             </button>
@@ -106,6 +110,23 @@
   </div>
 </div>
 <div class="hidden success-msg fa fa-thumbs-o-up">
+</div>
+<div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
+        <h4 class="modal-title" id="exampleModalLabel">PDF出力</h4>
+      </div>
+      <div class="modal-body">
+        <p>出力するPDFを選んでください</p>
+        <button type="button" id="normalPdf" class="btn btn-default" value="target='_blank'" onClick="window.open('@routes.AttendancePdfCtl.index(year,month,1)','_blank','')">社員用(ノーマル)</button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
 </div>
 <script>
   $(function(){
@@ -224,6 +245,10 @@
             }
           }
       });
+    });
+
+    $(".pdfBtn").click(function () {
+　　　　　$('#pdfModal').modal('show');
     });
 
     $.postAjax = function(formId, callBack, url) {
