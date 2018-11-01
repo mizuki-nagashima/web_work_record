@@ -86,10 +86,24 @@ public class AttendanceCtl extends Controller {
         // 表示用Form
         AttendanceInputFormList aifl = new AttendanceInputFormList();
 
-        if(monthStatusData.size() != 0) {
+        if(monthStatusData != null) {
         	statusDefaultValue = true;
-        	aifl.statusAndWorkFormList = MakeModelUtil.makeStatusAndWorkForm(employeeNo, monthsYears);
         }
+        	//保存データない場合はインサート
+//        	try {
+//	        	StatusAndWorkForm statusAndWorkForm= MakeModelUtil.makeStatusAndWorkForm(employeeNo, monthsYears);
+//	            TblYearMonthAttribute ymat = MakeModelUtil.makeYearMonthAttributeTbl(
+//	                    employeeNo, monthsYears, statusAndWorkForm);
+//	            ymat.monthsYearsStatus = Const.PERFORMANCE_STATUS_SAVE;
+//	            ymat.registUserId = employeeNo;
+//	            ymat.updateUserId = employeeNo;
+//	        	TblYearMonthAttribute.insertYearMonthData(ymat);
+//	        	aifl.statusAndWorkFormList = statusAndWorkForm;
+//
+//			} catch (Exception e) {
+//				System.out.println(e);
+//			}
+        aifl.statusAndWorkFormList = MakeModelUtil.makeStatusAndWorkForm(employeeNo, monthsYears);
 
         // 指定した年月の実績データが一件でもある場合は初期値をセット
         if (performanceData.size() != 0) {
