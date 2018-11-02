@@ -169,6 +169,7 @@ public class MakeModelUtil {
                     holidayClassCode = Optional.ofNullable(pd.getString("holiday_class")).orElse(holidayClassCode);
                     shiftClassCode = Optional.ofNullable(pd.getString("shift_class")).orElse(shiftClassCode);
                     remarks = Optional.ofNullable(pd.getString("remarks")).orElse(remarks);
+                    performanceStatus = Optional.ofNullable(pd.getString("performance_status")).orElse(performanceStatus);
                 }
             }
             AttendanceInputForm aif = new AttendanceInputForm();
