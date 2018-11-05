@@ -175,7 +175,7 @@ public class TblPerformance extends CommonModel {
     }
 
     /**
-     * 実績データから承認が必要なデータを取得します
+     * 実績データから承認が必要なデータを承認済み以外で取得します
      * @param performanceData 実績テーブル
      * @return sqlRows
      */
@@ -184,6 +184,7 @@ public class TblPerformance extends CommonModel {
         		"WHERE T.EMPLOYEE_NO = :emp AND T.MONTHS_YEARS = :yearmonth " +
         		"AND ((T.OPENING_TIME != :open OR T.CLOSING_TIME != :close ) " +
         		" OR (T.HOLIDAY_CLASS != :holiday OR T.SHIFT_CLASS != :shift)) " +
+        		"AND T.PERFORMANCE_STATUS != :status " +
         		"ORDER BY T.PERFORMANCE_DATE";
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
@@ -193,7 +194,22 @@ public class TblPerformance extends CommonModel {
                 .setParameter("close",performanceData.closingTime)
                 .setParameter("holiday",performanceData.holidayClass)
                 .setParameter("shift",performanceData.shiftClass)
+                .setParameter("status",Const.PERFORMANCE_STATUS_APPROVED)
                 .findList();
+
+        return sqlRows;
+    }
+
+    public static SqlRow getPerformanceDataByStatus(String empNo, String yearMonth,String status) {
+        String sql = "SELECT * FROM TBL_PERFORMANCE T " +
+        		"WHERE T.EMPLOYEE_NO = :emp AND T.MONTHS_YEARS = :yearmonth " +
+        		"AND  T.PERFORMANCE_STATUS = :status";
+
+        SqlRow sqlRows = Ebean.createSqlQuery(sql)
+                .setParameter("emp",empNo)
+                .setParameter("yearmonth",yearMonth)
+                .setParameter("status",status)
+                .findUnique();
 
         return sqlRows;
     }
@@ -226,7 +242,7 @@ public class TblPerformance extends CommonModel {
                      "BREAKDOWN2 = :break2,BREAKDOWN3 = :break3,BREAKDOWN4 = :break4," +
                      "PERFORMANCE_TIME = :pertime,DEDUCTION_NIGHT = :den,DEDUCTION_OTHER = :deo," +
                      "HOLIDAY_CLASS = :holiday,SHIFT_CLASS = :shift,OTHER_APPROVAL_CLASS = :other," +
-                     "REMARKS = :rem,UPDATE_DATE = CURRENT_TIMESTAMP " +
+                     "PERFORMANCE_STATUS = :status, REMARKS = :rem,UPDATE_DATE = CURRENT_TIMESTAMP " +
                      "WHERE EMPLOYEE_NO = :emp AND MONTHS_YEARS = :yearmonth AND PERFORMANCE_DATE = :date";
         Ebean.beginTransaction();
         try {
@@ -243,6 +259,7 @@ public class TblPerformance extends CommonModel {
                 .setParameter("holiday",performanceData.holidayClass)
                 .setParameter("shift",performanceData.shiftClass)
                 .setParameter("other",performanceData.other_approval_class)
+                .setParameter("status",performanceData.performanceStatus)
                 .setParameter("rem",performanceData.remarks)
                 .setParameter("emp",performanceData.employeeNo)
                 .setParameter("yearmonth",performanceData.monthsYears)

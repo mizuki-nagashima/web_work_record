@@ -69,6 +69,8 @@ public class AttendanceCtl extends Controller {
         final int MAX_MONTH = 12;
         // 社員番号
         final String employeeNo = session("employeeNo");
+        // 社員名
+        final String employeeName = session("employeeName");
         // 日付
         List<DateList> dateList = getDateList(year, DateUtil.getZeroPadding(month));
 
@@ -84,10 +86,10 @@ public class AttendanceCtl extends Controller {
         // 表示用Form
         AttendanceInputFormList aifl = new AttendanceInputFormList();
 
-        if(monthStatusData.size() != 0) {
+        if(monthStatusData != null) {
         	statusDefaultValue = true;
-        	aifl.statusAndWorkFormList = MakeModelUtil.makeStatusAndWorkForm(employeeNo, monthsYears);
         }
+        aifl.statusAndWorkFormList = MakeModelUtil.makeStatusAndWorkForm(employeeNo, monthsYears);
 
         // 指定した年月の実績データが一件でもある場合は初期値をセット
         if (performanceData.size() != 0) {
@@ -117,6 +119,7 @@ public class AttendanceCtl extends Controller {
                     statusDefaultValue,
                     existsDefaultValue,
                     employeeNo,
+                    employeeName,
                     defalutWorkTime,
                     departList,
                     divisionList,
@@ -232,8 +235,8 @@ public class AttendanceCtl extends Controller {
                             // 登録しようとしている日のデータがある場合は更新、ない場合登録
                             if (performanceDataList.contains(date)) {
                                 //
-                                pft.updateUserId = inputForm.employeeNo;
-                                TblPerformance.updatePerformanceData(pft);
+	                            pft.updateUserId = inputForm.employeeNo;
+	                            TblPerformance.updatePerformanceData(pft);
                             } else {
                                 //
                                 pft.registUserId = inputForm.employeeNo;
@@ -241,8 +244,6 @@ public class AttendanceCtl extends Controller {
                                 TblPerformance.insertPerformanceData(pft);
                             }
 	                    } catch (Exception e) {
-	                        //  debug
-	                        System.out.println(e);
 	        	            //  debug
 	        	            System.out.println(e);
 	        	            return ok(Json.toJson(
@@ -360,7 +361,7 @@ public class AttendanceCtl extends Controller {
 		            pft.holidayClass = Const.HOLIDAY_CLASS_NOTHING;
 		            pft.shiftClass = Const.SHIFT_CLASS_NOTHING;
 
-		            // 承認申請するデータ(全ステータス)を取得
+		            // 承認申請するデータ(承認済以外)を取得
 		            List<SqlRow> appData= TblPerformance.getApproveNecessaryData(pft);
 		            String perStatus = Const.PERFORMANCE_STATUS_NEED_APPROVAL;
 		            String attrStatus = Const.MONTHS_YEARS_STATUS_FIX;

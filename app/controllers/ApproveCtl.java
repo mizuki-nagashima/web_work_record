@@ -51,6 +51,7 @@ public class ApproveCtl extends Controller {
 
     	String yearMonth = year + DateUtil.getZeroPadding(month);
     	String appEmp = session("employeeNo");
+    	String appName = session("employeeName");
 
     	// 業務チームコード取得
     	List<SqlRow> sqlBusinessTeamCodeList = getBusinessTeamCode();
@@ -72,6 +73,7 @@ public class ApproveCtl extends Controller {
         		appEmp,
          		year,month,
          		apfl.approveFormList
+         		,appEmp,appName
         		));
 
     	} else {
@@ -84,32 +86,44 @@ public class ApproveCtl extends Controller {
 
     /**
      * 承認処理
-     * @param 実績ステータス
-     * @param 承認者社員番号
+     * @param empNo 該当社員番号
+     * @param monthsYears 該当年月
+     * @param date 該当日
+     * @param flg 承認不可フラグ
      * @return 承認画面
      */
-    public Result updateApprove(String emp, String year, String month , String date,Double flg) {
-    	System.out.println("きてる？");
-    	String appEmp = session("employeeNo");	// 承認者社員番号
-        try {
-    	if(flg == 0) {
-    	System.out.println("承認処理開始");
-    	String perStatus = Const.PERFORMANCE_STATUS_APPROVED;
-    	TblPerformance.updateApprove(emp, year+month, date, perStatus, appEmp);
-    	} else if(flg == 1) {
-    		System.out.println("承認不可処理開始");
-        	String preStatus = Const.PERFORMANCE_STATUS_APPROVAL_NOT;
-        	TblPerformance.updateApprove(emp, year+month, date, preStatus,appEmp);
-    	} else {
-    		return ok(Json.toJson(ImmutableMap.of("result", "ng")));
-    	}
+    public Result updateApprove(String empNo, String monthsYears , String  date, Integer flg) {
 
-    } catch (Exception e) {
-        //  debug
-        System.out.println(e);
-        return ok(Json.toJson(ImmutableMap.of("result", "ng")));
-    }
-    	return ok(Json.toJson(ImmutableMap.of("result", "ok")));
+        // エラーメッセージを詰め込むためのリスト
+        ArrayList<HashMap> errorMsgList = new ArrayList<>();
+        HashMap<String, String> map = new HashMap<>();
+
+	    try {
+	    	String appEmp = session("employeeNo");	// 承認者社員番号
+		    if(flg == 0) {
+		    	System.out.println("承認処理開始");
+		    	String perStatus = Const.PERFORMANCE_STATUS_APPROVED;
+		    	TblPerformance.updateApprove(empNo, monthsYears, date, perStatus, appEmp);
+		    } else if(flg == 1) {
+		    		System.out.println("承認不可処理開始");
+		        	String perStatus = Const.PERFORMANCE_STATUS_APPROVAL_NOT;
+		        	TblPerformance.updateApprove(empNo, monthsYears, date, perStatus);
+		    } else {
+		            map.put(date, "承認フラグに不正なデータが入っています");
+		            errorMsgList.add(map);
+		    }
+		} catch (Exception e) {
+	       //  debug
+	       System.out.println(e);
+	       map.put(date, "承認処理中にエラーが発生しました。");
+	       errorMsgList.add(map);
+		}
+
+    	if(!errorMsgList.isEmpty()) {
+    		return ok(Json.toJson(ImmutableMap.of("result", "ng","msg",errorMsgList)));
+    	} else {
+    		return ok(Json.toJson(ImmutableMap.of("result", "ok")));
+    	}
     }
 
     /**
@@ -117,18 +131,32 @@ public class ApproveCtl extends Controller {
      * @param 実績ステータス
      * @return 承認画面
      */
-    public Result updateNotApprove(String emp, String year,String month,String date) {
-    	System.out.println("承認不可処理開始");
+    public Result updateNotApprove(String empNo, String monthsYears , String  date) {
 
-    	String preStatus = Const.PERFORMANCE_STATUS_APPROVAL_NOT;
-    	String appEmp = session("employeeNo");
+    	// 画面からForm取得
+        ApproveFormList approveFormList =
+                formFactory.form(ApproveFormList.class).bindFromRequest().get();
+        List<ApproveForm> apl = approveFormList.approveFormList;
 
-    	TblPerformance.updateApprove(emp, year+month, date, preStatus,appEmp);
+     // エラーメッセージを詰め込むためのリスト
+        ArrayList<HashMap> errorMsgList = new ArrayList<>();
 
-    	return ok(Json.toJson(ImmutableMap.of(
-                "result", "ok",
-                "link", String.valueOf(routes.ApproveCtl.index(year,month)))
-        ));
+	        try {
+		    	System.out.println("承認不可処理開始");
+		    	String perStatus = Const.PERFORMANCE_STATUS_APPROVAL_NOT;
+		    	TblPerformance.updateApprove(empNo, monthsYears, date, perStatus);
+		    } catch (Exception e) {
+		        //  debug
+		        System.out.println(e);
+		        HashMap<String, String> map = new HashMap<>();
+	            map.put(date, "承認不可処理中にエラーが発生しました。");
+	            errorMsgList.add(map);
+		    }
+    	if(!errorMsgList.isEmpty()) {
+    	return ok(Json.toJson(ImmutableMap.of("result", "ng","msg",errorMsgList)));
+    	} else {
+    	return ok(Json.toJson(ImmutableMap.of("result", "ok")));
+    	}
     }
 
     /**
@@ -165,8 +193,6 @@ public class ApproveCtl extends Controller {
      * @return 勤怠管理画面画面
      */
     public Result moveTargetYearMonth(String empNo, String yearMonth, String nowYearMonth) {
-    	System.out.println("てすと"+empNo+yearMonth+nowYearMonth);
-
         String Year = yearMonth.substring(0,4);
         String Month = yearMonth.substring(4,6);
         return ok(Json.toJson(

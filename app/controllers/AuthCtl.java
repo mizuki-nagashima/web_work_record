@@ -47,7 +47,9 @@ public class AuthCtl extends Controller {
     public Result menu() {
     	LoginForm lForm = new LoginForm();
     	Form<LoginForm> loginForm = formFactory.form(LoginForm.class).fill(lForm);
-        return ok(menu.render(loginForm));
+        final String employeeNo = session("employeeNo");
+        final String employeeName = session("employeeName");
+        return ok(menu.render(loginForm,employeeNo,employeeName));
     }
 
     /**
@@ -89,10 +91,12 @@ public class AuthCtl extends Controller {
             // 社員情報を取得し権限情報をセッションへ
             SqlRow result = MsEmployee.getEmployeeInfo(employeeNo);
             String authority = result.getString("authority_class");
-            session("authorityClass", result.getString("authority_class"));
+            session("authorityClass", authority);
+            session("employeeName", result.getString("employee_name"));
 
             // FIXME debug
             System.out.println("authority_class ===== " + authority);
+            System.out.println("authority_class ===== " + result.getString("employee_name"));
 
            // 権限が05：自陣のみ閲覧以外の場合はメニュー画面に遷移
             if (!Const.AUTHORITY_CLASS_SELF.equals(authority)) {

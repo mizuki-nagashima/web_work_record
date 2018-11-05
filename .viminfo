@@ -11,10 +11,10 @@
 # hlsearch on (H) or off (h):
 ~h
 # コマンドライン 項目の履歴 (新しいものから古いものへ):
+:wq!
+|2,0,1540975506,,"wq!"
 :q!
 |2,0,1540353982,,"q!"
-:wq!
-|2,0,1538466696,,"wq!"
 :q
 |2,0,1536122635,,"q"
 :wq
@@ -32,17 +32,27 @@
 
 # ファイルマーク:
 '0  1  0  ~/.git/MERGE_MSG
-|4,48,1,0,1540353982,"~/.git/MERGE_MSG"
+|4,48,1,0,1540975506,"~/.git/MERGE_MSG"
 '1  1  0  ~/.git/MERGE_MSG
-|4,49,1,0,1540353905,"~/.git/MERGE_MSG"
+|4,49,1,0,1540353982,"~/.git/MERGE_MSG"
 '2  1  0  ~/.git/MERGE_MSG
-|4,50,1,0,1538466696,"~/.git/MERGE_MSG"
+|4,50,1,0,1540353905,"~/.git/MERGE_MSG"
 '3  1  0  ~/.git/MERGE_MSG
-|4,51,1,0,1538466696,"~/.git/MERGE_MSG"
-'4  3  40  ~/.git/COMMIT_EDITMSG
-|4,52,3,40,1536122682,"~/.git/COMMIT_EDITMSG"
+|4,51,1,0,1540353905,"~/.git/MERGE_MSG"
+'4  1  0  ~/.git/MERGE_MSG
+|4,52,1,0,1538466696,"~/.git/MERGE_MSG"
+'5  1  0  ~/.git/MERGE_MSG
+|4,53,1,0,1538466696,"~/.git/MERGE_MSG"
+'6  1  0  ~/.git/MERGE_MSG
+|4,54,1,0,1538466696,"~/.git/MERGE_MSG"
+'7  1  0  ~/.git/MERGE_MSG
+|4,55,1,0,1538466696,"~/.git/MERGE_MSG"
+'8  3  40  ~/.git/COMMIT_EDITMSG
+|4,56,3,40,1536122682,"~/.git/COMMIT_EDITMSG"
 
 # ジャンプリスト (新しいものが先):
+-'  1  0  ~/.git/MERGE_MSG
+|4,39,1,0,1540975506,"~/.git/MERGE_MSG"
 -'  1  0  ~/.git/MERGE_MSG
 |4,39,1,0,1540353982,"~/.git/MERGE_MSG"
 -'  1  0  ~/.git/MERGE_MSG
@@ -65,6 +75,38 @@
 |4,39,3,40,1536122682,"~/.git/COMMIT_EDITMSG"
 -'  3  40  ~/.git/COMMIT_EDITMSG
 |4,39,3,40,1536122682,"~/.git/COMMIT_EDITMSG"
+-'  3  40  ~/.git/COMMIT_EDITMSG
+|4,39,3,40,1536122682,"~/.git/COMMIT_EDITMSG"
+-'  3  40  ~/.git/COMMIT_EDITMSG
+|4,39,3,40,1536122682,"~/.git/COMMIT_EDITMSG"
+-'  3  40  ~/.git/COMMIT_EDITMSG
+|4,39,3,40,1536122682,"~/.git/COMMIT_EDITMSG"
+-'  3  40  ~/.git/COMMIT_EDITMSG
+|4,39,3,40,1536122682,"~/.git/COMMIT_EDITMSG"
+-'  3  40  ~/.git/COMMIT_EDITMSG
+|4,39,3,40,1536122682,"~/.git/COMMIT_EDITMSG"
+-'  3  40  ~/.git/COMMIT_EDITMSG
+|4,39,3,40,1536122682,"~/.git/COMMIT_EDITMSG"
+-'  3  40  ~/.git/COMMIT_EDITMSG
+|4,39,3,40,1536122682,"~/.git/COMMIT_EDITMSG"
+-'  3  40  ~/.git/COMMIT_EDITMSG
+|4,39,3,40,1536122682,"~/.git/COMMIT_EDITMSG"
+-'  1  0  ~/.git/COMMIT_EDITMSG
+|4,39,1,0,1536122492,"~/.git/COMMIT_EDITMSG"
+-'  1  0  ~/.git/COMMIT_EDITMSG
+|4,39,1,0,1536122492,"~/.git/COMMIT_EDITMSG"
+-'  1  0  ~/.git/COMMIT_EDITMSG
+|4,39,1,0,1536122492,"~/.git/COMMIT_EDITMSG"
+-'  1  0  ~/.git/COMMIT_EDITMSG
+|4,39,1,0,1536122492,"~/.git/COMMIT_EDITMSG"
+-'  1  0  ~/.git/COMMIT_EDITMSG
+|4,39,1,0,1536122492,"~/.git/COMMIT_EDITMSG"
+-'  1  0  ~/.git/COMMIT_EDITMSG
+|4,39,1,0,1536122492,"~/.git/COMMIT_EDITMSG"
+-'  1  0  ~/.git/COMMIT_EDITMSG
+|4,39,1,0,1536122492,"~/.git/COMMIT_EDITMSG"
+-'  1  0  ~/.git/COMMIT_EDITMSG
+|4,39,1,0,1536122492,"~/.git/COMMIT_EDITMSG"
 -'  1  0  ~/.git/COMMIT_EDITMSG
 |4,39,1,0,1536122492,"~/.git/COMMIT_EDITMSG"
 -'  1  0  ~/.git/COMMIT_EDITMSG
@@ -85,7 +127,7 @@
 # ファイル内マークの履歴 (新しいものから古いもの):
 
 > ~/.git/MERGE_MSG
-	*	1540353971	0
+	*	1540975499	0
 	"	1	0
 
 > ~/.git/COMMIT_EDITMSG

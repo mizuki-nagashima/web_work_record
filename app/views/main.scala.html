@@ -4,7 +4,7 @@
  * two arguments, a `String` for the title of the page and an `Html`
  * object to insert into the body of the page.
  *@
-@(title: String)(content: Html)
+@(title: String,empNo: String,empName:String)(content: Html)
 <!DOCTYPE html>
 <html lang="ja">
     <head>
@@ -54,10 +54,11 @@
        @import play.i18n._
 
        <section class="content-header" id="header">
-         <h1><i class="fa fa-list-alt"></i> @Messages.get("title")<button type="button" id="logoutBtn" class="btn btn-default pull-right" style="margin-bottom: 10px">
-          <span class="glyphicon glyphicon-log-out"></span>
-          ログアウト
-        </button></h1>
+         <h1><i class="fa fa-list-alt"></i> @Messages.get("title")
+         <button type="button" id="logoutBtn" class="btn btn-default pull-right" style="margin-bottom: 10px;">
+          <span class="glyphicon glyphicon-log-out"></span>ログアウト</button>
+        <span class="pull-right" style="font-size:15px;  margin-right:10px;">@Messages.get("header.name",empNo,empName)</span>
+        </h1>
         <script>
         $("#logoutBtn").click(function () {
 	      	var url = '@routes.AuthCtl.logout'
