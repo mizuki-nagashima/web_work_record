@@ -235,8 +235,8 @@ public class AttendanceCtl extends Controller {
                             // 登録しようとしている日のデータがある場合は更新、ない場合登録
                             if (performanceDataList.contains(date)) {
                                 //
-                                pft.updateUserId = inputForm.employeeNo;
-                                TblPerformance.updatePerformanceData(pft);
+	                            pft.updateUserId = inputForm.employeeNo;
+	                            TblPerformance.updatePerformanceData(pft);
                             } else {
                                 //
                                 pft.registUserId = inputForm.employeeNo;
@@ -244,8 +244,6 @@ public class AttendanceCtl extends Controller {
                                 TblPerformance.insertPerformanceData(pft);
                             }
 	                    } catch (Exception e) {
-	                        //  debug
-	                        System.out.println(e);
 	        	            //  debug
 	        	            System.out.println(e);
 	        	            return ok(Json.toJson(
@@ -363,7 +361,7 @@ public class AttendanceCtl extends Controller {
 		            pft.holidayClass = Const.HOLIDAY_CLASS_NOTHING;
 		            pft.shiftClass = Const.SHIFT_CLASS_NOTHING;
 
-		            // 承認申請するデータ(全ステータス)を取得
+		            // 承認申請するデータ(承認済以外)を取得
 		            List<SqlRow> appData= TblPerformance.getApproveNecessaryData(pft);
 		            String perStatus = Const.PERFORMANCE_STATUS_NEED_APPROVAL;
 		            String attrStatus = Const.MONTHS_YEARS_STATUS_FIX;

@@ -107,7 +107,7 @@ public class ApproveCtl extends Controller {
 		    } else if(flg == 1) {
 		    		System.out.println("承認不可処理開始");
 		        	String perStatus = Const.PERFORMANCE_STATUS_APPROVAL_NOT;
-		        	TblPerformance.updateApprove(empNo, monthsYears, date, perStatus, appEmp);
+		        	TblPerformance.updateApprove(empNo, monthsYears, date, perStatus);
 		    } else {
 		            map.put(date, "承認フラグに不正なデータが入っています");
 		            errorMsgList.add(map);
@@ -141,11 +141,10 @@ public class ApproveCtl extends Controller {
      // エラーメッセージを詰め込むためのリスト
         ArrayList<HashMap> errorMsgList = new ArrayList<>();
 
-    	String appEmp = session("employeeNo");	// 承認者社員番号
 	        try {
 		    	System.out.println("承認不可処理開始");
 		    	String perStatus = Const.PERFORMANCE_STATUS_APPROVAL_NOT;
-		    	TblPerformance.updateApprove(empNo, monthsYears, date, perStatus, appEmp);
+		    	TblPerformance.updateApprove(empNo, monthsYears, date, perStatus);
 		    } catch (Exception e) {
 		        //  debug
 		        System.out.println(e);

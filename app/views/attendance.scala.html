@@ -285,6 +285,7 @@
           </tr>
           </thead>
           <tbody style="font-size: 14px;">
+          <!-- TODO 承認済みだったら入力できないようにする -->
             @date.zipWithIndex.map{ case(d, idx) =>
             <tr class="attendanceForm tableDeta" id="@d.dateId" data-monthsYears="@d.monthsYears" data-date="@d.date" string-date="@d.stringDate" @if(d.isHoliday){background="#f2f2f2"}>
               <input type="hidden" name="attendanceInputFormList[@idx].employeeNo" value="@empNo">
@@ -769,7 +770,6 @@
       $(this).addClass("hidden");
     });
 
-	//TODO save切り出し
     $(".saveBtn").click(function () {
        $(".warn-msg").addClass("hidden");
        $('.warn-msg-contents').remove();
@@ -1103,8 +1103,9 @@
 
     $(".remandLavel").each(function(){
   	  var trId = $(this).parent().find(".calendar").text();
-      var msgContents = '<p class= "save-warn-msg-contents">' + trId + ' - 差し戻しがあります。修正して再度保存し確定してください。</p>';
+      var msgContents = '<p class= "save-warn-msg-contents">' + trId + ' - 差し戻しがあります。修正して再度確定してください。</p>';
 	  $(".warn-msg").removeClass("hidden");
+	  $(".saveBtn").addClass("hidden");
 	  $('#warn-msg-title').after(msgContents);
     });
 
