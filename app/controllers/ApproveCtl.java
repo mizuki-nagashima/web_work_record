@@ -127,39 +127,6 @@ public class ApproveCtl extends Controller {
     }
 
     /**
-     * 承認不可処理
-     * @param 実績ステータス
-     * @return 承認画面
-     */
-    public Result updateNotApprove(String empNo, String monthsYears , String  date) {
-
-    	// 画面からForm取得
-        ApproveFormList approveFormList =
-                formFactory.form(ApproveFormList.class).bindFromRequest().get();
-        List<ApproveForm> apl = approveFormList.approveFormList;
-
-     // エラーメッセージを詰め込むためのリスト
-        ArrayList<HashMap> errorMsgList = new ArrayList<>();
-
-	        try {
-		    	System.out.println("承認不可処理開始");
-		    	String perStatus = Const.PERFORMANCE_STATUS_APPROVAL_NOT;
-		    	TblPerformance.updateApprove(empNo, monthsYears, date, perStatus);
-		    } catch (Exception e) {
-		        //  debug
-		        System.out.println(e);
-		        HashMap<String, String> map = new HashMap<>();
-	            map.put(date, "承認不可処理中にエラーが発生しました。");
-	            errorMsgList.add(map);
-		    }
-    	if(!errorMsgList.isEmpty()) {
-    	return ok(Json.toJson(ImmutableMap.of("result", "ng","msg",errorMsgList)));
-    	} else {
-    	return ok(Json.toJson(ImmutableMap.of("result", "ok")));
-    	}
-    }
-
-    /**
      * 業務チームコード取得処理
      * @param 承認者社員番号
      * @param 年月
