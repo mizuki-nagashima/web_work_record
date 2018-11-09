@@ -47,9 +47,10 @@ attendance.form.shiftClassCode=シフト区分
 attendance.form.nightWork=深夜作業
 attendance.form.salaried=有給割当
 attendance.form.remarks=備考
+
 attendance.form.alreadySave=保存済
 attendance.form.alreadyFix=承認済
-attendance.form.alreadyApprovalRequest=承認要請済
+attendance.form.alreadyApprovalRequest=承認依頼済
 attendance.form.alreadyFixRemand=差し戻し
 attendance.defaultWorkTime=所定労働時間
 attendance.sumPerformanceTime=今月作業実績

@@ -235,10 +235,10 @@
               <i class="fa fa-check-square-o"></i>
               @Messages.get("attendance.save")
             </button>
-            <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
+        <!--    <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
               <i class="fa fa-file-text"></i>
               @Messages.get("attendance.pdf")
-            </button>
+            </button>  -->
             <button type="button" class="btn btn-danger fixBtn" style="margin-right: 10px">
               <i class="fa fa-check-square"></i>
               @Messages.get("attendance.fix")
@@ -292,17 +292,19 @@
               <input type="hidden" name="attendanceInputFormList[@idx].monthsYears" value="@d.monthsYears">
               <input type="hidden" name="attendanceInputFormList[@idx].date" value="@d.date">
               <input type="hidden" name="attendanceInputFormList[@idx].dateId" value="@d.dateId">
-              <input type="hidden" id="performanceStatus@idx" value="@inputForm.get().attendanceInputFormList.get(idx).performanceStatus">
+              <input type="hidden" id="performanceStatus-@d.dateId" value="@inputForm.get().attendanceInputFormList.get(idx).performanceStatus">
               <input type="hidden" id="@d.dateId-closingTime" class="form-control hiddenClosingTime" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).closingTime"}>
                 <input type="hidden" id="beforeHolidayClass@idx" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).holidayClassCode"}else{"00"}>
               <td valign="middle">
                 <span class="calendar" style="white-space: nowrap;">@d.stringDate</span>@if(d.isHoliday){<span style="margin-bottom: 3px" class="label label-warning holiday">休</span>}
                 @if(existsDefaultValue && (inputForm.get().attendanceInputFormList.get(idx).openingTime != "" || inputForm.get().attendanceInputFormList.get(idx).holidayClassCode != "00")){
-                  <span style="margin-bottom: 3px" class="label label-success fa fa-check-square-o saveLavel"> @Messages.get("attendance.form.alreadySave")</span>
+                  <span style="margin-bottom: 3px" class="label label-success fa fa-check-square-o saveLavel"> @Messages.get("attendance.form.alreadySave")</span>}
+                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "02"){<span class="label label-primary fa fa-exclamation-circle requestLavel"> @Messages.get("attendance.form.alreadyApprovalRequest")</span>}
+
                 @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "03"){<span class="label label-primary fa fa-check-square approveLabel"> @Messages.get("attendance.form.alreadyFix")</span>
                 }
-                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "04"){<span class="remandLavel label label-danger fa fa-exclamation-triangle"> @Messages.get("attendance.form.alreadyFixRemand")</span>}
-              	}
+                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "04"){<span class="label label-danger fa fa-exclamation-triangle remandLavel"> @Messages.get("attendance.form.alreadyFixRemand")</span>}
+
               </td>
               <td valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.start") id="openingTime" name="attendanceInputFormList[@idx].openingTime" class="form-control timePicker openingTime changeEventForm" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).openingTime"}> </td>
               <td valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.end") id="closingTime" name="attendanceInputFormList[@idx].closingTime" class="form-control timePicker closingTime changeEventForm" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).closingTime" }> </td>
@@ -433,10 +435,10 @@
               <i class="fa fa-check-square-o"></i>
               @Messages.get("attendance.save")
             </button>
-            <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
+     <!--         <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
               <i class="fa fa-file-text"></i>
               @Messages.get("attendance.pdf")
-            </button>
+            </button> -->
             <button type="button" class="btn btn-danger fixBtn" style="margin-right: 10px">
               <i class="fa fa-check-square"></i>
               @Messages.get("attendance.fix")
@@ -853,14 +855,17 @@
       });
     });
 
+	// TODO 成功時msgを取得する
     $(".fixBtn").click(function () {
        $.totalInsert();
+       $(".warn-msg").addClass("hidden");
+       $('.warn-msg-contents').remove();
+       $('.save-warn-msg-contents').remove();
+       $('#form-warning').addClass("none-form-warning");
+       $('#form-warning').removeClass("form-warning");
        $('.fix-contents').remove();
-       var url = '@routes.AttendanceCtl.fixCheck(empNo, year, month)'
-       $.ajax({
-          type:'POST',
-          url:url,
-          success:function(data) {
+       $('#inputForm').attr("action", '@routes.AttendanceCtl.fixCheck(empNo, year ,month)');
+       $.postAjax('#inputForm', function(data){
             if(data.result == "ok"){
               var msgContents = '<p id="approveBody" class="fix-contents">てすと</p>';
 		      $('#approveTitle').after(msgContents);
@@ -895,7 +900,6 @@
             }else{
                alert('エラーが発生しました。');
             }
-          }
       });
     });
 
@@ -905,11 +909,8 @@
       $('.fix-warn-msg-contents').remove();
       $('#form-warning').addClass("none-form-warning");
       $('#form-warning').removeClass("form-warning");
-      var url = '@routes.AttendanceCtl.fix(empNo, year + month)'
-      $.ajax({
-          type:'POST',
-          url:url,
-          success:function(data) {
+      $('#inputForm').attr("action", '@routes.AttendanceCtl.fix(empNo, year + month)');
+      $.postAjax('#inputForm', function(data){
             if(data.result == "ok"){
               var yearMonth = @year + '年' + @month + '月';
               localStorage.saveMsg = yearMonth +'の勤怠情報を確定しました。';
@@ -921,7 +922,6 @@
             }else{
                alert('エラーが発生しました。');
             }
-          }
       });
     });
 
@@ -1101,12 +1101,17 @@
       }
     });
 
+    // TODO 差戻し時に保存データを差戻しだけにする
     $(".remandLavel").each(function(){
   	  var trId = $(this).parent().find(".calendar").text();
       var msgContents = '<p class= "save-warn-msg-contents">' + trId + ' - 差し戻しがあります。修正して再度確定してください。</p>';
 	  $(".warn-msg").removeClass("hidden");
 	  $(".saveBtn").addClass("hidden");
 	  $('#warn-msg-title').after(msgContents);
+    });
+
+    $(".requestLavel").each(function(){
+	  $(".saveBtn").addClass("hidden");
     });
 
     $.postAjax = function(formId, callBack, url) {
