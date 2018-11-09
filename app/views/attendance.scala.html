@@ -297,14 +297,10 @@
                 <input type="hidden" id="beforeHolidayClass@idx" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).holidayClassCode"}else{"00"}>
               <td valign="middle">
                 <span class="calendar" style="white-space: nowrap;">@d.stringDate</span>@if(d.isHoliday){<span style="margin-bottom: 3px" class="label label-warning holiday">休</span>}
-                @if(existsDefaultValue && (inputForm.get().attendanceInputFormList.get(idx).openingTime != "" || inputForm.get().attendanceInputFormList.get(idx).holidayClassCode != "00")){
-                  <span style="margin-bottom: 3px" class="label label-success fa fa-check-square-o saveLavel"> @Messages.get("attendance.form.alreadySave")</span>}
+                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "01"){<span style="margin-bottom: 3px" class="label label-success fa fa-check-square-o saveLavel"> @Messages.get("attendance.form.alreadySave")</span>}
                 @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "02"){<span class="label label-primary fa fa-exclamation-circle requestLavel"> @Messages.get("attendance.form.alreadyApprovalRequest")</span>}
-
-                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "03"){<span class="label label-primary fa fa-check-square approveLabel"> @Messages.get("attendance.form.alreadyFix")</span>
-                }
+                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "03"){<span class="label label-primary fa fa-check-square approveLabel"> @Messages.get("attendance.form.alreadyFix")</span>}
                 @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "04"){<span class="label label-danger fa fa-exclamation-triangle remandLavel"> @Messages.get("attendance.form.alreadyFixRemand")</span>}
-
               </td>
               <td valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.start") id="openingTime" name="attendanceInputFormList[@idx].openingTime" class="form-control timePicker openingTime changeEventForm" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).openingTime"}> </td>
               <td valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.end") id="closingTime" name="attendanceInputFormList[@idx].closingTime" class="form-control timePicker closingTime changeEventForm" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).closingTime" }> </td>
@@ -321,7 +317,7 @@
                 <select id="holidayClass@d.dateId" name="attendanceInputFormList[@idx].holidayClassCode" class="form-control holidayClass changeEventForm holidayClass-@d.dateId">
                    <option value="00"></option>
                   @hcmList.map{ hcm =>
-                    <option value="@hcm.code">@hcm.codeName</option>
+                    <option value="@hcm.code" id="holiday-@hcm.code">@hcm.codeName</option>
                   }
                   @if(existsDefaultValue){
                     <script>
@@ -338,7 +334,7 @@
                 <select id="shiftClass@d.dateId" name="attendanceInputFormList[@idx].shiftClassCode" class="form-control shiftClass changeEventForm shiftClass-@d.dateId">
                   <option value="00"></option>
                   @shiftList.map{ shift =>
-                    <option value="@shift.code">@shift.codeName</option>
+                    <option value="@shift.code" id="shift-@shift.code">@shift.codeName</option>
                   }
                   @if(existsDefaultValue){
                     <script>
@@ -592,6 +588,7 @@
     });
 
     $(".changeEventForm").change(function(){
+      $(".fixBtn").prop('disabled', false);
       var targetTr = $(this).closest('tr');
       var targetTrId = targetTr.attr('id');
       if(targetTrId == "behindTr"){
@@ -1107,11 +1104,28 @@
       var msgContents = '<p class= "save-warn-msg-contents">' + trId + ' - 差し戻しがあります。修正して再度確定してください。</p>';
 	  $(".warn-msg").removeClass("hidden");
 	  $(".saveBtn").addClass("hidden");
+	  $(".fixBtn").prop('disabled', true);
 	  $('#warn-msg-title').after(msgContents);
     });
 
     $(".requestLavel").each(function(){
 	  $(".saveBtn").addClass("hidden");
+    });
+
+    $(".approveLabel").each(function(){
+      var targetTr = $(this).closest('tr');
+      var targetTrId = targetTr.attr('id');
+      if(targetTrId == "behindTr"){
+        targetTrId = targetTr.attr('date-id');
+      }
+      $('#' + targetTrId).children().children('.openingTime').prop('readonly', true);
+      $('#' + targetTrId).children().children('.closingTime').prop('readonly', true);
+      $('#' + targetTrId).children().children('.breakdown1').prop('readonly', true);
+      $('#' + targetTrId).children().children('.breakdown2').prop('readonly', true);
+      $('#' + targetTrId).children().children('.breakdown3').prop('readonly', true);
+      $('#' + targetTrId).children().children('.breakdown4').prop('readonly', true);
+      $('#' + targetTrId).children().children('.deductionNight').prop('readonly', true);
+      $('#' + targetTrId).children().children('.deductionOther').prop('readonly', true);
     });
 
     $.postAjax = function(formId, callBack, url) {

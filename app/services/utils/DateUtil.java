@@ -71,6 +71,15 @@ public class DateUtil {
         return sdf.format(date);
     }
 
+    /**
+     * 今日の日付をDD形式で取得します。
+     */
+    public static String getNowDay(){
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd");
+        return sdf.format(date);
+    }
+
 
     /**
      * 引数で渡されたカレンダーを表示します。

@@ -3,10 +3,14 @@ package controllers;
 import static models.TblPerformance.*;
 import static models.TblYearMonthAttribute.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import org.joda.time.TimeOfDay;
 
 import com.avaje.ebean.SqlRow;
 import com.google.common.collect.ImmutableMap;
@@ -254,7 +258,7 @@ public class AttendanceCtl extends Controller {
 	                    }
                 } else if (!TblPerformance.getPerformanceDataByYearMonthAndDate(
                         inputForm.employeeNo,inputForm.monthsYears,inputForm.date).isEmpty()){
-//                    TblPerformance.deletePerformanceData(inputForm.employeeNo,inputForm.monthsYears,inputForm.date);
+                    TblPerformance.deletePerformanceData(inputForm.employeeNo,inputForm.monthsYears,inputForm.date);
                 }
             }
         }
@@ -533,7 +537,6 @@ public class AttendanceCtl extends Controller {
      * @return 勤怠管理画面画面
      */
     public Result moveTargetYearMonth(String empNo, String yearMonth, String nowYearMonth) {
-    	System.out.println("てすと"+empNo+yearMonth+nowYearMonth);
         String Year = yearMonth.substring(0,4);
         String Month = yearMonth.substring(4,6);
         return ok(Json.toJson(
