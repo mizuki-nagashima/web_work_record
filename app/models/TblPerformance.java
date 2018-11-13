@@ -200,16 +200,21 @@ public class TblPerformance extends CommonModel {
         return sqlRows;
     }
 
-    public static SqlRow getPerformanceDataByStatus(String empNo, String yearMonth,String status) {
+    /**
+     * 社員番号とステータスからデータリストを取得します
+     * @param empNo
+     * @param status
+     * @return
+     */
+    public static List<SqlRow> getPerformanceDataByStatus(String empNo,String status) {
         String sql = "SELECT * FROM TBL_PERFORMANCE T " +
-        		"WHERE T.EMPLOYEE_NO = :emp AND T.MONTHS_YEARS = :yearmonth " +
+        		"WHERE T.EMPLOYEE_NO = :emp " +
         		"AND  T.PERFORMANCE_STATUS = :status";
 
-        SqlRow sqlRows = Ebean.createSqlQuery(sql)
+        List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
                 .setParameter("emp",empNo)
-                .setParameter("yearmonth",yearMonth)
                 .setParameter("status",status)
-                .findUnique();
+                .findList();
 
         return sqlRows;
     }

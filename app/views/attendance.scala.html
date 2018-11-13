@@ -285,7 +285,6 @@
           </tr>
           </thead>
           <tbody style="font-size: 14px;">
-          <!-- TODO 承認済みだったら入力できないようにする -->
             @date.zipWithIndex.map{ case(d, idx) =>
             <tr class="attendanceForm tableDeta" id="@d.dateId" data-monthsYears="@d.monthsYears" data-date="@d.date" string-date="@d.stringDate" @if(d.isHoliday){background="#f2f2f2"}>
               <input type="hidden" name="attendanceInputFormList[@idx].employeeNo" value="@empNo">
@@ -559,10 +558,9 @@
     }).on({
       changeDate : function(){
         var yearMonth = $(this).val();
-        var nowYearMonth = $('#monthsYears').val();
         var empNum = '@empNo';
-        var url = '@routes.AttendanceCtl.moveTargetYearMonth("0","0","0")';
-        url = url.substring(0, url.length - 5) + empNum + '/' + yearMonth.replace("/","") + '/' + nowYearMonth;
+        var url = '@routes.AttendanceCtl.moveTargetYearMonth("0","0")';
+        url = url.substring(0, url.length - 3) + empNum + '/' + yearMonth.replace("/","");
         $.ajax({
           type : 'GET',
           url : url,
@@ -749,10 +747,9 @@
 /*
     $(".moveBtn").click(function () {
         var yearMonth = $(this).parent().find('.moveYearMonth').val();
-        var nowYearMonth = $('#monthsYears').val();
         var empNum = '@empNo';
-        var url = '@routes.AttendanceCtl.moveTargetYearMonth("0","0","0")';
-        url = url.substring(0, url.length - 5) + empNum + '/' + yearMonth.replace("/","") + '/' + nowYearMonth;
+        var url = '@routes.AttendanceCtl.moveTargetYearMonth("0","0")';
+        url = url.substring(0, url.length - 5) + empNum + '/' + yearMonth.replace("/","");
         $.ajax({
           type : 'GET',
           url : url,

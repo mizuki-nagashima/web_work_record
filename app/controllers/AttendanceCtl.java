@@ -230,7 +230,6 @@ public class AttendanceCtl extends Controller {
                         pft.deductionOther = inputForm.deductionOther;
                         pft.holidayClass = holidayClassCode;
                         pft.shiftClass = inputForm.shiftClassCode;
-                        // TODO その他承認区分
                         pft.other_approval_class = "";
                         pft.remarks = inputForm.remarks;
                         pft.performanceStatus = Const.PERFORMANCE_STATUS_SAVE;
@@ -413,7 +412,6 @@ public class AttendanceCtl extends Controller {
 			                            pft.deductionOther = inputForm.deductionOther;
 			                            pft.holidayClass = holidayClassCode;
 			                            pft.shiftClass = inputForm.shiftClassCode;
-			                            // TODO その他承認区分
 			                            pft.other_approval_class = "";
 			                            pft.remarks = inputForm.remarks;
 			                            pft.performanceStatus = Const.PERFORMANCE_STATUS_NEED_APPROVAL;
@@ -536,7 +534,9 @@ public class AttendanceCtl extends Controller {
      * @param yearMonth 年月(yyyyMM)
      * @return 勤怠管理画面画面
      */
-    public Result moveTargetYearMonth(String empNo, String yearMonth, String nowYearMonth) {
+    // TODO 却下されたデータあったらしるしつける
+    // TODO 管理メニューに戻れるように
+    public Result moveTargetYearMonth(String empNo, String yearMonth) {
         String Year = yearMonth.substring(0,4);
         String Month = yearMonth.substring(4,6);
         return ok(Json.toJson(
@@ -735,5 +735,36 @@ public class AttendanceCtl extends Controller {
                         "value", businessTeamList
                 )));
     }
+
+    /**
+     * 却下された差戻しデータがあれば取得する
+     * @return dataList
+     */
+    public Result isApproveRemand() {
+		// 社員番号
+        String empNo = session("employeeNo");
+        List<SqlRow> data = TblPerformance.getPerformanceDataByStatus(empNo,Const.PERFORMANCE_STATUS_APPROVAL_NOT);
+        //データリストを詰め込むためのリスト
+        ArrayList<HashMap> dataList = new ArrayList<>();
+        HashMap<String, String> map = new HashMap<>();
+        if(!data.isEmpty()){
+        	for(SqlRow d:data) {
+        		// yyyy/MMに変換
+        		String monthsYears = (d.getString("months_years").substring(0, 4))
+        				.concat("/").concat(d.getString("months_years").substring(4, 6));
+        		map.put(monthsYears,d.getString("performance_date"));
+        	}
+        	dataList.add(map);
+			return ok(Json.toJson(
+	                ImmutableMap.of(
+	                        "result","ok",
+	                        "value", dataList
+	                )));
+        } else {
+            return ok(Json.toJson(
+                    ImmutableMap.of(
+                            "result", "ng")));
+        }
+	}
 
 }
