@@ -101,11 +101,9 @@ public class ApproveCtl extends Controller {
 	    try {
 	    	String appEmp = session("employeeNo");	// 承認者社員番号
 		    if(flg == 0) {
-		    	System.out.println("承認処理開始");
 		    	String perStatus = Const.PERFORMANCE_STATUS_APPROVED;
 		    	TblPerformance.updateApprove(empNo, monthsYears, date, perStatus, appEmp);
 		    } else if(flg == 1) {
-		    		System.out.println("承認不可処理開始");
 		        	String perStatus = Const.PERFORMANCE_STATUS_APPROVAL_NOT;
 		        	TblPerformance.updateApprove(empNo, monthsYears, date, perStatus);
 		    } else {
