@@ -10,8 +10,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.joda.time.TimeOfDay;
-
 import com.avaje.ebean.SqlRow;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
@@ -746,15 +744,15 @@ public class AttendanceCtl extends Controller {
         List<SqlRow> data = TblPerformance.getPerformanceDataByStatus(empNo,Const.PERFORMANCE_STATUS_APPROVAL_NOT);
         //データリストを詰め込むためのリスト
         ArrayList<HashMap> dataList = new ArrayList<>();
-        HashMap<String, String> map = new HashMap<>();
         if(!data.isEmpty()){
         	for(SqlRow d:data) {
         		// yyyy/MMに変換
         		String monthsYears = (d.getString("months_years").substring(0, 4))
         				.concat("/").concat(d.getString("months_years").substring(4, 6));
+        		HashMap<String, String> map = new HashMap<>();
         		map.put(monthsYears,d.getString("performance_date"));
+            	dataList.add(map);
         	}
-        	dataList.add(map);
 			return ok(Json.toJson(
 	                ImmutableMap.of(
 	                        "result","ok",
