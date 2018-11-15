@@ -291,8 +291,8 @@
               <input type="hidden" name="attendanceInputFormList[@idx].monthsYears" value="@d.monthsYears">
               <input type="hidden" name="attendanceInputFormList[@idx].date" value="@d.date">
               <input type="hidden" name="attendanceInputFormList[@idx].dateId" value="@d.dateId">
-              <input type="hidden" id="performanceStatus-@d.dateId" value="@inputForm.get().attendanceInputFormList.get(idx).performanceStatus">
-              <input type="hidden" id="@d.dateId-closingTime" class="form-control hiddenClosingTime" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).closingTime"}>
+              <input type="hidden" id="performanceStatus@d.dateId" value="@inputForm.get().attendanceInputFormList.get(idx).performanceStatus">
+              <input type="hidden" id="closingTime@d.dateId" class="form-control hiddenClosingTime" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).closingTime"}>
                 <input type="hidden" id="beforeHolidayClass@idx" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).holidayClassCode"}else{"00"}>
               <td valign="middle">
                 <span class="calendar" style="white-space: nowrap;">@d.stringDate</span>@if(d.isHoliday){<span style="margin-bottom: 3px" class="label label-warning holiday">休</span>}

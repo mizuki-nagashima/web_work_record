@@ -102,19 +102,18 @@
 				          if(data.result == "ok"){
 				        	$(".fixRemand").removeClass("hidden");
 				        	var dataList = data.value;
+				        	var count = 0;
 				        	$.each(dataList, function(key, obj) {
 	            				$.each(obj, function(monthyears, date) {
-	            					var dateContents= date + '日';
-	            					var emp = @empNo;
-	            					var url = '@routes.AttendanceCtl.moveTargetYearMonth("0","0")';
-        							url = url.substring(0, url.length - 3) + emp + '/' + monthyears;
-        							var count = date.length;
+        							count = count+1;
 		            				var msgContents = '<p class= "arrow_box">' + monthyears + '　' + count + '件';
 			      					$(".fixRemand").after(msgContents);
 					            });
 					        });
+					      }else if(data.result == "ng"){
+							$(".fixRemand").addClass("hidden");
 				          }else{
-							alert('どっかでエラー');
+						  	alert('却下データ取得中にエラーが発生しました');
 				          }
 				     	}
 				   	 });

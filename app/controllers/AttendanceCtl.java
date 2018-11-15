@@ -86,7 +86,7 @@ public class AttendanceCtl extends Controller {
         // 保存済実績を取得
         List<SqlRow> performanceData = getPerformanceData(employeeNo, monthsYears);
         SqlRow monthStatusData = getYearMonthData(employeeNo, monthsYears);
-
+        try {
         // 表示用Form
         AttendanceInputFormList aifl = new AttendanceInputFormList();
 
@@ -98,8 +98,8 @@ public class AttendanceCtl extends Controller {
         // 指定した年月の実績データが一件でもある場合は初期値をセット
         if (performanceData.size() != 0) {
             existsDefaultValue = true;
-            aifl.attendanceInputFormList = MakeModelUtil.makeAttendanceInputFormList(dateList, performanceData);
         }
+        aifl.attendanceInputFormList = MakeModelUtil.makeAttendanceInputFormList(dateList, performanceData);
 
         Form<StatusAndWorkForm> statusAndWorkForm = formFactory.form(StatusAndWorkForm.class).fill(aifl.statusAndWorkFormList);
         Form<AttendanceInputFormList> inputForm = formFactory.form(AttendanceInputFormList.class).fill(aifl);
@@ -135,6 +135,11 @@ public class AttendanceCtl extends Controller {
         } else {
             return notFound();
         }
+	} catch (Exception e) {
+        //  debug
+        System.out.println(e);
+        return notFound();
+	}
     }
 
     /**

@@ -31,9 +31,9 @@
 		}).click(link);
 		return false;
 	};
-})(jQuery);
+});
 
-$(function(){
+(function($) {
 
     // 読み込みloading表示
 	$(function() {
