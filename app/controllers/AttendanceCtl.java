@@ -3,10 +3,14 @@ package controllers;
 import static models.TblPerformance.*;
 import static models.TblYearMonthAttribute.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import org.joda.time.TimeOfDay;
 
 import com.avaje.ebean.SqlRow;
 import com.google.common.collect.ImmutableMap;
@@ -82,7 +86,7 @@ public class AttendanceCtl extends Controller {
         // 保存済実績を取得
         List<SqlRow> performanceData = getPerformanceData(employeeNo, monthsYears);
         SqlRow monthStatusData = getYearMonthData(employeeNo, monthsYears);
-
+        try {
         // 表示用Form
         AttendanceInputFormList aifl = new AttendanceInputFormList();
 
@@ -94,8 +98,8 @@ public class AttendanceCtl extends Controller {
         // 指定した年月の実績データが一件でもある場合は初期値をセット
         if (performanceData.size() != 0) {
             existsDefaultValue = true;
-            aifl.attendanceInputFormList = MakeModelUtil.makeAttendanceInputFormList(dateList, performanceData);
         }
+        aifl.attendanceInputFormList = MakeModelUtil.makeAttendanceInputFormList(dateList, performanceData);
 
         Form<StatusAndWorkForm> statusAndWorkForm = formFactory.form(StatusAndWorkForm.class).fill(aifl.statusAndWorkFormList);
         Form<AttendanceInputFormList> inputForm = formFactory.form(AttendanceInputFormList.class).fill(aifl);
@@ -131,6 +135,11 @@ public class AttendanceCtl extends Controller {
         } else {
             return notFound();
         }
+	} catch (Exception e) {
+        //  debug
+        System.out.println(e);
+        return notFound();
+	}
     }
 
     /**
@@ -226,7 +235,6 @@ public class AttendanceCtl extends Controller {
                         pft.deductionOther = inputForm.deductionOther;
                         pft.holidayClass = holidayClassCode;
                         pft.shiftClass = inputForm.shiftClassCode;
-                        // TODO その他承認区分
                         pft.other_approval_class = "";
                         pft.remarks = inputForm.remarks;
                         pft.performanceStatus = Const.PERFORMANCE_STATUS_SAVE;
@@ -345,6 +353,11 @@ public class AttendanceCtl extends Controller {
 
         //  debug
         System.out.println("fix!!!!! :" + monthsYears);
+        // 画面からForm取得
+        AttendanceInputFormList attendanceFormList =
+                formFactory.form(AttendanceInputFormList.class).bindFromRequest().get();
+        List<AttendanceInputForm> adl = attendanceFormList.attendanceInputFormList;
+        for(AttendanceInputForm inputForm : adl) {
      // 実績一覧にすべて保存されている場合→承認申請を行う
         	try {
 	        	// 年月属性を取得
@@ -365,25 +378,59 @@ public class AttendanceCtl extends Controller {
 		            List<SqlRow> appData= TblPerformance.getApproveNecessaryData(pft);
 		            String perStatus = Const.PERFORMANCE_STATUS_NEED_APPROVAL;
 		            String attrStatus = Const.MONTHS_YEARS_STATUS_FIX;
+		            //TODO フォームデータのdateが承認申請されているデータと同じならフォーム保存する。違うならスルー
 		            // 承認申請リスト
 		            for(SqlRow list : appData) {
-		            	String status = list.getString("performance_status");
+	            		String date = list.getString("performance_date");
+	            		String status = list.getString("performance_status");
+		            	if(date.equals(inputForm.date)) {
+			            	System.out.println(date + "日　承認申請処理開始");
+			            	attrStatus = Const.MONTHS_YEARS_STATUS_FIX;
+			            	// 承認申請済のデータを修正した場合は、要承認状態に戻す
+			            	if(Const.PERFORMANCE_STATUS_NEED_APPROVAL.equals(status)) {
+			            		perStatus = Const.PERFORMANCE_STATUS_NEED_APPROVAL;
+				            	// 業績テーブル更新
+			            		TblPerformance.updateApprove(empNo, monthsYears, list.getString("performance_date"), perStatus);
+			            	//差戻しデータの場合フォームからデータ取得、saveする
+			            	} else if(Const.PERFORMANCE_STATUS_APPROVAL_NOT.equals(status)){
+			                    String op = inputForm.openingTime;
+			                    String cl = inputForm.closingTime;
+			                    String emptyChar = "";
 
-		            	// 承認申請済のデータを修正した場合は、要承認状態に戻す
-		            	if(Const.PERFORMANCE_STATUS_APPROVED.equals(status)) {
-		            		perStatus = Const.PERFORMANCE_STATUS_NEED_APPROVAL;
-		            		attrStatus = Const.MONTHS_YEARS_STATUS_FIX;
-		            	// 承認済のデータ以外を修正した場合は、承認済みのデータは要承認状態に戻さない
+			                    // フォームの"始業"と"終業"が入力されている または 休暇等区分が選択されているフォームのみ処理する。
+			                    if ((!emptyChar.equals(op) && !emptyChar.equals(cl))
+			                            || !Const.HOLIDAY_CLASS_NOTHING.equals(inputForm.holidayClassCode)) {
+			                            String holidayClassCode = inputForm.holidayClassCode;
+			                            if (holidayClassCode.isEmpty()) {
+			                            }
+			                            pft.employeeNo = inputForm.employeeNo;
+			                            pft.monthsYears = inputForm.monthsYears;
+			                            pft.performanceDate = DateUtil.getZeroPadding(inputForm.date);
+			                            pft.openingTime = op;
+			                            pft.closingTime = cl;
+			                            pft.breakdown1 = inputForm.breakdown1;
+			                            pft.breakdown2 = inputForm.breakdown2;
+			                            pft.breakdown3 = inputForm.breakdown3;
+			                            pft.breakdown4 = inputForm.breakdown4;
+			                            pft.performanceTime = inputForm.performanceTime;
+			                            pft.deductionNight = inputForm.deductionNight;
+			                            pft.deductionOther = inputForm.deductionOther;
+			                            pft.holidayClass = holidayClassCode;
+			                            pft.shiftClass = inputForm.shiftClassCode;
+			                            pft.other_approval_class = "";
+			                            pft.remarks = inputForm.remarks;
+			                            pft.performanceStatus = Const.PERFORMANCE_STATUS_NEED_APPROVAL;
+			    	                    pft.updateUserId = inputForm.employeeNo;
+			    	                    TblPerformance.updatePerformanceData(pft);
+			                    }
+			            	}
 		            	}
-		            	// 業績テーブル更新
-	            		TblPerformance.updateApprove(empNo, monthsYears, list.getString("performance_date"), perStatus);
-	            		//年月属性テーブル更新
-	            		TblYearMonthAttribute.updateYearMonthDataStatus(empNo,monthsYears,attrStatus);
 		            }
-		            //  debug
-		            System.out.println("exit fix!!!!!");
-		            return ok(Json.toJson(ImmutableMap.of("result", "ok")));
-
+		            if(appData.isEmpty()) {
+		            	attrStatus = Const.MONTHS_YEARS_STATUS_COMPLETE;
+		            }
+	            	//年月属性テーブル更新
+	            	TblYearMonthAttribute.updateYearMonthDataStatus(empNo,monthsYears,attrStatus);
         	} catch (Exception e) {
 	            //  debug
 	            System.out.println(e);
@@ -393,6 +440,10 @@ public class AttendanceCtl extends Controller {
 	                            "msg", "確定処理時エラーが発生しました。もう一度お試しください。"
 	                    )));
         	}
+        }
+        //  debug
+        System.out.println("exit fix!!!!!");
+        return ok(Json.toJson(ImmutableMap.of("result", "ok")));
     }
 
     /**
@@ -410,6 +461,30 @@ public class AttendanceCtl extends Controller {
 
         // エラーメッセージを詰め込むためのリスト
         ArrayList<HashMap> errorMsgList = new ArrayList<>();
+        HashMap<String, String> map = new HashMap<>();
+
+        // 画面からForm取得
+        AttendanceInputFormList attendanceFormList =
+                formFactory.form(AttendanceInputFormList.class).bindFromRequest().get();
+        List<AttendanceInputForm> adl = attendanceFormList.attendanceInputFormList;
+        for (AttendanceInputForm inputForm : adl){
+            String op = inputForm.openingTime;
+            String cl = inputForm.closingTime;
+            String emptyChar = "";
+
+            // フォームの"始業"と"終業"が入力されているまたは 休暇等区分が選択されているフォームのみ処理する。
+            if ((!emptyChar.equals(op) && !emptyChar.equals(cl))
+                    || !Const.HOLIDAY_CLASS_NOTHING.equals(inputForm.holidayClassCode)) {
+		        // エラーメッセージがあるかチェック
+		        ArrayList<HashMap> errorMsg = checkAttendanceInputForm(inputForm);
+		        // エラーがある場合エラーメッセージのリストにメッセージを詰め込む
+		        if (!errorMsg.isEmpty()) {
+		            for (HashMap msg : errorMsg) {
+		                errorMsgList.add(msg);
+		            }
+		        }
+            }
+        }
 
         // 月の全ての営業日にデータが登録されているかをチェック
         // 日付リスト取得
@@ -426,14 +501,22 @@ public class AttendanceCtl extends Controller {
         }
         // 実績一覧にすべて保存されている場合→承認申請を行う
         if(!notPDataList.isEmpty()) {
-            HashMap<String, String> map = new HashMap<>();
             for(String date :notPDataList) {
 //            	String week = DateUtil.getWeek(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(date));
             	map.put(date, "実績(もしくは休暇等区分)が記入(選択)されていない可能性があります。");
             }
         	errorMsgList.add(map);
-        	System.out.println(errorMsgList);
         }
+        // 勤怠を保存するボタン押下時に年月別ステータスが03：承認済の場合、 既に勤怠は凍結されているため、処理を実行しない。
+     // 年月属性を取得
+        SqlRow yearMonthData = TblYearMonthAttribute.getYearMonthData(empNo, monthsYears);
+        if (yearMonthData != null
+                && Const.MONTHS_YEARS_STATUS_COMPLETE.equals(yearMonthData.getString("months_years_status"))) {
+
+            map.put("", "今月の勤怠情報は既に凍結されているため変更できません。管理部までお問い合わせください。");
+            errorMsgList.add(map);
+        }
+
         if (!errorMsgList.isEmpty()) {
             //  debug
             System.out.println("exit error fix!!!!!");
@@ -456,8 +539,9 @@ public class AttendanceCtl extends Controller {
      * @param yearMonth 年月(yyyyMM)
      * @return 勤怠管理画面画面
      */
-    public Result moveTargetYearMonth(String empNo, String yearMonth, String nowYearMonth) {
-    	System.out.println("てすと"+empNo+yearMonth+nowYearMonth);
+    // TODO 却下されたデータあったらしるしつける
+    // TODO 管理メニューに戻れるように
+    public Result moveTargetYearMonth(String empNo, String yearMonth) {
         String Year = yearMonth.substring(0,4);
         String Month = yearMonth.substring(4,6);
         return ok(Json.toJson(
@@ -656,5 +740,36 @@ public class AttendanceCtl extends Controller {
                         "value", businessTeamList
                 )));
     }
+
+    /**
+     * 却下された差戻しデータがあれば取得する
+     * @return dataList
+     */
+    public Result isApproveRemand() {
+		// 社員番号
+        String empNo = session("employeeNo");
+        List<SqlRow> data = TblPerformance.getPerformanceDataByStatus(empNo,Const.PERFORMANCE_STATUS_APPROVAL_NOT);
+        //データリストを詰め込むためのリスト
+        ArrayList<HashMap> dataList = new ArrayList<>();
+        HashMap<String, String> map = new HashMap<>();
+        if(!data.isEmpty()){
+        	for(SqlRow d:data) {
+        		// yyyy/MMに変換
+        		String monthsYears = (d.getString("months_years").substring(0, 4))
+        				.concat("/").concat(d.getString("months_years").substring(4, 6));
+        		map.put(monthsYears,d.getString("performance_date"));
+        	}
+        	dataList.add(map);
+			return ok(Json.toJson(
+	                ImmutableMap.of(
+	                        "result","ok",
+	                        "value", dataList
+	                )));
+        } else {
+            return ok(Json.toJson(
+                    ImmutableMap.of(
+                            "result", "ng")));
+        }
+	}
 
 }

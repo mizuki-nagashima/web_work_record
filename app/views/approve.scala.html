@@ -15,10 +15,10 @@
             <input value="" class="form-control datepicker moveYearMonth" style="display: inline; width: 75%;">
           </div>
           <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
-            <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
+     <!--        <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
               <i class="fa fa-file-text"></i>
               @Messages.get("attendance.pdf")
-            </button>
+            </button>  -->
             <div class="pull-right hidden-xs">
               <label>年月を指定して移動：</label>
               <input value="" class="form-control datepicker moveYearMonth">
@@ -85,10 +85,10 @@
             <input value="" class="form-control datepicker moveYearMonth" style="display: inline; width: 75%;">
           </div>
           <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
-            <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
+    <!--         <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
               <i class="fa fa-file-text"></i>
               @Messages.get("attendance.pdf")
-            </button>
+            </button>  -->
             <div class="pull-right hidden-xs">
               <label>年月を指定して移動：</label>
               <input value="" class="form-control datepicker moveYearMonth">
@@ -98,6 +98,7 @@
       </div>
 </div>
 </section>
+<!-- TODO 承認前モーダル設置 -->
 <div class="hidden warn-msg">
   <p id="warn-msg-title"><i class="fa fa-exclamation-circle"></i>以下の入力値が誤っているため保存できません、修正して下さい。</p>
   <div align="right">
@@ -252,6 +253,8 @@
 	      $('#notApproveButton-' + targetTrId).prop('disabled', true);
       } else {
       	 $(this).css('font-weight', 'bold');
+      	 $('#approveButton-' + targetTrId).prop('disabled', true);
+	     $('#notApproveButton-' + targetTrId).prop('disabled', true);
       }
     });
 
