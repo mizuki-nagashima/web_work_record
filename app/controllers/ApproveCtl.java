@@ -46,12 +46,12 @@ public class ApproveCtl extends Controller {
      * @return 承認画面
      */
     public Result index(String year,String month) {
-    	if(!session("authorityClass").equals(Const.AUTHORITY_CLASS_CHECK) ||
-    			!session("authorityClass").equals(Const.AUTHORITY_CLASS_SELF)) {
-
     	String yearMonth = year + DateUtil.getZeroPadding(month);
     	String appEmp = session("employeeNo");
     	String appName = session("employeeName");
+
+    	if(!session("authorityClass").equals(Const.AUTHORITY_CLASS_CHECK) ||
+    			!session("authorityClass").equals(Const.AUTHORITY_CLASS_SELF)) {
 
     	// 業務チームコード取得
     	List<SqlRow> sqlBusinessTeamCodeList = getBusinessTeamCode();
@@ -79,7 +79,7 @@ public class ApproveCtl extends Controller {
     	} else {
         	return ok(Json.toJson(ImmutableMap.of(
                     "result", "ok",
-                    "link",String.valueOf(routes.AttendanceCtl.index(year,month))
+                    "link",String.valueOf(routes.AttendanceCtl.index(appEmp,year,month))
             )));
     	}
     }
@@ -152,7 +152,7 @@ public class ApproveCtl extends Controller {
 //    }
 
     /**
-     * 勤怠管理画面で「年月を指定して移動」時の処理をします。
+     * 承認一覧画面で「年月を指定して移動」時の処理をします。
      * @param empNo 社員番号
      * @param yearMonth 年月(yyyyMM)
      * @return 勤怠管理画面画面
@@ -165,5 +165,14 @@ public class ApproveCtl extends Controller {
                         "result", "ok",
                         "link",String.valueOf(routes.ApproveCtl.index(Year,Month))
                 )));
+    }
+
+    // TODO 承認画面の月日から勤怠管理画面に遷移
+    public Result moveAttendanceByApprove(String empNo, String year, String month) {
+	    return ok(Json.toJson(
+	            ImmutableMap.of(
+	                    "result", "ok",
+	                    "link", java.lang.String.valueOf(routes.AttendanceCtl.index(empNo,year, month))
+	            )));
     }
 }

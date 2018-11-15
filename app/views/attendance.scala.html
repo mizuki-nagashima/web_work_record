@@ -2,13 +2,13 @@
 	inputForm: Form[models.form.AttendanceInputFormList],
 	date: List[models.form.DateList], year: String, month: String,
 	statusDefaultValue: Boolean,existsDefaultValue: Boolean,
-	empNo: String, empName: String,defaultWorkTime: Double,
+	sesEmpNo: String, empNo: String, empName: String,defaultWorkTime: Double,
 	departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode],
 	businessList: List[models.MsGeneralCode], businessTeamList: List[models.MsGeneralCode],
 	hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
 @import play.i18n._
 @import helper._
-@main(Messages.get("header.title","勤怠入力"),empNo,empName) {
+@main(Messages.get("header.title","勤怠入力"),sesEmpNo,empName) {
 
 <section class="content">
   <div class="row">

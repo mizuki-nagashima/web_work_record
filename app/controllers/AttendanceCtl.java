@@ -60,19 +60,20 @@ public class AttendanceCtl extends Controller {
 
     /**
      * 勤怠管理画面を表示します。
+     * @param empNo 該当社員番号
      * @param year 年(yyyy形式)
      * @param month 月(1~12)
      * @return 勤怠管理画面画面
      */
-    public Result index(String year, String month) {
+    public Result index(String refEmpNo, String year, String month) {
         // 最大の月(1月)
         final int MIN_MONTH = 1;
         // 最大の月(月)
         final int MAX_MONTH = 12;
-        // 社員番号
-        final String employeeNo = session("employeeNo");
-        // 社員名
-        final String employeeName = session("employeeName");
+        // 参照社員番号
+        String sessionEmpNo = session("employeeNo");
+        // 参照社員名
+        String sessionEmpName = session("employeeName");
         // 日付
         List<DateList> dateList = getDateList(year, DateUtil.getZeroPadding(month));
 
@@ -82,16 +83,15 @@ public class AttendanceCtl extends Controller {
         Boolean existsDefaultValue = false;
 
         // 保存済実績を取得
-        List<SqlRow> performanceData = getPerformanceData(employeeNo, monthsYears);
-        SqlRow monthStatusData = getYearMonthData(employeeNo, monthsYears);
+        List<SqlRow> performanceData = getPerformanceData(refEmpNo, monthsYears);
+        SqlRow monthStatusData = getYearMonthData(refEmpNo, monthsYears);
 
         // 表示用Form
         AttendanceInputFormList aifl = new AttendanceInputFormList();
-
-        if(monthStatusData != null) {
+        if(monthStatusData.size() != 0) {
         	statusDefaultValue = true;
         }
-        aifl.statusAndWorkFormList = MakeModelUtil.makeStatusAndWorkForm(employeeNo, monthsYears);
+        aifl.statusAndWorkFormList = MakeModelUtil.makeStatusAndWorkForm(refEmpNo, monthsYears);
 
         // 指定した年月の実績データが一件でもある場合は初期値をセット
         if (performanceData.size() != 0) {
@@ -120,8 +120,9 @@ public class AttendanceCtl extends Controller {
                     month,
                     statusDefaultValue,
                     existsDefaultValue,
-                    employeeNo,
-                    employeeName,
+                    sessionEmpNo,
+                    refEmpNo,
+                    sessionEmpName,
                     defalutWorkTime,
                     departList,
                     divisionList,
@@ -540,7 +541,7 @@ public class AttendanceCtl extends Controller {
         return ok(Json.toJson(
                 ImmutableMap.of(
                         "result", "ok",
-                        "link",String.valueOf(routes.AttendanceCtl.index(Year,Month))
+                        "link",String.valueOf(routes.AttendanceCtl.index(empNo,Year,Month))
                 )));
     }
 
