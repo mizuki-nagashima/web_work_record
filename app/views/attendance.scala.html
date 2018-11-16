@@ -2,14 +2,14 @@
 	inputForm: Form[models.form.AttendanceInputFormList],
 	date: List[models.form.DateList], year: String, month: String,
 	statusDefaultValue: Boolean,existsDefaultValue: Boolean,
-	refEmpNo: String, empNo: String, empName: String,defaultWorkTime: Double,
+	refEmpNo: String, sesEmpNo: String, empName: String,defaultWorkTime: Double,
 	departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode],
 	businessList: List[models.MsGeneralCode], businessTeamList: List[models.MsGeneralCode],
 	hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
 @import play.i18n._
 @import helper._
-@main(Messages.get("header.title","勤怠入力"),empNo,empName) {
-
+@main(Messages.get("header.title","勤怠入力"),sesEmpNo,empName) {
+<!-- TODO 管理者が修正できるように -->
 <section class="content">
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -218,7 +218,7 @@
         </div>
       </div>
       }
-      @form(action = routes.AttendanceCtl.save(empNo, year + month), 'id -> "inputForm") {
+      @form(action = routes.AttendanceCtl.save(sesEmpNo, year + month), 'id -> "inputForm") {
       <input type="hidden" id="monthsYears" name="monthsYears" value="@((year + month).toInt)">
       <input type="hidden" id="businessCode" name="businessCode" value="@statusAndWorkForm.get().businessCode">
       <input type="hidden" id="businessTeamCode" name="businessTeamCode" value="@statusAndWorkForm.get().businessTeamCode">
@@ -287,7 +287,7 @@
           <tbody style="font-size: 14px;">
             @date.zipWithIndex.map{ case(d, idx) =>
             <tr class="attendanceForm tableDeta" id="@d.dateId" data-monthsYears="@d.monthsYears" data-date="@d.date" string-date="@d.stringDate" @if(d.isHoliday){background="#f2f2f2"}>
-              <input type="hidden" name="attendanceInputFormList[@idx].employeeNo" value="@empNo">
+              <input type="hidden" name="attendanceInputFormList[@idx].employeeNo" value="@sesEmpNo">
               <input type="hidden" name="attendanceInputFormList[@idx].monthsYears" value="@d.monthsYears">
               <input type="hidden" name="attendanceInputFormList[@idx].date" value="@d.date">
               <input type="hidden" name="attendanceInputFormList[@idx].dateId" value="@d.dateId">
@@ -559,7 +559,7 @@
       changeDate : function(){
         var yearMonth = $(this).val();
         var nowYearMonth = @((year + month).toInt);
-        var empNum = '@empNo';
+        var empNum = '@sesEmpNo';
         var url = '@routes.AttendanceCtl.moveTargetYearMonth("0","0","0")';
         url = url.substring(0, url.length - 5) + empNum + '/' + yearMonth.replace("/","")+ '/' + nowYearMonth;
         $.ajax({
@@ -755,7 +755,7 @@
        $('.save-warn-msg-contents').remove();
        $('#form-warning').addClass("none-form-warning");
        $('#form-warning').removeClass("form-warning");
-       $('#inputForm').attr("action", '@routes.AttendanceCtl.saveCheck(empNo, year + month)');
+       $('#inputForm').attr("action", '@routes.AttendanceCtl.saveCheck(refEmpNo, year + month)');
        $.totalInsert();
        $('.work-time-contents').remove();
        $.postAjax('#inputForm', function(data){
@@ -796,7 +796,7 @@
       $('.save-warn-msg-contents').remove();
       $('#form-warning').addClass("none-form-warning");
       $('#form-warning').removeClass("form-warning");
-      $('#inputForm').attr("action", '@routes.AttendanceCtl.save(empNo, year + month)');
+      $('#inputForm').attr("action", '@routes.AttendanceCtl.save(refEmpNo, year + month)');
       $.postAjax('#inputForm', function(data){
         if(data.result == "ok"){
 		  localStorage.saveMsg = '勤怠を保存しました。';
@@ -841,7 +841,7 @@
        $('#form-warning').addClass("none-form-warning");
        $('#form-warning').removeClass("form-warning");
        $('.fix-contents').remove();
-       $('#inputForm').attr("action", '@routes.AttendanceCtl.fixCheck(empNo, year ,month)');
+       $('#inputForm').attr("action", '@routes.AttendanceCtl.fixCheck(refEmpNo, year ,month)');
        $.postAjax('#inputForm', function(data){
             if(data.result == "ok"){
               var msgContents = '<p id="approveBody" class="fix-contents">てすと</p>';
@@ -886,7 +886,7 @@
       $('.fix-warn-msg-contents').remove();
       $('#form-warning').addClass("none-form-warning");
       $('#form-warning').removeClass("form-warning");
-      $('#inputForm').attr("action", '@routes.AttendanceCtl.fix(empNo, year + month)');
+      $('#inputForm').attr("action", '@routes.AttendanceCtl.fix(refEmpNo, year + month)');
       $.postAjax('#inputForm', function(data){
             if(data.result == "ok"){
               var yearMonth = @year + '年' + @month + '月';

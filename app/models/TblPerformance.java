@@ -247,7 +247,7 @@ public class TblPerformance extends CommonModel {
                      "BREAKDOWN2 = :break2,BREAKDOWN3 = :break3,BREAKDOWN4 = :break4," +
                      "PERFORMANCE_TIME = :pertime,DEDUCTION_NIGHT = :den,DEDUCTION_OTHER = :deo," +
                      "HOLIDAY_CLASS = :holiday,SHIFT_CLASS = :shift,OTHER_APPROVAL_CLASS = :other," +
-                     "PERFORMANCE_STATUS = :status, REMARKS = :rem,UPDATE_DATE = CURRENT_TIMESTAMP " +
+                     "PERFORMANCE_STATUS = :status, REMARKS = :rem,UPDATE_USER_ID =:upuser, UPDATE_DATE = CURRENT_TIMESTAMP " +
                      "WHERE EMPLOYEE_NO = :emp AND MONTHS_YEARS = :yearmonth AND PERFORMANCE_DATE = :date";
         Ebean.beginTransaction();
         try {
@@ -266,6 +266,7 @@ public class TblPerformance extends CommonModel {
                 .setParameter("other",performanceData.other_approval_class)
                 .setParameter("status",performanceData.performanceStatus)
                 .setParameter("rem",performanceData.remarks)
+                .setParameter("upuser",performanceData.updateUserId)
                 .setParameter("emp",performanceData.employeeNo)
                 .setParameter("yearmonth",performanceData.monthsYears)
                 .setParameter("date",performanceData.performanceDate);

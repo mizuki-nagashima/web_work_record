@@ -94,10 +94,6 @@ public class AuthCtl extends Controller {
             session("authorityClass", authority);
             session("employeeName", result.getString("employee_name"));
 
-            // FIXME debug
-            System.out.println("authority_class ===== " + authority);
-            System.out.println("authority_class ===== " + result.getString("employee_name"));
-
            // 権限が05：自陣のみ閲覧以外の場合はメニュー画面に遷移
             if (!Const.AUTHORITY_CLASS_SELF.equals(authority)) {
             	return ok(Json.toJson(
