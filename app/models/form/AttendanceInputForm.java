@@ -27,7 +27,6 @@ public class AttendanceInputForm {
     public String holidayClassName = "";
     public String shiftClassCode = "";
     public String shiftClassName = "";
-    public String otherApprovalClass = "";
     public String performanceStatus = "";
     public Double nightWork = 0.0;
     public Double salaried = 0.0;

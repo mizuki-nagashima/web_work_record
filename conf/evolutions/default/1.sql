@@ -97,7 +97,6 @@ create table tbl_performance (
   deduction_other               double,
   holiday_class                 varchar(255),
   shift_class                   varchar(255),
-  other_approval_class          varchar(255),
   remarks                       varchar(255),
   performance_status            varchar(255) not null,
   approval_employee_no          varchar(255),

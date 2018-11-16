@@ -94,10 +94,6 @@ public class AuthCtl extends Controller {
             session("authorityClass", authority);
             session("employeeName", result.getString("employee_name"));
 
-            // FIXME debug
-            System.out.println("authority_class ===== " + authority);
-            System.out.println("authority_class ===== " + result.getString("employee_name"));
-
            // 権限が05：自陣のみ閲覧以外の場合はメニュー画面に遷移
             if (!Const.AUTHORITY_CLASS_SELF.equals(authority)) {
             	return ok(Json.toJson(
@@ -109,7 +105,7 @@ public class AuthCtl extends Controller {
                 return ok(Json.toJson(
                         ImmutableMap.of(
                                 "result", "ok",
-                                "link", java.lang.String.valueOf(routes.AttendanceCtl.index(Year, Month))
+                                "link", java.lang.String.valueOf(routes.AttendanceCtl.index(employeeNo,Year, Month))
                         )));
             }
 
@@ -137,6 +133,7 @@ public class AuthCtl extends Controller {
      */
     public Result menuAttendance() {
     	Form<LoginForm> form = formFactory.form(LoginForm.class).bindFromRequest();
+    	String empNo = session("employeeNo");
     	try {
 		    	String yyyyMM = DateUtil.getNowYYYYMM();
 		        String Year = yyyyMM.substring(0,4);
@@ -144,7 +141,7 @@ public class AuthCtl extends Controller {
     	        return ok(Json.toJson(
     	                ImmutableMap.of(
     	                        "result", "ok",
-    	                        "link", java.lang.String.valueOf(routes.AttendanceCtl.index(Year,Month))
+    	                        "link", java.lang.String.valueOf(routes.AttendanceCtl.index(empNo,Year,Month))
     	                )));
 		} catch (Exception e) {
 			return notFound();

@@ -2,14 +2,14 @@
 	inputForm: Form[models.form.AttendanceInputFormList],
 	date: List[models.form.DateList], year: String, month: String,
 	statusDefaultValue: Boolean,existsDefaultValue: Boolean,
-	empNo: String, empName: String,defaultWorkTime: Double,
+	refEmpNo: String, sesEmpNo: String, empName: String,defaultWorkTime: Double,
 	departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode],
 	businessList: List[models.MsGeneralCode], businessTeamList: List[models.MsGeneralCode],
 	hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
 @import play.i18n._
 @import helper._
-@main(Messages.get("header.title","勤怠入力"),empNo,empName) {
-
+@main(Messages.get("header.title","勤怠入力"),sesEmpNo,empName) {
+<!-- TODO 管理者が修正できるように -->
 <section class="content">
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -218,7 +218,7 @@
         </div>
       </div>
       }
-      @form(action = routes.AttendanceCtl.save(empNo, year + month), 'id -> "inputForm") {
+      @form(action = routes.AttendanceCtl.save(sesEmpNo, year + month), 'id -> "inputForm") {
       <input type="hidden" id="monthsYears" name="monthsYears" value="@((year + month).toInt)">
       <input type="hidden" id="businessCode" name="businessCode" value="@statusAndWorkForm.get().businessCode">
       <input type="hidden" id="businessTeamCode" name="businessTeamCode" value="@statusAndWorkForm.get().businessTeamCode">
@@ -287,7 +287,7 @@
           <tbody style="font-size: 14px;">
             @date.zipWithIndex.map{ case(d, idx) =>
             <tr class="attendanceForm tableDeta" id="@d.dateId" data-monthsYears="@d.monthsYears" data-date="@d.date" string-date="@d.stringDate" @if(d.isHoliday){background="#f2f2f2"}>
-              <input type="hidden" name="attendanceInputFormList[@idx].employeeNo" value="@empNo">
+              <input type="hidden" name="attendanceInputFormList[@idx].employeeNo" value="@sesEmpNo">
               <input type="hidden" name="attendanceInputFormList[@idx].monthsYears" value="@d.monthsYears">
               <input type="hidden" name="attendanceInputFormList[@idx].date" value="@d.date">
               <input type="hidden" name="attendanceInputFormList[@idx].dateId" value="@d.dateId">
@@ -351,9 +351,9 @@
             <tr class="visible-xs">
               <td colspan="3"><button class="btn btn-default col-xs-12 otherInputModalBtn" date-id="@d.dateId" type="button"><i class="fa fa-pencil"></i>その他詳細入力</button></td>
             </tr>
-            <!--<tr class="tableDeta hidden-xs" id="behindTr" date-id="@d.dateId">
-              <input type="hidden" id="@d.dateId-closingTime" class="form-control hiddenClosingTime" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).closingTime"}>
-            </tr>-->
+            <tr class="tableDeta hidden-xs" id="behindTr" date-id="@d.dateId">
+              <input type="hidden" id="closingTime@d.dateId" class="form-control hiddenClosingTime" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).closingTime"}>
+            </tr>
             <div class="modal fade otherInputModal" id="otherInputModal@d.dateId" date-id="@d.dateId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -558,9 +558,10 @@
     }).on({
       changeDate : function(){
         var yearMonth = $(this).val();
-        var empNum = '@empNo';
-        var url = '@routes.AttendanceCtl.moveTargetYearMonth("0","0")';
-        url = url.substring(0, url.length - 3) + empNum + '/' + yearMonth.replace("/","");
+        var nowYearMonth = @((year + month).toInt);
+        var empNum = '@refEmpNo';
+        var url = '@routes.AttendanceCtl.moveTargetYearMonth("0","0","0")';
+        url = url.substring(0, url.length - 5) + empNum + '/' + yearMonth.replace("/","")+ '/' + nowYearMonth;
         $.ajax({
           type : 'GET',
           url : url,
@@ -744,24 +745,6 @@
       $.totalInsert();
     });
 
-/*
-    $(".moveBtn").click(function () {
-        var yearMonth = $(this).parent().find('.moveYearMonth').val();
-        var empNum = '@empNo';
-        var url = '@routes.AttendanceCtl.moveTargetYearMonth("0","0")';
-        url = url.substring(0, url.length - 5) + empNum + '/' + yearMonth.replace("/","");
-        $.ajax({
-          type : 'GET',
-          url : url,
-          success : function(data) {
-            if (data.result == "ok") {
-              window.location.href = data.link;
-            }
-          }
-        });
-    });
-*/
-
     $(".warn-msg").click(function () {
       $(this).addClass("hidden");
     });
@@ -772,7 +755,7 @@
        $('.save-warn-msg-contents').remove();
        $('#form-warning').addClass("none-form-warning");
        $('#form-warning').removeClass("form-warning");
-       $('#inputForm').attr("action", '@routes.AttendanceCtl.saveCheck(empNo, year + month)');
+       $('#inputForm').attr("action", '@routes.AttendanceCtl.saveCheck(refEmpNo, year + month)');
        $.totalInsert();
        $('.work-time-contents').remove();
        $.postAjax('#inputForm', function(data){
@@ -813,7 +796,7 @@
       $('.save-warn-msg-contents').remove();
       $('#form-warning').addClass("none-form-warning");
       $('#form-warning').removeClass("form-warning");
-      $('#inputForm').attr("action", '@routes.AttendanceCtl.save(empNo, year + month)');
+      $('#inputForm').attr("action", '@routes.AttendanceCtl.save(refEmpNo, year + month)');
       $.postAjax('#inputForm', function(data){
         if(data.result == "ok"){
 		  localStorage.saveMsg = '勤怠を保存しました。';
@@ -858,7 +841,7 @@
        $('#form-warning').addClass("none-form-warning");
        $('#form-warning').removeClass("form-warning");
        $('.fix-contents').remove();
-       $('#inputForm').attr("action", '@routes.AttendanceCtl.fixCheck(empNo, year ,month)');
+       $('#inputForm').attr("action", '@routes.AttendanceCtl.fixCheck(refEmpNo, year ,month)');
        $.postAjax('#inputForm', function(data){
             if(data.result == "ok"){
               var msgContents = '<p id="approveBody" class="fix-contents">てすと</p>';
@@ -903,7 +886,7 @@
       $('.fix-warn-msg-contents').remove();
       $('#form-warning').addClass("none-form-warning");
       $('#form-warning').removeClass("form-warning");
-      $('#inputForm').attr("action", '@routes.AttendanceCtl.fix(empNo, year + month)');
+      $('#inputForm').attr("action", '@routes.AttendanceCtl.fix(refEmpNo, year + month)');
       $.postAjax('#inputForm', function(data){
             if(data.result == "ok"){
               var yearMonth = @year + '年' + @month + '月';

@@ -153,3 +153,7 @@ tbody tr:nth-child(6n-5){
   pointer-events: none;
   content: " ";
 }
+.dateLink{
+  cursor: pointer;
+  cursor: hand;
+}

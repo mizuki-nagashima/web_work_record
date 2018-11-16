@@ -163,7 +163,6 @@ public class MakeModelUtil {
             double performanceTime = 0.0;
             String holidayClassCode = Const.HOLIDAY_CLASS_NOTHING;
             String shiftClassCode = Const.SHIFT_CLASS_NOTHING;
-            String otherApprovalClass = "";
             String performanceStatus = "";
 
             String remarks = "";
@@ -201,9 +200,6 @@ public class MakeModelUtil {
             aif.performanceTime = performanceTime;
             aif.holidayClassCode = holidayClassCode;
             aif.shiftClassCode = shiftClassCode;
-            aif.otherApprovalClass = otherApprovalClass;
-
-            // TODO 勤怠入力用フォームのステータス変更処理
             aif.performanceStatus = performanceStatus;
 
             if (!"".equals(closingTime)) {
