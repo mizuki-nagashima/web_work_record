@@ -2,7 +2,7 @@
 	inputForm: Form[models.form.AttendanceInputFormList],
 	date: List[models.form.DateList], year: String, month: String,
 	statusDefaultValue: Boolean,existsDefaultValue: Boolean,
-	empNo: String, empName: String,defaultWorkTime: Double,
+	refEmpNo: String, empNo: String, empName: String,defaultWorkTime: Double,
 	departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode],
 	businessList: List[models.MsGeneralCode], businessTeamList: List[models.MsGeneralCode],
 	hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
@@ -351,9 +351,9 @@
             <tr class="visible-xs">
               <td colspan="3"><button class="btn btn-default col-xs-12 otherInputModalBtn" date-id="@d.dateId" type="button"><i class="fa fa-pencil"></i>その他詳細入力</button></td>
             </tr>
-            <!--<tr class="tableDeta hidden-xs" id="behindTr" date-id="@d.dateId">
-              <input type="hidden" id="@d.dateId-closingTime" class="form-control hiddenClosingTime" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).closingTime"}>
-            </tr>-->
+            <tr class="tableDeta hidden-xs" id="behindTr" date-id="@d.dateId">
+              <input type="hidden" id="closingTime@d.dateId" class="form-control hiddenClosingTime" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).closingTime"}>
+            </tr>
             <div class="modal fade otherInputModal" id="otherInputModal@d.dateId" date-id="@d.dateId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -558,9 +558,10 @@
     }).on({
       changeDate : function(){
         var yearMonth = $(this).val();
+        var nowYearMonth = @((year + month).toInt);
         var empNum = '@empNo';
-        var url = '@routes.AttendanceCtl.moveTargetYearMonth("0","0")';
-        url = url.substring(0, url.length - 3) + empNum + '/' + yearMonth.replace("/","");
+        var url = '@routes.AttendanceCtl.moveTargetYearMonth("0","0","0")';
+        url = url.substring(0, url.length - 5) + empNum + '/' + yearMonth.replace("/","")+ '/' + nowYearMonth;
         $.ajax({
           type : 'GET',
           url : url,
@@ -743,24 +744,6 @@
       }
       $.totalInsert();
     });
-
-/*
-    $(".moveBtn").click(function () {
-        var yearMonth = $(this).parent().find('.moveYearMonth').val();
-        var empNum = '@empNo';
-        var url = '@routes.AttendanceCtl.moveTargetYearMonth("0","0")';
-        url = url.substring(0, url.length - 5) + empNum + '/' + yearMonth.replace("/","");
-        $.ajax({
-          type : 'GET',
-          url : url,
-          success : function(data) {
-            if (data.result == "ok") {
-              window.location.href = data.link;
-            }
-          }
-        });
-    });
-*/
 
     $(".warn-msg").click(function () {
       $(this).addClass("hidden");

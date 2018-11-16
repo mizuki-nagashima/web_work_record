@@ -54,7 +54,7 @@
           @for(app <- appFormList ){
 	          @form(action = routes.ApproveCtl.updateApprove(app.employeeNo, year+month,app.performanceDate,0), 'id -> "inputForm") {
 	          <tr id="@app.appNo">
-	         	 <input type="hidden" id="employeeNo.@app.appNo" name="employeeNo" value="@app.employeeNo">
+	         	 <input type="hidden" id="employeeNo@app.appNo" name="employeeNo" value="@app.employeeNo">
 	              <input type="hidden" name="monthsYears" value="@app.monthsYears">
 	              <input type="hidden" name="date" value="@app.performanceDate">
 	              <input type="hidden" name="appNo" value="@app.appNo">

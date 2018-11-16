@@ -46,14 +46,6 @@ import views.html.attendance;
  * @author nagashima-mizuki
  *
  */
-/**
- * @author nagashima-mizuki
- *
- */
-/**
- * @author nagashima-mizuki
- *
- */
 @Security.Authenticated(Secured.class)
 public class AttendanceCtl extends Controller {
 
@@ -66,7 +58,7 @@ public class AttendanceCtl extends Controller {
      * @param month 月(1~12)
      * @return 勤怠管理画面画面
      */
-    public Result index(String year, String month) {
+    public Result index(String refEmpNo, String year, String month) {
         // 最大の月(1月)
         final int MIN_MONTH = 1;
         // 最大の月(月)
@@ -84,8 +76,8 @@ public class AttendanceCtl extends Controller {
         Boolean existsDefaultValue = false;
 
         // 保存済実績を取得
-        List<SqlRow> performanceData = getPerformanceData(employeeNo, monthsYears);
-        SqlRow monthStatusData = getYearMonthData(employeeNo, monthsYears);
+        List<SqlRow> performanceData = getPerformanceData(refEmpNo, monthsYears);
+        SqlRow monthStatusData = getYearMonthData(refEmpNo, monthsYears);
         try {
         // 表示用Form
         AttendanceInputFormList aifl = new AttendanceInputFormList();
@@ -93,7 +85,7 @@ public class AttendanceCtl extends Controller {
         if(monthStatusData != null) {
         	statusDefaultValue = true;
         }
-        aifl.statusAndWorkFormList = MakeModelUtil.makeStatusAndWorkForm(employeeNo, monthsYears);
+        aifl.statusAndWorkFormList = MakeModelUtil.makeStatusAndWorkForm(refEmpNo, monthsYears);
 
         // 指定した年月の実績データが一件でもある場合は初期値をセット
         if (performanceData.size() != 0) {
@@ -122,6 +114,7 @@ public class AttendanceCtl extends Controller {
                     month,
                     statusDefaultValue,
                     existsDefaultValue,
+                    refEmpNo,
                     employeeNo,
                     employeeName,
                     defalutWorkTime,
@@ -541,13 +534,13 @@ public class AttendanceCtl extends Controller {
      */
     // TODO 却下されたデータあったらしるしつける
     // TODO 管理メニューに戻れるように
-    public Result moveTargetYearMonth(String empNo, String yearMonth) {
+    public Result moveTargetYearMonth(String empNo, String yearMonth,String nowYearMonth) {
         String Year = yearMonth.substring(0,4);
         String Month = yearMonth.substring(4,6);
         return ok(Json.toJson(
                 ImmutableMap.of(
                         "result", "ok",
-                        "link",String.valueOf(routes.AttendanceCtl.index(Year,Month))
+                        "link",String.valueOf(routes.AttendanceCtl.index(empNo,Year,Month))
                 )));
     }
 
