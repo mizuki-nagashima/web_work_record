@@ -559,7 +559,7 @@
       changeDate : function(){
         var yearMonth = $(this).val();
         var nowYearMonth = @((year + month).toInt);
-        var empNum = '@sesEmpNo';
+        var empNum = '@refEmpNo';
         var url = '@routes.AttendanceCtl.moveTargetYearMonth("0","0","0")';
         url = url.substring(0, url.length - 5) + empNum + '/' + yearMonth.replace("/","")+ '/' + nowYearMonth;
         $.ajax({

@@ -228,7 +228,6 @@ public class AttendanceCtl extends Controller {
                         pft.deductionOther = inputForm.deductionOther;
                         pft.holidayClass = holidayClassCode;
                         pft.shiftClass = inputForm.shiftClassCode;
-                        pft.other_approval_class = "";
                         pft.remarks = inputForm.remarks;
                         pft.performanceStatus = Const.PERFORMANCE_STATUS_SAVE;
                         try {
@@ -375,9 +374,6 @@ public class AttendanceCtl extends Controller {
 			            // 承認申請可能日チェック
 		            	if(date.equals(inputForm.date)) {
 			            		attrStatus = Const.MONTHS_YEARS_STATUS_FIX;
-			            		if(!session("authorityClass").equals(Const.AUTHORITY_CLASS_SELF)) {
-			            			perStatus = Const.PERFORMANCE_STATUS_APPROVED;
-			            		}
 			                    String op = inputForm.openingTime;
 			                    String cl = inputForm.closingTime;
 			                    String emptyChar = "";
@@ -402,7 +398,6 @@ public class AttendanceCtl extends Controller {
 			                            pft.deductionOther = inputForm.deductionOther;
 			                            pft.holidayClass = holidayClassCode;
 			                            pft.shiftClass = inputForm.shiftClassCode;
-			                            pft.other_approval_class = "";
 			                            pft.remarks = inputForm.remarks;
 			                            pft.performanceStatus = perStatus;
 			    	                    pft.updateUserId = session("employeeNo");
