@@ -153,17 +153,11 @@ public class AttendanceCtl extends Controller {
                     statusAndWorkForm.employeeNo, statusAndWorkForm.monthsYears);
             // 年月属性テーブルが既に存在する場合は更新、なければ新規作成
             if (targetYearMonthAttributeTbl == null) {
-                //  debug
-                System.out.println("insert！！！");
-
                 ymat.monthsYearsStatus = Const.PERFORMANCE_STATUS_SAVE;
                 ymat.registUserId = statusAndWorkForm.employeeNo;
                 ymat.updateUserId = statusAndWorkForm.employeeNo;
                 TblYearMonthAttribute.insertYearMonthData(ymat);
             } else {
-            	//  debug
-                System.out.println("update！！！");
-
                 ymat.monthsYearsStatus = Const.PERFORMANCE_STATUS_SAVE;
                 ymat.updateUserId = statusAndWorkForm.employeeNo;
                 TblYearMonthAttribute.updateYearMonthData(ymat);

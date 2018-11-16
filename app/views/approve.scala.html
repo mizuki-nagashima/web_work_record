@@ -42,8 +42,8 @@
             <th rowspan="2" width="8%">承認日時</th>
           </tr>
           <tr>
-          	<th>社員番号</th>
-            <th width="6%">社員名</th>
+          	<th width="6%">社員番号</th>
+            <th width="8%">社員名</th>
             <th>業務チーム名</th>
             <th width="8%">日付</th>
             <th width="15%">内容</th>
@@ -271,7 +271,6 @@
 		searching: false
 	});
 
-    // TODO リンク作成
 	$(".dateLink").click(function(){
 	  var targetTr = $(this).closest('tr');
       var targetTrId = targetTr.attr('id');
@@ -283,7 +282,8 @@
         url : url,
         success : function(data) {
           if(data.result == "ok"){
-            window.open(data.link,'newwindow');
+          window.open(data.link,'_blank','width=1000,height=500,scrollbars=1,location=0,menubar=0,toolbar=0,status=1,directories=0,resizable=1,left='+(window.screen.width-500)/2+',top='+(window.screen.height-500)/2);
+          return false;
           }
         }
       });
