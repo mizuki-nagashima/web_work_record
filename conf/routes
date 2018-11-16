@@ -37,6 +37,7 @@ GET     /attendancePdf/:year/:month/:pdfKind   controllers.AttendancePdfCtl.inde
 GET		/approve/:year/:month					controllers.ApproveCtl.index(year: String, month: String)
 POST	/approve/updateApprove/:empNo/:yearMonth/:date/:flg  	controllers.ApproveCtl.updateApprove(empNo: String, yearMonth: String, date:String, flg:Int)
 GET     /approve/moveTargetYearMonth/:empNo/:yearMonth/:nowYearMonth       controllers.ApproveCtl.moveTargetYearMonth(empNo: String, yearMonth: String, nowYearMonth: String)
+GET     /approve/moveAttendanceByApprove/:empNo/:year/:month	controllers.ApproveCtl.moveAttendanceByApprove(empNo: String, year: String, month: String)
 
 GET		/overtimeList	controllers.OvertimeListCtl.index()
 GET		/outputPdf	controllers.OutputPdfCtl.outputPdf()

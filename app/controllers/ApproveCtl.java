@@ -168,4 +168,19 @@ public class ApproveCtl extends Controller {
                         "link",String.valueOf(routes.ApproveCtl.index(Year,Month))
                 )));
     }
+
+    /**
+     * 承認画面の月日から勤怠管理画面に遷移
+     * @param empNo
+     * @param year
+     * @param month
+     * @return
+     */
+    public Result moveAttendanceByApprove(String empNo, String year, String month) {
+	    return ok(Json.toJson(
+	            ImmutableMap.of(
+	                    "result", "ok",
+	                    "link", java.lang.String.valueOf(routes.AttendanceCtl.index(year, month))
+	            )));
+    }
 }

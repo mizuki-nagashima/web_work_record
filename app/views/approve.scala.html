@@ -53,8 +53,8 @@
           <tbody>
           @for(app <- appFormList ){
 	          @form(action = routes.ApproveCtl.updateApprove(app.employeeNo, year+month,app.performanceDate,0), 'id -> "inputForm") {
-	          <tr>
-	         	 <input type="hidden" name="employeeNo" value="@app.employeeNo">
+	          <tr id="@app.appNo">
+	         	 <input type="hidden" id="employeeNo.@app.appNo" name="employeeNo" value="@app.employeeNo">
 	              <input type="hidden" name="monthsYears" value="@app.monthsYears">
 	              <input type="hidden" name="date" value="@app.performanceDate">
 	              <input type="hidden" name="appNo" value="@app.appNo">
@@ -62,7 +62,7 @@
 	            <td>@app.employeeNo</td>
 	            <td>@app.employeeName</td>
 	            <td>@app.bsCode</td>
-	            <td>@year/@month/@app.performanceDate</td>
+	            <td><a class="dateLink">@year/@month/@app.performanceDate</a></td>
 	            <td valign="middle">@app.contents</td>
 	            <td>@app.remarks</td>
 	            <td id="@app.appNo" class="status" valign="middle">@app.performanceStatus</td>
@@ -260,6 +260,24 @@
 
     $(".pdfBtn").click(function () {
 　　　　　$('#pdfModal').modal('show');
+    });
+
+    // TODO リンク作成
+	$(".dateLink").click(function(){
+	  var targetTr = $(this).closest('tr');
+      var targetTrId = targetTr.attr('id');
+      var empNo = $('#employeeNo' + targetTrId).val();
+      var url = '@routes.ApproveCtl.moveAttendanceByApprove("0","0","0")';
+      url = url.substring(0, url.length - 5) + empNo + '/' + @year + '/' + @month;
+      $.ajax({
+        type : 'GET',
+        url : url,
+        success : function(data) {
+          if(data.result == "ok"){
+            window.open(data.link,'newwindow');
+          }
+        }
+      });
     });
 
     $.postAjax = function(formId, callBack, url) {
