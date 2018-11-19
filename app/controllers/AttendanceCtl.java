@@ -10,8 +10,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.joda.time.TimeOfDay;
-
 import com.avaje.ebean.SqlRow;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;

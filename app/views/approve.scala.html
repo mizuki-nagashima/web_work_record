@@ -1,4 +1,4 @@
-@(message: String, appEmp:String, year:String, month:String, appFormList: List[models.form.ApproveForm],empNo: String, empName: String)
+@(message: String,year:String, month:String, appFormList: List[models.form.ApproveForm],empNo: String, empName: String)
 @import play.i18n._
 @import helper._
 @main(Messages.get("header.title","承認一覧"),empNo,empName) {
@@ -55,9 +55,9 @@
 	          @form(action = routes.ApproveCtl.updateApprove(app.employeeNo, year+month,app.performanceDate,0), 'id -> "inputForm") {
 	          <tr id="@app.appNo">
 	         	 <input type="hidden" id="employeeNo@app.appNo" name="employeeNo" value="@app.employeeNo">
-	              <input type="hidden" name="monthsYears" value="@app.monthsYears">
-	              <input type="hidden" name="date" value="@app.performanceDate">
-	              <input type="hidden" name="appNo" value="@app.appNo">
+	              <input type="hidden" id="monthsYears@app.appNo" name="monthsYears" value="@app.monthsYears">
+	              <input type="hidden" id="date@app.appNo" name="date" value="@app.performanceDate">
+	              <input type="hidden" id="appNo@app.appNo" name="appNo" value="@app.appNo">
 	            <td>@app.appNo</td>
 	            <td>@app.employeeNo</td>
 	            <td>@app.employeeName</td>
@@ -98,7 +98,6 @@
       </div>
 </div>
 </section>
-<!-- TODO 承認前モーダル設置 -->
 <div class="hidden warn-msg">
   <p id="warn-msg-title"><i class="fa fa-exclamation-circle"></i>以下の入力値が誤っているため保存できません、修正して下さい。</p>
   <div align="right">
@@ -145,7 +144,7 @@
       changeDate : function(){
         var yearMonth = $(this).val();
         var nowYearMonth = @((year + month).toInt);
-        var empNum = '@appEmp';
+        var empNum = '@empNo';
         var url = '@routes.ApproveCtl.moveTargetYearMonth("0","0","0")';
         url = url.substring(0, url.length - 5) + empNum + '/' + yearMonth.replace("/","") + '/' + nowYearMonth;
         $.ajax({
@@ -168,7 +167,12 @@
         $(".warn-msg").addClass("hidden");
         $('.warn-msg-contents').remove();
         $('.save-warn-msg-contents').remove();
-	    var url = $(this.form).attr('action');
+	    var targetTr = $(this).closest('tr');
+        var targetTrId = targetTr.attr('id');
+        var empNo = $('#employeeNo' + targetTrId).val();
+        var date = $('#date' + targetTrId).val();
+	    var url = '@routes.ApproveCtl.updateApprove("0","0","0",0)';
+	    url = url.substring(0, url.length - 7) + empNo + '/' + @year + @month + '/' + date + '/0';
    	 	$.ajax({
           type : 'POST',
           url : url,
@@ -206,8 +210,12 @@
         $(".warn-msg").addClass("hidden");
         $('.warn-msg-contents').remove();
         $('.save-warn-msg-contents').remove();
-	    var url = $(this.form).attr('action');
-	    url = url.substring(0, url.length - 1) + 1;
+	    var targetTr = $(this).closest('tr');
+        var targetTrId = targetTr.attr('id');
+        var empNo = $('#employeeNo' + targetTrId).val();
+        var date = $('#date' + targetTrId).val();
+	    var url = '@routes.ApproveCtl.updateApprove("0","0","0",0)';
+	    url = url.substring(0, url.length - 7) + empNo + '/' + @year + @month + '/' + date + '/1';
    	    $.ajax({
           type : 'POST',
           url : url,
@@ -266,8 +274,9 @@
 		language: {url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json"}
 	});
 	$('#tabelData').DataTable({
+	    stateSave: true,
 		paging: false,
-		columnDefs: [{ "orderable": false, "targets": [1,3,5,6,8,9,10] }],
+		columnDefs: [{ "orderable": false, "targets": [1,3,5] }],
 		searching: false
 	});
 

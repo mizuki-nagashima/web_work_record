@@ -9,7 +9,7 @@
 @import play.i18n._
 @import helper._
 @main(Messages.get("header.title","勤怠入力"),sesEmpNo,empName) {
-<!-- TODO 管理者が修正できるように -->
+
 <section class="content">
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -346,7 +346,7 @@
                   }
                 </select>
               </td>
-              <td class="hidden-xs" valign="middle"> <textarea rows="1" id="remarks" name="attendanceInputFormList[@idx].remarks" class="form-control  remarks-@d.dateId">@if(existsDefaultValue){@inputForm.get().attendanceInputFormList.get(idx).remarks}</textarea></td>
+              <td class="hidden-xs" valign="middle"> <textarea rows="1" id="remarks@d.dateId" name="attendanceInputFormList[@idx].remarks" class="form-control  remarks-@d.dateId">@if(existsDefaultValue){@inputForm.get().attendanceInputFormList.get(idx).remarks}</textarea></td>
             </tr>
             <tr class="visible-xs">
               <td colspan="3"><button class="btn btn-default col-xs-12 otherInputModalBtn" date-id="@d.dateId" type="button"><i class="fa fa-pencil"></i>その他詳細入力</button></td>
@@ -456,6 +456,7 @@
     </div>
   </div>
 </section>
+<!-- TODO 承認モーダルに保存データ表示 -->
 <p id="page-save" class="saveBtn"><a class="saveBtn-a"><i class="fa fa-check-square-o"></i> @Messages.get("attendance.save")</a></p>
 <div class="hidden warn-msg">
   <p id="warn-msg-title"><i class="fa fa-exclamation-circle"></i>以下の入力値が誤っているため保存できません、修正して下さい。</p>
@@ -1095,17 +1096,17 @@
     $(".approveLabel").each(function(){
       var targetTr = $(this).closest('tr');
       var targetTrId = targetTr.attr('id');
-      if(targetTrId == "behindTr"){
-        targetTrId = targetTr.attr('date-id');
-      }
-      $('#' + targetTrId).children().children('.openingTime').prop('readonly', true);
-      $('#' + targetTrId).children().children('.closingTime').prop('readonly', true);
-      $('#' + targetTrId).children().children('.breakdown1').prop('readonly', true);
-      $('#' + targetTrId).children().children('.breakdown2').prop('readonly', true);
-      $('#' + targetTrId).children().children('.breakdown3').prop('readonly', true);
-      $('#' + targetTrId).children().children('.breakdown4').prop('readonly', true);
-      $('#' + targetTrId).children().children('.deductionNight').prop('readonly', true);
-      $('#' + targetTrId).children().children('.deductionOther').prop('readonly', true);
+      $('#' + targetTrId).children().children('.openingTime').prop('disabled', true);
+      $('#' + targetTrId).children().children('.closingTime').prop('disabled', true);
+      $('#' + targetTrId).children().children('.breakdown1').prop('disabled', true);
+      $('#' + targetTrId).children().children('.breakdown2').prop('disabled', true);
+      $('#' + targetTrId).children().children('.breakdown3').prop('disabled', true);
+      $('#' + targetTrId).children().children('.breakdown4').prop('disabled', true);
+      $('#' + targetTrId).children().children('.deductionNight').prop('disabled', true);
+      $('#' + targetTrId).children().children('.deductionOther').prop('disabled', true);
+      $('#holidayClass'+ targetTrId).prop('disabled', true);
+      $('#shiftClass'+ targetTrId).prop('disabled', true);
+      $('#remarks' + targetTrId).prop('disabled', true);
     });
 
     $.postAjax = function(formId, callBack, url) {

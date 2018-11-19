@@ -71,7 +71,6 @@ public class ApproveCtl extends Controller {
     	Form<ApproveFormList> appForm = formFactory.form(ApproveFormList.class).fill(apfl);
 
         return ok(approve.render("承認画面",
-        		appEmp,
          		year,month,
          		apfl.approveFormList
          		,appEmp,appName
@@ -102,11 +101,9 @@ public class ApproveCtl extends Controller {
 	    try {
 	    	String appEmp = session("employeeNo");	// 承認者社員番号
 		    if(flg == 0) {
-		    	System.out.println("承認処理開始");
 		    	String perStatus = Const.PERFORMANCE_STATUS_APPROVED;
 		    	TblPerformance.updateApprove(empNo, monthsYears, date, perStatus, appEmp);
 		    } else if(flg == 1) {
-		    		System.out.println("承認不可処理開始");
 		        	String perStatus = Const.PERFORMANCE_STATUS_APPROVAL_NOT;
 		        	TblPerformance.updateApprove(empNo, monthsYears, date, perStatus);
 		    } else {
@@ -140,19 +137,6 @@ public class ApproveCtl extends Controller {
 
     	return resultList;
     }
-
-//    /**
-//     * 承認画面年度リスト取得処理
-//     * @param 承認者社員番号
-//     * @return 業務チームコードリスト
-//     */
-//    public List<SqlRow> getApproveYearMonth() {
-//    	List<SqlRow> resultList = new ArrayList<>();
-//        String emp = "00000";
-//    	resultList = MsPerformanceManage.getApproveYearMonth(emp);
-//
-//    	return resultList;
-//    }
 
     /**
      * 勤怠管理画面で「年月を指定して移動」時の処理をします。

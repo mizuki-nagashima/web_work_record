@@ -340,7 +340,9 @@ public class TblPerformance extends CommonModel {
      * @param appemp 承認者社員番号
      */
     public static void updateApprove(String empNo, String yearMonth, String date, String perStatus, String appemp) {
-    	String sql = "update tbl_performance set performance_status = :perStatus, approval_employee_no = :appEmp, approval_date = Now() " +
+    	String sql = "update tbl_performance set performance_status = :perStatus, " +
+    		   	     "approval_employee_no = :appEmp, approval_date = current_timestamp ,"
+    		   	     + "update_user_id=:appEmp, update_date=current_timestamp " +
     				 "where employee_no = :emp and months_years = :yearmonth and performance_date = :date";
         Ebean.beginTransaction();
         try {
@@ -370,7 +372,8 @@ public class TblPerformance extends CommonModel {
      * @param perStatus 実績ステータス
      */
     public static void updateApprove(String empNo, String yearMonth, String date, String perStatus) {
-    	String sql = "update tbl_performance set performance_status = :perStatus " +
+    	String sql = "update tbl_performance set performance_status = :perStatus, " +
+    			"update_user_id=:emp, update_date=current_timestamp " +
     				 "where employee_no = :emp and months_years = :yearmonth and performance_date = :date";
         Ebean.beginTransaction();
         try {
