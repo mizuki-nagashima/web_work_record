@@ -1,4 +1,12 @@
 media screen and (max-width: 767px)
+.html, body{
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: "Hiragino Kaku Gothic ProN","メイリオ","Meiryo UI",'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif!important;
+    -webkit-text-size-adjust: 100%;
+}
 .table-responsive {
     width: 100%;
     margin-bottom: 15px;
@@ -157,3 +165,28 @@ tbody tr:nth-child(6n-5){
   cursor: pointer;
   cursor: hand;
 }
+table.dataTable thead th {
+  /* ソートの矢印の画像を FontAwesome のアイコンに置き換える。*/
+  position: relative;
+  background-image: none !important;
+}
+
+.sorting:after,
+.sorting_asc:after,
+.sorting_desc:after {
+    position: absolute;
+    top: 12px;
+    right: 8px;
+    display: block;
+    font-family: FontAwesome;
+  }
+
+.sorting:after {
+    content: '\f0dc';
+  }
+.sorting_asc:after {
+    content: '\f0de';
+  }
+.sorting_desc:after {
+    content: '\f0dd';
+  }

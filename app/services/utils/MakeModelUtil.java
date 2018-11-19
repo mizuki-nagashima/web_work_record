@@ -124,8 +124,6 @@ public class MakeModelUtil {
             sawf.breakdownName4 = empInfo.getString("breakdown_name4");
             sawf.monthsYearsStatus = Const.MONTHS_YEARS_STATUS_UNFIX;
             // 年月属性テーブルを新規作成
-                //  debug
-                System.out.println("insert！！！");
                 // FormからEntityに詰め替え
                 TblYearMonthAttribute tblYearMonthAttribute = MakeModelUtil.makeYearMonthAttributeTbl(
                 		sawf.employeeNo, sawf.monthsYears, sawf);
