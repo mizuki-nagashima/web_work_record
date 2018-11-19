@@ -33,21 +33,21 @@
         <table id="tabelData" class="table table-bordered">
           <thead style="background: #d3e5ff;">
           <tr>
-            <th rowspan="2">No.</th>
-            <th colspan="3">社員ステータス</th>
-            <th colspan="3">承認内容</th>
-            <th rowspan="2">状況</th>
-            <th colspan="2" rowspan="2">承認</th>
-            <th rowspan="2">承認者</th>
-            <th rowspan="2" width="8%">承認日時</th>
+            <th class="hidden-xs" rowspan="2">No.</th>
+            <th class="hidden-xs" colspan="3">社員ステータス</th>
+            <th class="hidden-xs" colspan="3">承認内容</th>
+            <th class="hidden-xs" rowspan="2">状況</th>
+            <th class="hidden-xs" colspan="2" rowspan="2">承認</th>
+            <th class="hidden-xs" rowspan="2">承認者</th>
+            <th class="hidden-xs" rowspan="2" width="8%">承認日時</th>
           </tr>
           <tr>
           	<th width="6%">社員番号</th>
             <th width="8%">社員名</th>
-            <th>業務チーム名</th>
+            <th class="hidden-xs">業務チーム名</th>
             <th width="8%">日付</th>
             <th width="15%">内容</th>
-            <th>備考欄</th>
+            <th class="hidden-xs">備考欄</th>
           </tr>
           </thead>
           <tbody>
@@ -68,8 +68,8 @@
 	            <td id="@app.appNo" class="status" valign="middle">@app.performanceStatus</td>
 		            <td><button id="approveButton-@app.appNo" type="button" class="btn btn-success approveButton" style="margin-right: 10px">承認する</button></td>
 		            <td><button id="notApproveButton-@app.appNo"type="button" class="btn btn-danger notApproveButton" style="margin-right: 10px" >却下</button></td>
-	    		<td>@app.approvalEmployeeName</td>
-	            <td>@app.approvalDate</td>
+	    		<td class="hidden-xs">@app.approvalEmployeeName</td>
+	            <td class="hidden-xs">@app.approvalDate</td>
 	          </tr>
 	          }
 			}
@@ -270,14 +270,13 @@
 　　　　　$('#pdfModal').modal('show');
     });
 
-	$.extend( $.fn.dataTable.defaults, {
-		language: {url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json"}
-	});
 	$('#tabelData').DataTable({
 	    stateSave: true,
 		paging: false,
-		columnDefs: [{ "orderable": false, "targets": [1,3,5] }],
-		searching: false
+		searching: false,
+		columnDefs: [
+			{"orderable": false ,"targets": [1,3,5,6,9,10,11] }
+		]
 	});
 
 	$(".dateLink").click(function(){
