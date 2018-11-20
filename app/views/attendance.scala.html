@@ -227,7 +227,7 @@
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
           <div class="col-md-12 col-sm-12 col-xs-12 visible-xs form-inline margin-bottom">
-            <label>年月を指定して移動：</label>
+            <label>@Messages.get("moveYearMonth")</label>
             <input value="" class="form-control datepicker moveYearMonth" style="display: inline; width: 75%;">
           </div>
           <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
@@ -244,7 +244,7 @@
               @Messages.get("attendance.fix")
             </button>
             <div class="pull-right hidden-xs">
-              <label>年月を指定して移動：</label>
+              <label>@Messages.get("moveYearMonth")</label>
               <input value="" class="form-control datepicker moveYearMonth">
             </div>
           </div>
@@ -296,10 +296,10 @@
                 <input type="hidden" id="beforeHolidayClass@idx" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).holidayClassCode"}else{"00"}>
               <td valign="middle">
                 <span class="calendar" style="white-space: nowrap;">@d.stringDate</span>@if(d.isHoliday){<span style="margin-bottom: 3px" class="label label-warning holiday">休</span>}
-                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "01"){<span style="margin-bottom: 3px" class="label label-success fa fa-check-square-o saveLavel"> @Messages.get("attendance.form.alreadySave")</span>}
-                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "02"){<span class="label label-primary fa fa-exclamation-circle requestLavel"> @Messages.get("attendance.form.alreadyApprovalRequest")</span>}
-                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "03"){<span class="label label-primary fa fa-check-square approveLabel"> @Messages.get("attendance.form.alreadyFix")</span>}
-                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "04"){<span class="label label-danger fa fa-exclamation-triangle remandLavel"> @Messages.get("attendance.form.alreadyFixRemand")</span>}
+                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "01"){<span style="margin-bottom: 3px" class="label label-success fa fa-check-square-o saveLavel"> @Messages.get("approve.form.alreadySave")</span>}
+                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "02"){<span class="label label-primary fa fa-exclamation-circle requestLavel"> @Messages.get("approve.form.alreadyApprovalRequest")</span>}
+                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "03"){<span class="label label-primary fa fa-check-square approveLabel"> @Messages.get("approve.form.alreadyFix")</span>}
+                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "04"){<span class="label label-danger fa fa-exclamation-triangle remandLavel"> @Messages.get("approve.form.alreadyFixRemand")</span>}
               </td>
               <td valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.start") id="openingTime" name="attendanceInputFormList[@idx].openingTime" class="form-control timePicker openingTime changeEventForm" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).openingTime"}> </td>
               <td valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.end") id="closingTime" name="attendanceInputFormList[@idx].closingTime" class="form-control timePicker closingTime changeEventForm" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).closingTime" }> </td>
@@ -422,7 +422,7 @@
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
           <div class="col-md-12 col-sm-12 col-xs-12 visible-xs form-inline margin-bottom">
-            <label>年月を指定して移動：</label>
+            <label>@Messages.get("moveYearMonth")</label>
             <input value="" class="form-control datepicker moveYearMonth" style="display: inline; width: 75%;">
           </div>
           <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
@@ -439,7 +439,7 @@
               @Messages.get("attendance.fix")
             </button>
             <div class="pull-right hidden-xs">
-              <label>年月を指定して移動：</label>
+              <label>@Messages.get("moveYearMonth")</label>
               <input value="" class="form-control datepicker moveYearMonth">
             </div>
           </div>
@@ -459,9 +459,9 @@
 <!-- TODO 承認モーダルに保存データ表示 -->
 <p id="page-save" class="saveBtn"><a class="saveBtn-a"><i class="fa fa-check-square-o"></i> @Messages.get("attendance.save")</a></p>
 <div class="hidden warn-msg">
-  <p id="warn-msg-title"><i class="fa fa-exclamation-circle"></i>以下の入力値が誤っているため保存できません、修正して下さい。</p>
+  <p id="warn-msg-title"><i class="fa fa-exclamation-circle"></i>@Messages.get("errorModal.message.header")</p>
   <div align="right">
-    <small>※クリックでこのメッセージを閉じます。</small>
+    <small>@Messages.get("errorModal.message.footer")</small>
   </div>
 </div>
 <div class="hidden success-msg fa fa-thumbs-o-up">
@@ -472,10 +472,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
-        <h4 class="modal-title" id="exampleModalLabel">PDF出力</h4>
+        <h4 class="modal-title" id="exampleModalLabel">@Messages.get("pdfModal.title")</h4>
       </div>
       <div class="modal-body">
-        <p>出力するPDFを選んでください</p>
+        <p>@Messages.get("pdfModal.message.header")</p>
         <button type="button" id="normalPdf" class="btn btn-default" value="target='_blank'" onClick="window.open('@routes.AttendancePdfCtl.index(year,month,1)','_blank','')">社員用(ノーマル)</button>
       </div>
       <div class="modal-footer">
@@ -491,10 +491,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
-        <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i>　保存</h4>
+        <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i>　@Messages.get("attendance.save")</h4>
       </div>
       <div class="modal-body">
-        <p>お仕事お疲れ様です。<br>以下を確認のうえ、OKボタンを押して保存してください。</p>
+        <p>お仕事お疲れ様です。<br>@Messages.get("otherModal.message.header")</p>
         <p id="defaultWorkTime">・所定労働時間： @defaultWorkTime 時間</p>
       </div>
       <div class="modal-footer">
@@ -509,10 +509,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
-        <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i> 確定</h4>
+        <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i> @Messages.get("attendance.fix")</h4>
       </div>
       <div class="modal-body">
-        <p>今月の勤怠情報を確定します。<br>以下を確認のうえ、OKボタンを押して確定してください。</p>
+        <p>今月の勤怠情報を確定します。<br>@Messages.get("otherModal.message.header")</p>
         <p id="approveTitle">--承認依頼一覧--</p>
         <div align="right">
 		    <small>※</small>

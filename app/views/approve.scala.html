@@ -11,7 +11,7 @@
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
           <div class="col-md-12 col-sm-12 col-xs-12 visible-xs form-inline margin-bottom">
-            <label>年月を指定して移動：</label>
+            <label>@Messages.get("moveYearMonth")</label>
             <input value="" class="form-control datepicker moveYearMonth" style="display: inline; width: 75%;">
           </div>
           <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
@@ -20,7 +20,7 @@
               @Messages.get("attendance.pdf")
             </button>  -->
             <div class="pull-right hidden-xs">
-              <label>年月を指定して移動：</label>
+              <label>@Messages.get("moveYearMonth")</label>
               <input value="" class="form-control datepicker moveYearMonth">
             </div>
           </div>
@@ -81,7 +81,7 @@
    <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
           <div class="col-md-12 col-sm-12 col-xs-12 visible-xs form-inline margin-bottom">
-            <label>年月を指定して移動：</label>
+            <label>@Messages.get("moveYearMonth")</label>
             <input value="" class="form-control datepicker moveYearMonth" style="display: inline; width: 75%;">
           </div>
           <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
@@ -90,7 +90,7 @@
               @Messages.get("attendance.pdf")
             </button>  -->
             <div class="pull-right hidden-xs">
-              <label>年月を指定して移動：</label>
+              <label>@Messages.get("moveYearMonth")</label>
               <input value="" class="form-control datepicker moveYearMonth">
             </div>
           </div>
@@ -99,9 +99,9 @@
 </div>
 </section>
 <div class="hidden warn-msg">
-  <p id="warn-msg-title"><i class="fa fa-exclamation-circle"></i>以下の入力値が誤っているため保存できません、修正して下さい。</p>
+  <p id="warn-msg-title"><i class="fa fa-exclamation-circle"></i>@Messages.get("errorModal.message.header")</p>
   <div align="right">
-    <small>※クリックでこのメッセージを閉じます。</small>
+    <small>@Messages.get("errorModal.message.footer")</small>
   </div>
 </div>
 <div class="hidden success-msg fa fa-thumbs-o-up">
@@ -111,10 +111,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
-        <h4 class="modal-title" id="exampleModalLabel">PDF出力</h4>
+        <h4 class="modal-title" id="exampleModalLabel">@Messages.get("pdfModal.title")</h4>
       </div>
       <div class="modal-body">
-        <p>出力するPDFを選んでください</p>
+        <p>@Messages.get("pdfModal.message.header")</p>
         <button type="button" id="normalPdf" class="btn btn-default" value="target='_blank'" onClick="window.open('@routes.AttendancePdfCtl.index(year,month,1)','_blank','')">社員用(ノーマル)</button>
       </div>
       <div class="modal-footer">
@@ -253,10 +253,10 @@
       var targetTrId = $(this).attr('id');
       var text = $(this).text();
       var value = text.substr(text.length-6);
-	　  if (value.match('未承認')){
+	　  if (value.match('@Messages.get("approve.form.unapproved")')){
         $(this).css('color', 'red');
         $(this).css('font-weight', 'bold');
-      } else if(value.match('承認済')){
+      } else if(value.match('@Messages.get("approve.form.alreadyFix")')){
 	      $('#approveButton-' + targetTrId).prop('disabled', true);
 	      $('#notApproveButton-' + targetTrId).prop('disabled', true);
       } else {
