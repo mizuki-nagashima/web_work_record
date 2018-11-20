@@ -1,7 +1,7 @@
 @(loginForm: Form[models.form.LoginForm],empNo: String, empName: String)
 @import play.i18n._
 @import helper._
-@main(Messages.get("header.title","管理者メニュー"),empNo,empName) {
+@main(messages.at("header.title","管理者メニュー"),empNo,empName) {
 <style>
 body {
 background-color:#f8f8f8;
@@ -12,10 +12,10 @@ background-color:#f8f8f8;
     <h2>管理者メニュー</h2>
   <div class="login-box-body">
    @form(action = routes.AuthCtl.menuAttendance, 'id -> "attendance") {
-   	  <h4><p>・<a id="attendanceBtn" class="cp_link">@Messages.get("attendance")</a></p></h4>
+   	  <h4><p>・<a id="attendanceBtn" class="cp_link">@messages.at("attendance")</a></p></h4>
  　　}
    @form(action = routes.AuthCtl.menuApprove, 'id -> "approve") {
- 	  <h4><p>・<a id="approveBtn" class="cp_link">@Messages.get("approve")</a></p></h4>
+ 	  <h4><p>・<a id="approveBtn" class="cp_link">@messages.at("approve")</a></p></h4>
    }
   </div>
  </div>

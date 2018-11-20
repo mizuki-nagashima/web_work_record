@@ -1,26 +1,26 @@
 @(message: String,year:String, month:String, appFormList: List[models.form.ApproveForm],empNo: String, empName: String)
 @import play.i18n._
 @import helper._
-@main(Messages.get("header.title","承認一覧"),empNo,empName) {
+@main(messages.at("header.title","承認一覧"),empNo,empName) {
 <section class="content">
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <div class="col-md-10 col-sm-10 col-xs-12">
-        <h2><i class="fa fa-pencil-square-o"></i> @Messages.get("titleDate",year,month)</h2>
+        <h2><i class="fa fa-pencil-square-o"></i> @messages.at("titleDate",year,month)</h2>
       </div>
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
           <div class="col-md-12 col-sm-12 col-xs-12 visible-xs form-inline margin-bottom">
-            <label>@Messages.get("moveYearMonth")</label>
+            <label>@messages.at("moveYearMonth")</label>
             <input value="" class="form-control datepicker moveYearMonth" style="display: inline; width: 75%;">
           </div>
           <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
      <!--        <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
               <i class="fa fa-file-text"></i>
-              @Messages.get("attendance.pdf")
+              @messages.at("attendance.pdf")
             </button>  -->
             <div class="pull-right hidden-xs">
-              <label>@Messages.get("moveYearMonth")</label>
+              <label>@messages.at("moveYearMonth")</label>
               <input value="" class="form-control datepicker moveYearMonth">
             </div>
           </div>
@@ -81,16 +81,16 @@
    <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
           <div class="col-md-12 col-sm-12 col-xs-12 visible-xs form-inline margin-bottom">
-            <label>@Messages.get("moveYearMonth")</label>
+            <label>@messages.at("moveYearMonth")</label>
             <input value="" class="form-control datepicker moveYearMonth" style="display: inline; width: 75%;">
           </div>
           <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
     <!--         <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
               <i class="fa fa-file-text"></i>
-              @Messages.get("attendance.pdf")
+              @messages.at("attendance.pdf")
             </button>  -->
             <div class="pull-right hidden-xs">
-              <label>@Messages.get("moveYearMonth")</label>
+              <label>@messages.at("moveYearMonth")</label>
               <input value="" class="form-control datepicker moveYearMonth">
             </div>
           </div>
@@ -99,9 +99,9 @@
 </div>
 </section>
 <div class="hidden warn-msg">
-  <p id="warn-msg-title"><i class="fa fa-exclamation-circle"></i>@Messages.get("errorModal.message.header")</p>
+  <p id="warn-msg-title"><i class="fa fa-exclamation-circle"></i>@messages.at("errorModal.message.header")</p>
   <div align="right">
-    <small>@Messages.get("errorModal.message.footer")</small>
+    <small>@messages.at("errorModal.message.footer")</small>
   </div>
 </div>
 <div class="hidden success-msg fa fa-thumbs-o-up">
@@ -111,10 +111,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
-        <h4 class="modal-title" id="exampleModalLabel">@Messages.get("pdfModal.title")</h4>
+        <h4 class="modal-title" id="exampleModalLabel">@messages.at("pdfModal.title")</h4>
       </div>
       <div class="modal-body">
-        <p>@Messages.get("pdfModal.message.header")</p>
+        <p>@messages.at("pdfModal.message.header")</p>
         <button type="button" id="normalPdf" class="btn btn-default" value="target='_blank'" onClick="window.open('@routes.AttendancePdfCtl.index(year,month,1)','_blank','')">社員用(ノーマル)</button>
       </div>
       <div class="modal-footer">
@@ -253,10 +253,10 @@
       var targetTrId = $(this).attr('id');
       var text = $(this).text();
       var value = text.substr(text.length-6);
-	　  if (value.match('@Messages.get("approve.form.unapproved")')){
+	　  if (value.match('@messages.at("approve.form.unapproved")')){
         $(this).css('color', 'red');
         $(this).css('font-weight', 'bold');
-      } else if(value.match('@Messages.get("approve.form.alreadyFix")')){
+      } else if(value.match('@messages.at("approve.form.alreadyFix")')){
 	      $('#approveButton-' + targetTrId).prop('disabled', true);
 	      $('#notApproveButton-' + targetTrId).prop('disabled', true);
       } else {
@@ -274,6 +274,7 @@
 	    stateSave: true,
 		paging: false,
 		searching: false,
+		"autoWidth": false,
 		columnDefs: [
 			{"orderable": false ,"targets": [1,3,5,6,9,10,11] }
 		]
