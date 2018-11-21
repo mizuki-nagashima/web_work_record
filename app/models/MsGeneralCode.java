@@ -201,22 +201,21 @@ public class MsGeneralCode extends CommonModel {
      * @param holidayClassCode コード
      * @return sqlRows
      */
-    public static String getClassNameByCode(String holidayClassCode) {
+    public static String getClassNameByCode(String type,String code) {
 
         // 休暇区分コード00：無しの場合は取得不要のためreturn
-        if (Const.HOLIDAY_CLASS_NOTHING.equals(holidayClassCode)) {
+        if (Const.HOLIDAY_CLASS_NOTHING.equals(code)) {
             return "";
         }
         String sql = "SELECT CODE_NAME as code_name FROM MS_GENERAL_CODE " +
-                     "WHERE CODE_TYPE = 'HOLIDAY_CLASS' AND CODE = :holidayClassCode";
+                     "WHERE CODE_TYPE = :type AND CODE = :code";
 
         String codeName = "";
 
         SqlRow sqlRow = Ebean.createSqlQuery(sql)
-                .setParameter("holidayClassCode",holidayClassCode)
+        		.setParameter("type",type)
+                .setParameter("code",code)
                 .findUnique();
-
-        Logger.debug("id:" + String.valueOf(holidayClassCode) + "sql:" + String.valueOf(sqlRow));
 
         codeName = sqlRow.getString("code_name");
         return codeName;

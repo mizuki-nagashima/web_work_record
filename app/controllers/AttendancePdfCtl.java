@@ -1,9 +1,13 @@
 package controllers;
 
 import com.avaje.ebean.SqlRow;
+import com.fasterxml.jackson.core.io.InputDecorator;
 import com.google.inject.Inject;
+
+import common.Const;
 import it.innove.play.pdf.PdfGenerator;
 import models.MsGeneralCode;
+import models.form.AttendanceInputForm;
 import models.form.AttendanceInputFormList;
 import models.form.AttendanceSumForm;
 import models.form.DateList;
@@ -32,49 +36,52 @@ public class AttendancePdfCtl {
     FormFactory formFactory;
     @Inject
     public PdfGenerator pdfGenerator;
-    public Result index(String year, String month, int pdfKind){
+
+
+    /**
+     * 勤怠表PDFを表示します。
+     * @param refEmpNo 該当社員番号
+     * @param year 年
+     * @param month 月
+     * @param pdfKind pdf種類
+     * @return
+     */
+    public Result index(String refEmpNo, String year, String month, int pdfKind){
         final int PDF_KIND_NORMAL = 1;
         final int MIN_MONTH = 1;//最大の月(1月)
         final int MAX_MONTH = 12;//最大の月(月)
-        final String employeeNo = session("employeeNo");//社員番号はセッションから取ってくる
-        List<DateList> dateList = getDateList(year, month);//日付
-
-        //月が一桁の場合"0"を前に付ける　⇒　"1" →　"01"
-        if(month.length() == 1){
-            month = "0" + month;
-        }
-        String monthsYears = year + month;
-        Boolean existsDefaultValue = false;
+        final String employeeNo = refEmpNo;
+        final String monthsYears = year + DateUtil.getZeroPadding(month);
+        List<DateList> dateList = DateUtil.getDateList(year, DateUtil.getZeroPadding(month));
         List<SqlRow> performanceData = getPerformanceData(employeeNo, monthsYears);
+
         AttendanceInputFormList aifl = new AttendanceInputFormList();
 
+        //ステータスと作業実績内訳詳細をフォーム化
         StatusAndWorkForm sawf = MakeModelUtil.makeStatusAndWorkForm(employeeNo, monthsYears);
-
-        //ステータスと作業実績内訳詳細を保存
         Form<StatusAndWorkForm> statusAndWorkForm = formFactory.form(StatusAndWorkForm.class).fill(sawf);
 
-        //指定した年月の実績データが一件でもある場合は初期値をセット
-        if(performanceData.size() != 0){
-            existsDefaultValue = true;
-            aifl.attendanceInputFormList = MakeModelUtil.makeAttendanceInputFormList(dateList, performanceData);
-        }
+        //登録データをフォーム化
+        aifl.attendanceInputFormList = MakeModelUtil.makeAttendanceInputFormList(dateList, performanceData);
         Form<AttendanceInputFormList> inputForm = formFactory.form(AttendanceInputFormList.class).fill(aifl);
 
+        //合計表示をフォーム化
         AttendanceSumForm asf = MakeModelUtil.makeAttendanceSumForm(aifl.attendanceInputFormList);
 
         //休暇区分のリスト
-        List<MsGeneralCode> hcmList = MakeModelUtil.makeCodeTypeList("HOLIDAY_CLASS");
+        List<MsGeneralCode> hcmList = MakeModelUtil.makeCodeTypeList(Const.HOLIDAY_CODE_NAME);
 
         ArrayList<String> fonts = new ArrayList<>();
         fonts.add("fonts/meiryo.ttc");
+     // 1~12(1月~12月以外がパラメータに入ってきたらエラー)
+        if (MIN_MONTH <= Integer.parseInt(month) && MAX_MONTH >= Integer.parseInt(month)) {
         if(pdfKind == PDF_KIND_NORMAL) {
             return pdfGenerator.ok(attendance_pdf.render(
-                    statusAndWorkForm,
+            		statusAndWorkForm,
                     inputForm,
                     dateList,
                     year,
                     month,
-                    existsDefaultValue,
                     employeeNo,
                     hcmList,
                     asf
@@ -82,22 +89,8 @@ public class AttendancePdfCtl {
         }else{
             return notFound();
         }
-    }
-
-    public List<DateList> getDateList(String year, String month) {
-        List<DateList> dl = new ArrayList<>();
-        int day = 0;
-        //当月の最大日付まで処理する。
-        for(String d: DateUtil.getDayOfTheMonth(year, month)){
-            DateList dateList = new DateList();
-            d = d.substring(d.indexOf('月')+1,d.length());
-            dateList.stringDate = d;
-            dateList.monthsYears = year + month;
-            dateList.date = String.valueOf(day + 1);
-            dateList.dateId = "date" + year + month + String.valueOf(day);
-            dateList.isHoliday = DateUtil.isHoliday(year, month, String.valueOf(day));
-            dl.add(dateList);
+        } else {
+            return notFound();
         }
-        return dl;
     }
 }

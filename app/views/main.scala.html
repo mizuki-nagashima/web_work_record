@@ -55,13 +55,13 @@
        @import play.i18n._
 
        <section class="content-header" id="header">
-         <h1><i class="fa fa-list-alt"></i> @Messages.get("title")
+         <h1><i class="fa fa-list-alt"></i> @messages.at("title")
          <button type="button" id="logoutBtn" class="btn btn-default pull-right" style="margin-bottom: 10px;">
           <span class="glyphicon glyphicon-log-out"></span>ログアウト</button>
-         <span class="pull-right" style="font-size:15px;  margin-right:10px; margin-bottom: 20px;">@Messages.get("header.name",empNo,empName)</span>
+         <span class="pull-right" style="font-size:15px;  margin-right:10px; margin-bottom: 20px;">@messages.at("header.name",empNo,empName)</span>
          </h1>
          <div id="menu">
-		<span class="hidden fixRemand label label-danger fa fa-exclamation-triangle"> @Messages.get("attendance.form.alreadyFixRemand")あり</span>
+		<span class="hidden fixRemand label label-danger fa fa-exclamation-triangle"> @messages.at("approve.form.alreadyFixRemand")あり</span>
 		</div>
        </section>
        <div id="container">
@@ -127,7 +127,7 @@
        </div>
        <footer id="footer">
          <strong>
-         Copyright © 2017 （株）キーマネジメントソリューションズ.
+         @messages.at("footer")
          </strong>
        </footer>
     </body>

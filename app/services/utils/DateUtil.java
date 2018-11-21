@@ -236,5 +236,27 @@ public class DateUtil {
 		return workDay;
 	}
 
+    /**
+     * 画面を表示用の日付リストを返します。
+     * @param year 年(yyyy形式)
+     * @param month 月(1~12)
+     * @return DateList
+     */
+    public static List<DateList> getDateList(String year, String month) {
+        List<DateList> dl = new ArrayList<>();
+        int day = 0;
+        // 当月の最大日付まで処理
+        for (String d: DateUtil.getDayOfTheMonth(year, month)) {
+            DateList dateList = new DateList();
+            dateList.stringDate = d;
+            dateList.monthsYears = year + month;
+            dateList.date = DateUtil.getZeroPadding(String.valueOf(++day));
+            dateList.dateId = "date" + year + month + String.valueOf(day);
+            dateList.isHoliday = DateUtil.isHoliday(year, month, DateUtil.getZeroPadding(String.valueOf(day)));
+            dl.add(dateList);
+        }
+        return dl;
+    }
+
 
 }

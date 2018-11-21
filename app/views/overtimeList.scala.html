@@ -1,7 +1,7 @@
 @(message: String)
 @import play.i18n._
 @import helper._
-@main(Messages.get("overtimeList.title"),"","") {
+@main(messages.at("overtimeList.title"),"","") {
 <style type="text/css">
 /* === フィルタボタン ============================ */
 .tfArea{
@@ -488,7 +488,7 @@ function trim(argStr){
 <br>
   <div class="row">
       <div class="col-md-10 col-sm-10 col-xs-12">
-        <h2>@Messages.get("overtimeList.pagetitle")</h2>
+        <h2>@messages.at("overtimeList.pagetitle")</h2>
       </div>
 
 <!-- PDFボタン用script start -->

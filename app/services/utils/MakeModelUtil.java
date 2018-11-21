@@ -160,7 +160,9 @@ public class MakeModelUtil {
             double deductionOther = 0.0;
             double performanceTime = 0.0;
             String holidayClassCode = Const.HOLIDAY_CLASS_NOTHING;
+            String holidayClassName = "";
             String shiftClassCode = Const.SHIFT_CLASS_NOTHING;
+            String shiftClassName = "";
             String performanceStatus = "";
 
             String remarks = "";
@@ -179,7 +181,9 @@ public class MakeModelUtil {
                     deductionOther = Optional.ofNullable(pd.getDouble("deduction_other")).orElse(deductionOther);
                     performanceTime = Optional.ofNullable(pd.getDouble("performance_time")).orElse(performanceTime);
                     holidayClassCode = Optional.ofNullable(pd.getString("holiday_class")).orElse(holidayClassCode);
+                    holidayClassName = MsGeneralCode.getClassNameByCode(Const.HOLIDAY_CODE_NAME,holidayClassCode);
                     shiftClassCode = Optional.ofNullable(pd.getString("shift_class")).orElse(shiftClassCode);
+                    shiftClassName = MsGeneralCode.getClassNameByCode(Const.SHIFT_CODE_NAME, shiftClassCode);
                     remarks = Optional.ofNullable(pd.getString("remarks")).orElse(remarks);
                     performanceStatus = Optional.ofNullable(pd.getString("performance_status")).orElse(performanceStatus);
                 }
@@ -197,12 +201,14 @@ public class MakeModelUtil {
             aif.deductionOther = deductionOther;
             aif.performanceTime = performanceTime;
             aif.holidayClassCode = holidayClassCode;
+            aif.holidayClassName = holidayClassName;
             aif.shiftClassCode = shiftClassCode;
+            aif.shiftClassName = shiftClassName;
             aif.performanceStatus = performanceStatus;
 
             if (!"".equals(closingTime)) {
-                aif.holidayClassName = MsGeneralCode.getClassNameByCode(holidayClassCode);
-                aif.salaried = MsGeneralCode.getAnyValue1ByCode(holidayClassCode,"HOLIDAY_CLASS");
+                aif.holidayClassName = MsGeneralCode.getClassNameByCode(Const.HOLIDAY_CODE_NAME,holidayClassCode);
+                aif.salaried = MsGeneralCode.getAnyValue1ByCode(holidayClassCode,Const.HOLIDAY_CODE_NAME);
             }
             if (!"".equals(closingTime) && closingTime != null) {
                 aif.nightWork = DateUtil.getLateNightWorkTime(closingTime);
@@ -259,14 +265,14 @@ public class MakeModelUtil {
     		String holidayClass =  appList.getString("ho_cl");
     		contents = holidayClass;
     		if(!holidayClass.equals(Const.HOLIDAY_CLASS_NOTHING)) {
-    			holidayClass = MsGeneralCode.getCodeMaster("HOLIDAY_CLASS",holidayClass).getString("code_name");
+    			holidayClass = MsGeneralCode.getCodeMaster(Const.HOLIDAY_CODE_NAME,holidayClass).getString("code_name");
     			map.put("休暇区分",holidayClass);
     			contentsList.add(map);
     		}
     		// シフト区分
     		String shiftClass =  appList.getString("shi_cl");
     		if(!shiftClass.equals(Const.SHIFT_CLASS_NOTHING)){
-    			shiftClass = MsGeneralCode.getCodeMaster("SHIFT_CLASS",shiftClass).getString("code_name");
+    			shiftClass = MsGeneralCode.getCodeMaster(Const.SHIFT_CODE_NAME,shiftClass).getString("code_name");
     			map.put("シフト区分",shiftClass);
     			contentsList.add(map);
     		}

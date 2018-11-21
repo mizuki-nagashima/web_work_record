@@ -8,6 +8,8 @@ public class Const {
 
     private Const() {}
 
+    /** 休暇区分コード名 */
+    public static final String HOLIDAY_CODE_NAME = "HOLIDAY_CLASS";
     /** 休暇区分：なし */
     public static final String HOLIDAY_CLASS_NOTHING = "00";
     /** 休暇区分：休日出勤 */
@@ -17,6 +19,8 @@ public class Const {
     /** 休暇区分：半休 */
     public static final String HOLIDAY_CLASS_HALF_HOLIDAY = "10";
 
+    /** シフト区分コード名 */
+    public static final String SHIFT_CODE_NAME = "SHIFT_CLASS";
     /** シフト区分：なし */
     public static final String SHIFT_CLASS_NOTHING = "00";
 

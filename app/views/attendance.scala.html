@@ -8,27 +8,27 @@
 	hcmList: List[models.MsGeneralCode], shiftList: List[models.MsGeneralCode])
 @import play.i18n._
 @import helper._
-@main(Messages.get("header.title","勤怠入力"),sesEmpNo,empName) {
+@main(messages.at("header.title","勤怠入力"),sesEmpNo,empName) {
 
 <section class="content">
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <div class="col-md-10 col-sm-10 col-xs-12">
-        <h2><i class="fa fa-pencil-square-o"></i> @Messages.get("titleDate",year,month)</h2>
+        <h2><i class="fa fa-pencil-square-o"></i> @messages.at("titleDate",year,month)</h2>
       </div>
       @form(action = routes.AttendanceCtl.statusAndWorkSave, 'id -> "statusAndWorkForm") {
       <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="col-md-12 col-sm-12 col-xs-12 well">
           <div class="col-md-8 col-sm-8 col-xs-12">
             <div class="col-md-12 col-sm-12 col-xs-12">
-              <h3>@Messages.get("attendance.yourStatus")</h3>
+              <h3>@messages.at("attendance.yourStatus")</h3>
             </div>
             <input type="hidden" id="monthsYears" name="monthsYears" value="@((year + month).toInt)">
             <div class="col-md-2 col-sm-2 col-xs-12">
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
-                    @Messages.get("attendance.employeeNo")
+                    @messages.at("attendance.employeeNo")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
                     <input type="text" readonly="readonly" name="employeeNo" class="form-control" value="@statusAndWorkForm.get().employeeNo">
@@ -40,7 +40,7 @@
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
-                    @Messages.get("attendance.employeeName")
+                    @messages.at("attendance.employeeName")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
                     <input type="text" readonly="readonly" name="employeeName" class="form-control" value="@statusAndWorkForm.get().employeeName">
@@ -52,7 +52,7 @@
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
-                    @Messages.get("attendance.department")
+                    @messages.at("attendance.department")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
                   <select id="departmentCode" name="departmentCode" class="form-control departmentCode changeDepartmentCd departmentCode-@((year + month).toInt)" required>
@@ -78,7 +78,7 @@
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
-                    @Messages.get("attendance.division")
+                    @messages.at("attendance.division")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
 					<select id="divisionCode" class="division form-control" name="divisionCode" required>
@@ -104,7 +104,7 @@
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
-                    @Messages.get("attendance.workName")
+                    @messages.at("attendance.workName")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
 	                <select id="businessCode" name="businessCode" class="form-control businessCode changeBusinessCd businessCode-@((year + month).toInt)" required>
@@ -130,7 +130,7 @@
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
-                    @Messages.get("attendance.workTeamName")
+                    @messages.at("attendance.workTeamName")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
 	                 <select id="businessTeamCode" class="businessTeamCode form-control" name="businessTeamCode" required>
@@ -155,13 +155,13 @@
           </div>
           <div class="col-md-4 col-sm-4 col-xs-12">
             <div class="col-md-12 col-sm-12 col-xs-12">
-              <h3>@Messages.get("attendance.workingContents")</h3>
+              <h3>@messages.at("attendance.workingContents")</h3>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12">
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
-                    @Messages.get("attendance.work1")
+                    @messages.at("attendance.work1")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
                     <input type="text" name="breakdownName1" class="form-control" value="@statusAndWorkForm.get().breakdownName1">
@@ -173,7 +173,7 @@
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
-                    @Messages.get("attendance.work2")
+                    @messages.at("attendance.work2")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
                     <input type="text" name="breakdownName2" class="form-control" value="@statusAndWorkForm.get().breakdownName2">
@@ -185,7 +185,7 @@
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
-                    @Messages.get("attendance.work3")
+                    @messages.at("attendance.work3")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
                     <input type="text" name="breakdownName3" class="form-control" value="@statusAndWorkForm.get().breakdownName3">
@@ -197,7 +197,7 @@
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
-                    @Messages.get("attendance.work4")
+                    @messages.at("attendance.work4")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
                     <input type="text" name="breakdownName4" class="form-control" value="@statusAndWorkForm.get().breakdownName4">
@@ -211,7 +211,7 @@
           <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="col-md-12 col-sm-12 col-xs-12">
             <button type="button" id="statusAndWorksaveBtn" class="btn btn-success" style="margin-top: 15px;">
-              <i class="fa fa-clipboard"></i> @Messages.get("attendance.statusSave")
+              <i class="fa fa-clipboard"></i> @messages.at("attendance.statusSave")
             </button>
               </div>
           </div>
@@ -227,24 +227,24 @@
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
           <div class="col-md-12 col-sm-12 col-xs-12 visible-xs form-inline margin-bottom">
-            <label>年月を指定して移動：</label>
+            <label>@messages.at("moveYearMonth")</label>
             <input value="" class="form-control datepicker moveYearMonth" style="display: inline; width: 75%;">
           </div>
           <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
             <button type="button" id="attendanceSaveTop" class="btn btn-success saveBtn" style="margin-right: 10px">
               <i class="fa fa-check-square-o"></i>
-              @Messages.get("attendance.save")
+              @messages.at("attendance.save")
             </button>
-        <!--    <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
+            <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
               <i class="fa fa-file-text"></i>
-              @Messages.get("attendance.pdf")
-            </button>  -->
+              @messages.at("attendance.pdf")
+            </button>
             <button type="button" class="btn btn-danger fixBtn" style="margin-right: 10px">
               <i class="fa fa-check-square"></i>
-              @Messages.get("attendance.fix")
+              @messages.at("attendance.fix")
             </button>
             <div class="pull-right hidden-xs">
-              <label>年月を指定して移動：</label>
+              <label>@messages.at("moveYearMonth")</label>
               <input value="" class="form-control datepicker moveYearMonth">
             </div>
           </div>
@@ -262,26 +262,26 @@
         <table class="table table-bordered">
           <thead style="background: #d3e5ff;">
           <tr>
-            <th rowspan="2" width="2%">@Messages.get("attendance.form.date")</th>
-            <th colspan="2" width="10%">@Messages.get("attendance.form.workTime")</th>
-            <th class="hidden-xs" colspan="4" width="18%">@Messages.get("attendance.form.workingContents")</th>
-            <th class="hidden-xs" colspan="2" width="9%">@Messages.get("attendance.form.deduction")</th>
-            <th rowspan="2" width="4.5%">@Messages.get("attendance.form.total")</th>
-            <th class="hidden-xs" rowspan="2" width="4.5%">@Messages.get("attendance.form.nightWork")</th>
-            <th class="hidden-xs" rowspan="2" width="4.5%">@Messages.get("attendance.form.salaried")</th>
-            <th class="hidden-xs" rowspan="2" width="5.5%">@Messages.get("attendance.form.holidayClassCode")</th>
-            <th class="hidden-xs" rowspan="2" width="5.5%">@Messages.get("attendance.form.shiftClassCode")</th>
-            <th class="hidden-xs" rowspan="2" width="8%">@Messages.get("attendance.form.remarks")</th>
+            <th rowspan="2" width="2%">@messages.at("attendance.form.date")</th>
+            <th colspan="2" width="10%">@messages.at("attendance.form.workTime")</th>
+            <th class="hidden-xs" colspan="4" width="18%">@messages.at("attendance.form.workingContents")</th>
+            <th class="hidden-xs" colspan="2" width="9%">@messages.at("attendance.form.deduction")</th>
+            <th rowspan="2" width="4.5%">@messages.at("attendance.form.total")</th>
+            <th class="hidden-xs" rowspan="2" width="4.5%">@messages.at("attendance.form.nightWork")</th>
+            <th class="hidden-xs" rowspan="2" width="4.5%">@messages.at("attendance.form.salaried")</th>
+            <th class="hidden-xs" rowspan="2" width="5.5%">@messages.at("attendance.form.holidayClassCode")</th>
+            <th class="hidden-xs" rowspan="2" width="5.5%">@messages.at("attendance.form.shiftClassCode")</th>
+            <th class="hidden-xs" rowspan="2" width="8%">@messages.at("attendance.form.remarks")</th>
           </tr>
           <tr>
-            <th>@Messages.get("attendance.form.start")</th>
-            <th>@Messages.get("attendance.form.end")</th>
-            <th class="hidden-xs">@Messages.get("attendance.form.work1")</th>
-            <th class="hidden-xs">@Messages.get("attendance.form.work2")</th>
-            <th class="hidden-xs">@Messages.get("attendance.form.work3")</th>
-            <th class="hidden-xs">@Messages.get("attendance.form.work4")</th>
-            <th class="hidden-xs">@Messages.get("attendance.form.lateNight")</th>
-            <th class="hidden-xs">@Messages.get("attendance.form.other")</th>
+            <th>@messages.at("attendance.form.start")</th>
+            <th>@messages.at("attendance.form.end")</th>
+            <th class="hidden-xs">@messages.at("attendance.form.work1")</th>
+            <th class="hidden-xs">@messages.at("attendance.form.work2")</th>
+            <th class="hidden-xs">@messages.at("attendance.form.work3")</th>
+            <th class="hidden-xs">@messages.at("attendance.form.work4")</th>
+            <th class="hidden-xs">@messages.at("attendance.form.lateNight")</th>
+            <th class="hidden-xs">@messages.at("attendance.form.other")</th>
           </tr>
           </thead>
           <tbody style="font-size: 14px;">
@@ -296,19 +296,19 @@
                 <input type="hidden" id="beforeHolidayClass@idx" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).holidayClassCode"}else{"00"}>
               <td valign="middle">
                 <span class="calendar" style="white-space: nowrap;">@d.stringDate</span>@if(d.isHoliday){<span style="margin-bottom: 3px" class="label label-warning holiday">休</span>}
-                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "01"){<span style="margin-bottom: 3px" class="label label-success fa fa-check-square-o saveLavel"> @Messages.get("attendance.form.alreadySave")</span>}
-                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "02"){<span class="label label-primary fa fa-exclamation-circle requestLavel"> @Messages.get("attendance.form.alreadyApprovalRequest")</span>}
-                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "03"){<span class="label label-primary fa fa-check-square approveLabel"> @Messages.get("attendance.form.alreadyFix")</span>}
-                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "04"){<span class="label label-danger fa fa-exclamation-triangle remandLavel"> @Messages.get("attendance.form.alreadyFixRemand")</span>}
+                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "01"){<span style="margin-bottom: 3px" class="label label-success fa fa-check-square-o saveLavel"> @messages.at("approve.form.alreadySave")</span>}
+                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "02"){<span class="label label-primary fa fa-exclamation-circle requestLavel"> @messages.at("approve.form.alreadyApprovalRequest")</span>}
+                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "03"){<span class="label label-primary fa fa-check-square approveLabel"> @messages.at("approve.form.alreadyFix")</span>}
+                @if(inputForm.get().attendanceInputFormList.get(idx).performanceStatus == "04"){<span class="label label-danger fa fa-exclamation-triangle remandLavel"> @messages.at("approve.form.alreadyFixRemand")</span>}
               </td>
-              <td valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.start") id="openingTime" name="attendanceInputFormList[@idx].openingTime" class="form-control timePicker openingTime changeEventForm" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).openingTime"}> </td>
-              <td valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.end") id="closingTime" name="attendanceInputFormList[@idx].closingTime" class="form-control timePicker closingTime changeEventForm" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).closingTime" }> </td>
-              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")1 id="breakdown1" name="attendanceInputFormList[@idx].breakdown1" class="breakdown1 form-control breakdown1-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown1"}else{"0.0"}> </td>
-              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")2 id="breakdown2" name="attendanceInputFormList[@idx].breakdown2" class="breakdown2 form-control breakdown2-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown2"}else{"0.0"}> </td>
-              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")3 id="breakdown3" name="attendanceInputFormList[@idx].breakdown3" class="breakdown3 form-control breakdown3-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown3"}else{"0.0"}> </td>
-              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.workingContents")4 id="breakdown4" name="attendanceInputFormList[@idx].breakdown4" class="breakdown4 form-control breakdown4-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown4"}else{"0.0"}> </td>
-              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.lateNight")控除 id="deductionNight" name="attendanceInputFormList[@idx].deductionNight" class="deductionNight form-control changeEventForm deductionNight-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).deductionNight"}else{"0.0"}> </td>
-              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@Messages.get("attendance.form.other")控除 id="deductionOther" name="attendanceInputFormList[@idx].deductionOther" class="deductionOther form-control changeEventForm deductionOther-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).deductionOther"}else{"0.0"}> </td>
+              <td valign="middle"> <input type="text" data-toggle="popover" data-content=@messages.at("attendance.form.start") id="openingTime" name="attendanceInputFormList[@idx].openingTime" class="form-control timePicker openingTime changeEventForm" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).openingTime"}> </td>
+              <td valign="middle"> <input type="text" data-toggle="popover" data-content=@messages.at("attendance.form.end") id="closingTime" name="attendanceInputFormList[@idx].closingTime" class="form-control timePicker closingTime changeEventForm" @if(existsDefaultValue){value="@inputForm.get().attendanceInputFormList.get(idx).closingTime" }> </td>
+              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@messages.at("attendance.form.workingContents")1 id="breakdown1" name="attendanceInputFormList[@idx].breakdown1" class="breakdown1 form-control breakdown1-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown1"}else{"0.0"}> </td>
+              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@messages.at("attendance.form.workingContents")2 id="breakdown2" name="attendanceInputFormList[@idx].breakdown2" class="breakdown2 form-control breakdown2-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown2"}else{"0.0"}> </td>
+              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@messages.at("attendance.form.workingContents")3 id="breakdown3" name="attendanceInputFormList[@idx].breakdown3" class="breakdown3 form-control breakdown3-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown3"}else{"0.0"}> </td>
+              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@messages.at("attendance.form.workingContents")4 id="breakdown4" name="attendanceInputFormList[@idx].breakdown4" class="breakdown4 form-control breakdown4-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).breakdown4"}else{"0.0"}> </td>
+              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@messages.at("attendance.form.lateNight")控除 id="deductionNight" name="attendanceInputFormList[@idx].deductionNight" class="deductionNight form-control changeEventForm deductionNight-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).deductionNight"}else{"0.0"}> </td>
+              <td class="hidden-xs" valign="middle"> <input type="text" data-toggle="popover" data-content=@messages.at("attendance.form.other")控除 id="deductionOther" name="attendanceInputFormList[@idx].deductionOther" class="deductionOther form-control changeEventForm deductionOther-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).deductionOther"}else{"0.0"}> </td>
               <td valign="middle"> <input readonly="readonly" id="performanceTime" name="attendanceInputFormList[@idx].performanceTime" class="performanceTime form-control performanceTime-@d.dateId" step="0.5" min="0" value=@if(existsDefaultValue){"@inputForm.get().attendanceInputFormList.get(idx).performanceTime"}else{"0.0"}></td>
               <td class="hidden-xs" valign="middle"> <input readonly="readonly" id="nightWork" class="form-control nightWork" value="0.0"></td>
               <td class="hidden-xs" valign="middle"> <input readonly="readonly" id="salaried" class="form-control salaried" value="0.0"></td>
@@ -362,39 +362,39 @@
                     <h4 class="modal-title">その他詳細入力</h4>
                   </div>
                   <div class="modal-body">
-                    <label>@Messages.get("attendance.form.workingContents")1</label>
+                    <label>@messages.at("attendance.form.workingContents")1</label>
                     <input type="number" id="breakdown1-modal-@d.dateId" class="form-control" step="0.5" min="0" >
-                    <label>@Messages.get("attendance.form.workingContents")2</label>
+                    <label>@messages.at("attendance.form.workingContents")2</label>
                     <input type="number" id="breakdown2-modal-@d.dateId" class="form-control" step="0.5" min="0" >
-                    <label>@Messages.get("attendance.form.workingContents")3 </label>
+                    <label>@messages.at("attendance.form.workingContents")3 </label>
                     <input type="number" id="breakdown3-modal-@d.dateId" class="form-control" step="0.5" min="0" >
-                    <label>@Messages.get("attendance.form.workingContents")4</label>
+                    <label>@messages.at("attendance.form.workingContents")4</label>
                     <input type="number" id="breakdown4-modal-@d.dateId" class="form-control" step="0.5" min="0" >
-                    <label>@Messages.get("attendance.form.lateNight")控除 </label>
+                    <label>@messages.at("attendance.form.lateNight")控除 </label>
                     <input type="number" id="deductionNight-modal-@d.dateId" class="form-control" step="0.5" min="0" >
-                    <label>@Messages.get("attendance.form.other")控除</label>
+                    <label>@messages.at("attendance.form.other")控除</label>
                     <input type="number" id="deductionOther-modal-@d.dateId" class="form-control" step="0.5" min="0" >
-                    <label>@Messages.get("attendance.form.total")</label>
+                    <label>@messages.at("attendance.form.total")</label>
                     <input type="number" readonly="readonly" id="performanceTime-modal-@d.dateId" class="form-control" step="0.5" min="0">
-                    <label>@Messages.get("attendance.form.nightWork")</label>
+                    <label>@messages.at("attendance.form.nightWork")</label>
                     <input type="number" readonly="readonly" id="nightWork-model-@d.dateId" class="form-control" step="0.5" min="0">
-            		<label>@Messages.get("attendance.form.salaried")</label>
+            		<label>@messages.at("attendance.form.salaried")</label>
             		<input type="number" readonly="readonly" id="salaried-model-@d.dateId" class="form-control" step="0.5" min="0">
-                    <label>@Messages.get("attendance.form.holidayClassCode")</label>
+                    <label>@messages.at("attendance.form.holidayClassCode")</label>
                     <select id="holidayClass-modal-@d.dateId" class="form-control changeEventForm" >
                       <option value="0"></option>
                       @hcmList.map{ hcm =>
                       <option value="@hcm.code">@hcm.codeName</option>
                       }
                     </select>
-                    <label>@Messages.get("attendance.form.shiftClassCode")</label>
+                    <label>@messages.at("attendance.form.shiftClassCode")</label>
                     <select id="holidayClass-modal-@d.dateId" class="form-control changeEventForm" >
                       <option value="0"></option>
                       @hcmList.map{ hcm =>
                       <option value="@hcm.code">@hcm.codeName</option>
                       }
                     </select>
-                    <label>@Messages.get("attendance.form.remarks")</label>
+                    <label>@messages.at("attendance.form.remarks")</label>
                     <input type="text" id="remarks-modal-@d.dateId" class="form-control">
                   </div>
                   <div class="modal-footer">
@@ -422,24 +422,24 @@
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
           <div class="col-md-12 col-sm-12 col-xs-12 visible-xs form-inline margin-bottom">
-            <label>年月を指定して移動：</label>
+            <label>@messages.at("moveYearMonth")</label>
             <input value="" class="form-control datepicker moveYearMonth" style="display: inline; width: 75%;">
           </div>
           <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
             <button type="button" id="attendanceSave" class="btn btn-success saveBtn" style="margin-right: 10px">
               <i class="fa fa-check-square-o"></i>
-              @Messages.get("attendance.save")
+              @messages.at("attendance.save")
             </button>
-     <!--         <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
+              <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
               <i class="fa fa-file-text"></i>
-              @Messages.get("attendance.pdf")
-            </button> -->
+              @messages.at("attendance.pdf")
+            </button>
             <button type="button" class="btn btn-danger fixBtn" style="margin-right: 10px">
               <i class="fa fa-check-square"></i>
-              @Messages.get("attendance.fix")
+              @messages.at("attendance.fix")
             </button>
             <div class="pull-right hidden-xs">
-              <label>年月を指定して移動：</label>
+              <label>@messages.at("moveYearMonth")</label>
               <input value="" class="form-control datepicker moveYearMonth">
             </div>
           </div>
@@ -457,11 +457,11 @@
   </div>
 </section>
 <!-- TODO 承認モーダルに保存データ表示 -->
-<p id="page-save" class="saveBtn"><a class="saveBtn-a"><i class="fa fa-check-square-o"></i> @Messages.get("attendance.save")</a></p>
+<p id="page-save" class="saveBtn"><a class="saveBtn-a"><i class="fa fa-check-square-o"></i> @messages.at("attendance.save")</a></p>
 <div class="hidden warn-msg">
-  <p id="warn-msg-title"><i class="fa fa-exclamation-circle"></i>以下の入力値が誤っているため保存できません、修正して下さい。</p>
+  <p id="warn-msg-title"><i class="fa fa-exclamation-circle"></i>@messages.at("errorModal.message.header")</p>
   <div align="right">
-    <small>※クリックでこのメッセージを閉じます。</small>
+    <small>@messages.at("errorModal.message.footer")</small>
   </div>
 </div>
 <div class="hidden success-msg fa fa-thumbs-o-up">
@@ -472,11 +472,11 @@
     <div class="modal-content">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
-        <h4 class="modal-title" id="exampleModalLabel">PDF出力</h4>
+        <h4 class="modal-title" id="exampleModalLabel">@messages.at("pdfModal.title")</h4>
       </div>
       <div class="modal-body">
-        <p>出力するPDFを選んでください</p>
-        <button type="button" id="normalPdf" class="btn btn-default" value="target='_blank'" onClick="window.open('@routes.AttendancePdfCtl.index(year,month,1)','_blank','')">社員用(ノーマル)</button>
+        <p>@messages.at("pdfModal.message.header")</p>
+        <button type="button" id="normalPdf" class="btn btn-default" value="target='_blank'" onClick="window.open('@routes.AttendancePdfCtl.index(refEmpNo,year,month,1)','_blank','')">社員用(ノーマル)</button>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -491,10 +491,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
-        <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i>　保存</h4>
+        <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i>　@messages.at("attendance.save")</h4>
       </div>
       <div class="modal-body">
-        <p>お仕事お疲れ様です。<br>以下を確認のうえ、OKボタンを押して保存してください。</p>
+        <p>お仕事お疲れ様です。<br>@messages.at("otherModal.message.header")</p>
         <p id="defaultWorkTime">・所定労働時間： @defaultWorkTime 時間</p>
       </div>
       <div class="modal-footer">
@@ -509,10 +509,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
-        <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i> 確定</h4>
+        <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i> @messages.at("attendance.fix")</h4>
       </div>
       <div class="modal-body">
-        <p>今月の勤怠情報を確定します。<br>以下を確認のうえ、OKボタンを押して確定してください。</p>
+        <p>今月の勤怠情報を確定します。<br>@messages.at("otherModal.message.header")</p>
         <p id="approveTitle">--承認依頼一覧--</p>
         <div align="right">
 		    <small>※</small>
