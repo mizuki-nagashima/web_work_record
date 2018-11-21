@@ -104,28 +104,28 @@ public class CheckUtil {
         if (DateUtil.isHoliday(year, month, day)) {
             // 休日かつ休暇等区分が01:休日出勤かつ始業、終業時間に値がない場合、エラー
             if (Const.HOLIDAY_CLASS_HOLIDAY_WORK.equals(holidayClassCode) && (startTime == null || endTime == null)) {
-                return "【休暇等区分：" + MsGeneralCode.getClassNameByCode(holidayClassCode) +
+                return "【休暇等区分：" + MsGeneralCode.getClassNameByCode(Const.HOLIDAY_CODE_NAME,holidayClassCode) +
                         "】が選択されていますが、始業時間と終業時間が入力されていません。";
             // 休日かつ休暇等区分が選択されていないかつ始業、終業時間に値がある場合、エラー
             } else if (Const.HOLIDAY_CLASS_NOTHING.equals(holidayClassCode) && (startTime != null || endTime != null)){
                 return "休日に始業時間と終業時間が入力されています。休日出勤した場合は【休暇等区分：" +
-            MsGeneralCode.getClassNameByCode(Const.HOLIDAY_CLASS_HOLIDAY_WORK) + "】を選択してください。";
+            MsGeneralCode.getClassNameByCode(Const.HOLIDAY_CODE_NAME,Const.HOLIDAY_CLASS_HOLIDAY_WORK) + "】を選択してください。";
             // 休日かつ休暇等区分が選択されているかつ01:休日出勤以外が選択されている場合、エラー
             } else if (!Const.HOLIDAY_CLASS_HOLIDAY_WORK.equals(holidayClassCode)){
                 return "休日に誤った休暇等区分が入力されています。休日出勤した場合は【休暇等区分：" +
-            MsGeneralCode.getClassNameByCode(Const.HOLIDAY_CLASS_HOLIDAY_WORK) + "】を選択してください。";
+            MsGeneralCode.getClassNameByCode(Const.HOLIDAY_CODE_NAME,Const.HOLIDAY_CLASS_HOLIDAY_WORK) + "】を選択してください。";
             }
         } else {
             // 平日かつ休暇等区分が1:休日出勤の場合、エラー
             if (Const.HOLIDAY_CLASS_HOLIDAY_WORK.equals(holidayClassCode)) {
                 return "平日に【休暇等区分：" +
-                        MsGeneralCode.getClassNameByCode(Const.HOLIDAY_CLASS_HOLIDAY_WORK) + "】が選択されています。";
+                        MsGeneralCode.getClassNameByCode(Const.HOLIDAY_CODE_NAME,Const.HOLIDAY_CLASS_HOLIDAY_WORK) + "】が選択されています。";
             // 平日かつ休暇等区分が選択されているかつ01:休日出勤以外が選択されているかつ始業、終業時間に値がある場合、エラー
             } else if (!Const.HOLIDAY_CLASS_NOTHING.equals(holidayClassCode)
                     && !Const.HOLIDAY_CLASS_HOLIDAY_WORK.equals(holidayClassCode)
                     && !Const.HOLIDAY_CLASS_HALF_HOLIDAY.equals(holidayClassCode)
                     && (startTime != null || endTime != null)) {
-                return "【休暇等区分：" + MsGeneralCode.getClassNameByCode(holidayClassCode) +
+                return "【休暇等区分：" + MsGeneralCode.getClassNameByCode(Const.HOLIDAY_CODE_NAME,holidayClassCode) +
                         "】が選択されていますが、始業時間と終業時間が入力されています。";
             }
         }

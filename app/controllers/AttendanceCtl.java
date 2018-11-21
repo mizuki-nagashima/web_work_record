@@ -66,7 +66,7 @@ public class AttendanceCtl extends Controller {
         // 社員名
         final String employeeName = session("employeeName");
         // 日付
-        List<DateList> dateList = getDateList(year, DateUtil.getZeroPadding(month));
+        List<DateList> dateList = DateUtil.getDateList(year, DateUtil.getZeroPadding(month));
 
         String monthsYears = year + DateUtil.getZeroPadding(month);
         Double defalutWorkTime = DateUtil.getDefaultWorkTime(year,month);
@@ -95,8 +95,8 @@ public class AttendanceCtl extends Controller {
         Form<AttendanceInputFormList> inputForm = formFactory.form(AttendanceInputFormList.class).fill(aifl);
 
         //ステータスのリスト化
-        List<MsGeneralCode> hcmList = MakeModelUtil.makeCodeTypeList("HOLIDAY_CLASS");
-        List<MsGeneralCode> shiftList = MakeModelUtil.makeCodeTypeList("SHIFT_CLASS");
+        List<MsGeneralCode> hcmList = MakeModelUtil.makeCodeTypeList(Const.HOLIDAY_CODE_NAME);
+        List<MsGeneralCode> shiftList = MakeModelUtil.makeCodeTypeList(Const.SHIFT_CODE_NAME);
         List<MsGeneralCode> departList = MakeModelUtil.makeCodeTypeList("DEPARTMENT_CODE");
         List<MsGeneralCode> divisionList = MakeModelUtil.makeCodeTypeList("DIVISION_CODE");
         List<MsGeneralCode> businessList = MakeModelUtil.makeCodeTypeList("BUSINESS_CODE");
@@ -452,7 +452,7 @@ public class AttendanceCtl extends Controller {
 
         // 月の全ての営業日にデータが登録されているかをチェック
         // 日付リスト取得
-        List<DateList> dateList = getDateList(year, DateUtil.getZeroPadding(month));
+        List<DateList> dateList = DateUtil.getDateList(year, DateUtil.getZeroPadding(month));
         ArrayList<String> notPDataList = new ArrayList<>();
         for(DateList dl : dateList){
         	if (!dl.isHoliday) {
@@ -505,28 +505,6 @@ public class AttendanceCtl extends Controller {
                         "result", "ok",
                         "link",String.valueOf(routes.AttendanceCtl.index(empNo,Year,Month))
                 )));
-    }
-
-    /**
-     * 勤怠管理画面を表示用の日付リストを返します。
-     * @param year 年(yyyy形式)
-     * @param month 月(1~12)
-     * @return DateList
-     */
-    public List<DateList> getDateList(String year, String month) {
-        List<DateList> dl = new ArrayList<>();
-        int day = 0;
-        // 当月の最大日付まで処理
-        for (String d: DateUtil.getDayOfTheMonth(year, month)) {
-            DateList dateList = new DateList();
-            dateList.stringDate = d;
-            dateList.monthsYears = year + month;
-            dateList.date = DateUtil.getZeroPadding(String.valueOf(++day));
-            dateList.dateId = "date" + year + month + String.valueOf(day);
-            dateList.isHoliday = DateUtil.isHoliday(year, month, DateUtil.getZeroPadding(String.valueOf(day)));
-            dl.add(dateList);
-        }
-        return dl;
     }
 
     /**
@@ -617,7 +595,7 @@ public class AttendanceCtl extends Controller {
         Double salariedTime = 0.0;
         // 休暇区分が設定されている場合休暇区分の時間を取得
         if (!holidayClassCode.equals(Const.HOLIDAY_CLASS_NOTHING)) {
-            salariedTime = MsGeneralCode.getAnyValue1ByCode(holidayClassCode,"HOLIDAY_CLASS");
+            salariedTime = MsGeneralCode.getAnyValue1ByCode(holidayClassCode,Const.HOLIDAY_CODE_NAME);
         }
         double doubleDeduction = Double.parseDouble(deduction);
         String performanceTime = String.valueOf(time + salariedTime - doubleDeduction);
@@ -657,7 +635,7 @@ public class AttendanceCtl extends Controller {
     public Result getSalaried(String holidayClassCode){
         double salaried = 0.0;
         if (!Const.HOLIDAY_CLASS_NOTHING.equals(holidayClassCode)) {
-            salaried = MsGeneralCode.getAnyValue1ByCode(holidayClassCode,"HOLIDAY_CLASS");
+            salaried = MsGeneralCode.getAnyValue1ByCode(holidayClassCode,Const.HOLIDAY_CODE_NAME);
         }
         return ok(Json.toJson(
                 ImmutableMap.of(

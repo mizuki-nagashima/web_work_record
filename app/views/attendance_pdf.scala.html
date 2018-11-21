@@ -1,4 +1,4 @@
-@(statusAndWorkForm:Form[models.form.StatusAndWorkForm], inputForm: Form[models.form.AttendanceInputFormList], date: List[models.form.DateList], year: String, month: String, existsDefaultValue: Boolean, empNum: String,  hcmList: List[models.MsGeneralCode], attendanceSumForm: models.form.AttendanceSumForm)
+@(statusAndWorkForm:Form[models.form.StatusAndWorkForm], inputForm: Form[models.form.AttendanceInputFormList], date: List[models.form.DateList], year: String, month: String, empNum: String,  hcmList: List[models.MsGeneralCode], attendanceSumForm: models.form.AttendanceSumForm)
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -45,10 +45,10 @@
 </p>
 <p>
   ◎ @messages.at("attendance.workingContents")
-  - @messages.at("attendance.work1")  @statusAndWorkForm.get().breakdownName1
-  - @messages.at("attendance.work2")  @statusAndWorkForm.get().breakdownName2
-  - @messages.at("attendance.work3")  @statusAndWorkForm.get().breakdownName3
-  - @messages.at("attendance.work4")  @statusAndWorkForm.get().breakdownName4
+   　　@messages.at("attendance.work1")  @statusAndWorkForm.get().breakdownName1
+   　　@messages.at("attendance.work2")  @statusAndWorkForm.get().breakdownName2
+   　　@messages.at("attendance.work3")  @statusAndWorkForm.get().breakdownName3
+   　　@messages.at("attendance.work4")  @statusAndWorkForm.get().breakdownName4
 </p>
 <div id="container">
   <table class="border-table" style="width: 100%;">
@@ -58,10 +58,11 @@
       <th colspan="2" >@messages.at("attendance.form.workTime")</th>
       <th colspan="4" >@messages.at("attendance.form.workingContents")</th>
       <th colspan="2" >@messages.at("attendance.form.deduction")</th>
+      <th rowspan="2" >@messages.at("attendance.form.total")</th>
       <th rowspan="2" >@messages.at("attendance.form.nightWork")</th>
       <th rowspan="2" >@messages.at("attendance.form.salaried")</th>
       <th rowspan="2" >@messages.at("attendance.form.holidayClassCode")</th>
-      <th rowspan="2" >@messages.at("attendance.form.total")</th>
+      <th rowspan="2" >@messages.at("attendance.form.shiftClassCode")</th>
       <th rowspan="2" >@messages.at("attendance.form.remarks")</th>
     </tr>
     <tr>
@@ -78,68 +79,38 @@
     <tbody style="background:#fff;">
     @date.zipWithIndex.map{ case(d, idx) =>
     <tr class="attendanceForm tableDeta" id="@d.dateId" data-monthsYears="@d.monthsYears" data-date="@d.date" string-date="@d.stringDate" @if(d.isHoliday){style="background: #e6e6e6"}>
-      <td valign="middle">
+      <td valign="middle" width="8%">
         <span class="calendar">@d.stringDate</span>
       </td>
-      <td width="7%"><div id="openingTime" name="attendanceInputFormList[@idx].openingTime" class="form-control timePicker openingTime" style="white-space: nowrap;" >@inputForm.get().attendanceInputFormList.get(idx).openingTime</div></td>
-      <td width="7%"><div id="closingTime" name="attendanceInputFormList[@idx].closingTime" class="form-control timePicker closingTime" style="white-space: nowrap;">@inputForm.get().attendanceInputFormList.get(idx).closingTime</div></td>
-      <td width="5%"><div id="breakdown1" name="attendanceInputFormList[@idx].breakdown1" class="breakdown1 form-control">@if(existsDefaultValue){@inputForm.get().attendanceInputFormList.get(idx).breakdown1}else{0.0}</div></td>
-      <td width="5%"><div id="breakdown2" name="attendanceInputFormList[@idx].breakdown2" class="breakdown2 form-control">@if(existsDefaultValue){@inputForm.get().attendanceInputFormList.get(idx).breakdown2}else{0.0}</div></td>
-      <td width="5%"><div id="breakdown3" name="attendanceInputFormList[@idx].breakdown3" class="breakdown3 form-control">@if(existsDefaultValue){@inputForm.get().attendanceInputFormList.get(idx).breakdown3}else{0.0}</div></td>
-      <td width="5%"><div id="breakdown4" name="attendanceInputFormList[@idx].breakdown4" class="breakdown4 form-control">@if(existsDefaultValue){@inputForm.get().attendanceInputFormList.get(idx).breakdown4}else{0.0}</div></td>
-      <td width="6%"><div id="deductionNight" name="attendanceInputFormList[@idx].deductionNight" class="deductionNight form-control" >@if(existsDefaultValue){@inputForm.get().attendanceInputFormList.get(idx).deductionNight}else{0.0}</div></td>
-      <td width="6%"><div id="deductionOther" name="attendanceInputFormList[@idx].deductionOther" class="deductionOther form-control" >@if(existsDefaultValue){@inputForm.get().attendanceInputFormList.get(idx).deductionOther}else{0.0}</div></td>
-      <td width="7%"><div id="nightWork" name="attendanceInputFormList[@idx].nightWork" class="nightWork form-control">@if(existsDefaultValue){@inputForm.get().attendanceInputFormList.get(idx).nightWork}else{0.0}</div></td>
-      <td width="7%"><div id="salaried" name="attendanceInputFormList[@idx].salaried" class="salaried form-control">@if(existsDefaultValue){@inputForm.get().attendanceInputFormList.get(idx).salaried}else{0.0}</div></td>
-      <td width="8%"><div id="holidayClassName" name="attendanceInputFormList[@idx].holidayClassName" class="holidayClassName form-control">@if(existsDefaultValue){@inputForm.get().attendanceInputFormList.get(idx).holidayClassName}else{0.0}</div></td>
-      <td width="6%"><div id="performanceTime" name="attendanceInputFormList[@idx].performanceTime" class="performanceTime form-control">@if(existsDefaultValue){@inputForm.get().attendanceInputFormList.get(idx).performanceTime}else{0.0}</div></td>
-      <td width="18%"><div id="remarks" name="attendanceInputFormList[@idx].remarks" class="remarks form-control">@if(existsDefaultValue){ @inputForm.get().attendanceInputFormList.get(idx).remarks }</div></td>
+      <td width="5%"><div id="openingTime" name="attendanceInputFormList[@idx].openingTime" class="form-control timePicker openingTime" style="white-space: nowrap;" >@inputForm.get().attendanceInputFormList.get(idx).openingTime</div></td>
+      <td width="5%"><div id="closingTime" name="attendanceInputFormList[@idx].closingTime" class="form-control timePicker closingTime" style="white-space: nowrap;">@inputForm.get().attendanceInputFormList.get(idx).closingTime</div></td>
+      <td width="5%"><div id="breakdown1" name="attendanceInputFormList[@idx].breakdown1" class="breakdown1 form-control">@inputForm.get().attendanceInputFormList.get(idx).breakdown1</div></td>
+      <td width="5%"><div id="breakdown2" name="attendanceInputFormList[@idx].breakdown2" class="breakdown2 form-control">@inputForm.get().attendanceInputFormList.get(idx).breakdown2</div></td>
+      <td width="5%"><div id="breakdown3" name="attendanceInputFormList[@idx].breakdown3" class="breakdown3 form-control">@inputForm.get().attendanceInputFormList.get(idx).breakdown3</div></td>
+      <td width="5%"><div id="breakdown4" name="attendanceInputFormList[@idx].breakdown4" class="breakdown4 form-control">@inputForm.get().attendanceInputFormList.get(idx).breakdown4</div></td>
+      <td width="5%"><div id="deductionNight" name="attendanceInputFormList[@idx].deductionNight" class="deductionNight form-control" >@inputForm.get().attendanceInputFormList.get(idx).deductionNight</div></td>
+      <td width="5%"><div id="deductionOther" name="attendanceInputFormList[@idx].deductionOther" class="deductionOther form-control" >@inputForm.get().attendanceInputFormList.get(idx).deductionOther</div></td>
+      <td width="7%"><div id="performanceTime" name="attendanceInputFormList[@idx].performanceTime" class="performanceTime form-control">@inputForm.get().attendanceInputFormList.get(idx).performanceTime</div></td>
+      <td width="7%"><div id="nightWork" name="attendanceInputFormList[@idx].nightWork" class="nightWork form-control">@inputForm.get().attendanceInputFormList.get(idx).nightWork</div></td>
+      <td width="7%"><div id="salaried" name="attendanceInputFormList[@idx].salaried" class="salaried form-control">@inputForm.get().attendanceInputFormList.get(idx).salaried</div></td>
+<!-- TODO 休日を表示させる  -->
+      <td width="8%"><div id="holidayClassName" name="attendanceInputFormList[@idx].holidayClassName" class="holidayClassName form-control">@inputForm.get().attendanceInputFormList.get(idx).holidayClassName</div></td>
+	  <td width="8%"><div id="shiftClassName" name="attendanceInputFormList[@idx].shiftClassName" class="holidayClassName form-control">@inputForm.get().attendanceInputFormList.get(idx).shiftClassName</div></td>
+      <td width="18%"><div id="remarks" name="attendanceInputFormList[@idx].remarks" class="remarks form-control"> @inputForm.get().attendanceInputFormList.get(idx).remarks</div></td>
     </tr>
-    <!--
-    <tr class="tableDeta">
-
-      <td> <label>休暇区分</label></td>
-      <td>
-        <select id="holidayClass@idx" name="attendanceInputFormList[@idx].holidayClassCode" class="form-control holidayClass" >
-          <option value="0"></option>
-          @hcmList.map{ hcm =>
-          <option value="@hcm.code">@hcm.codeType</option>
-          }
-          @if(existsDefaultValue){
-          <script>
-                    var holidayClass = '@inputForm.get().attendanceInputFormList.get(idx).holidayClassCode';
-                    if(holidayClass != 0){
-                      var targetHolidayClass = "#holidayClass@idx"
-                      $(targetHolidayClass).val(holidayClass)
-                    }
-                    </script>
-          }
-        </select>
-      </td>
-      <td> <label>深夜作業</label></td>
-      <td> <input type="number" readonly="readonly" id="nightWork" class="form-control nightWork" value="0"></td>
-      <td> <label>有給割当</label></td>
-      <td> <input type="number" readonly="readonly" id="salaried" class="form-control salaried" value="0"></td>
-      <td> <label>備考</label></td>
-      <td colspan="2"> <input type="text" id="remarks" name="attendanceInputFormList[@idx].remarks" class="form-control" @if(existsDefaultValue){ value="@inputForm.get().attendanceInputFormList.get(idx).remarks" }> </td>
-    </tr>
-    -->
     }
     <tr>
       <td colspan="3">TOTAL</td>
-      <td> <div id="sumBreakdown1" class="form-control">@if(existsDefaultValue){@attendanceSumForm.sumBreakdown1}</div></td>
-      <td> <div id="sumBreakdown2" class="form-control">@if(existsDefaultValue){@attendanceSumForm.sumBreakdown2}</div></td>
-      <td> <div id="sumBreakdown3" class="form-control">@if(existsDefaultValue){@attendanceSumForm.sumBreakdown3}</div></td>
-      <td> <div id="sumBreakdown4" class="form-control">@if(existsDefaultValue){@attendanceSumForm.sumBreakdown4}</div></td>
-      <td> <div id="sumDeductionNight" class="form-control">@if(existsDefaultValue){@attendanceSumForm.sumDeductionNight}</div></td>
-      <td> <div id="sumDeductionOther" class="form-control">@if(existsDefaultValue){@attendanceSumForm.sumDeductionOther}</div></td>
-      <td> <div id="sumNightWork" class="form-control">@if(existsDefaultValue){@attendanceSumForm.sumNightWork}</div></td>
-      <td> <div id="sumSalaried" class="form-control">@if(existsDefaultValue){@attendanceSumForm.sumSalaried}</div></td>
-      <td> <div></div></td>
-      <td> <div id="sumPerformanceTime" class="form-control"></div>@if(existsDefaultValue){@attendanceSumForm.sumPerformanceTime}</td>
-      <td> <div></div></td>
+      <td> <div id="sumBreakdown1" class="form-control">@attendanceSumForm.sumBreakdown1</div></td>
+      <td> <div id="sumBreakdown2" class="form-control">@attendanceSumForm.sumBreakdown2</div></td>
+      <td> <div id="sumBreakdown3" class="form-control">@attendanceSumForm.sumBreakdown3</div></td>
+      <td> <div id="sumBreakdown4" class="form-control">@attendanceSumForm.sumBreakdown4</div></td>
+      <td> <div id="sumDeductionNight" class="form-control">@attendanceSumForm.sumDeductionNight</div></td>
+      <td> <div id="sumDeductionOther" class="form-control">@attendanceSumForm.sumDeductionOther</div></td>
+      <td> <div id="sumPerformanceTime" class="form-control">@attendanceSumForm.sumPerformanceTime</div></div></td>
+      <td> <div id="sumNightWork" class="form-control">@attendanceSumForm.sumNightWork</div></td>
+      <td> <div id="sumSalaried" class="form-control">@attendanceSumForm.sumSalaried</div></td>
     </tr>
-    </tbody>
     </tbody>
   </table>
 
