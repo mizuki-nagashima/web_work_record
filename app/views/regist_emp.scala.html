@@ -1,22 +1,28 @@
-@(registEmpForm: Form[models.form.LoginForm])
+@(registEmpForm: Form[models.form.RegistEmpForm])
 @import play.i18n._
 @import helper._
 @login_main(messages.at("header.title","ユーザ登録")) {
-<style>
-body {
-background-color:#f8f8f8;
-}
-</style>
 <section class="content">
  @form(action = routes.RegistEmpCtl.registEmp, 'id -> "registEmpForm") {
  <div class="registEmp-box">
   <div class="registEmp-box-body">
    <h2>KMS勤怠【WEB】</h2>
+               <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.work4")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    @inputText(registEmpForm("employeeNo"), 'class -> "form-control", 'placeholder -> "社員番号を入力してください。", '_label ->"社員番号" ,'_showConstraints -> false)
+                  </div>
+                </div>
+              </div>
+            </div>
    <p class="error text-danger errorMsg"></p>
    <p class="error text-danger errorMsg2"></p>
    <p class="error text-danger errorEmployeeNo"></p>
    <p class="error text-danger errorPassword"></p>
-   @inputText(registEmpForm("employeeNo"), 'class -> "form-control", 'placeholder -> "社員番号を入力してください。", '_label ->"社員番号" ,'_showConstraints -> false)
    @inputText(registEmpForm("password"), 'type -> "password", 'class -> "form-control", 'placeholder -> "パスワードを入力してください。", '_label ->"パスワード" ,'_showConstraints -> false)
    <button type="button" class="btn btn-info" id="registEmpBtn">ログイン</button>
   </div>

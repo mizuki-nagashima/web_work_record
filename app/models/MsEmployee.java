@@ -98,6 +98,26 @@ public class MsEmployee extends CommonModel {
     public String authorityClass;
 
     /**
+     * 社員登録有無チェック
+     * @param empNo 社員番号
+     * @param pass パスワード
+     * @return boolean
+     */
+    public static boolean isRegistEmp(String empNo) {
+        String sql = "SELECT COUNT(*) as cnt FROM MS_EMPLOYEE " +
+        		"WHERE EMPLOYEE_NO = :emp";
+
+        List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
+                .setParameter("emp", empNo)
+                .findList();
+
+        if (sqlRows.get(0).getInteger("cnt") >= 1) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * 社員情報取得
      * @param empNo 社員番号
      * @return sqlRow
