@@ -41,3 +41,6 @@ GET     /approve/moveAttendanceByApprove/:empNo/:year/:month	controllers.Approve
 
 GET		/overtimeList	controllers.OvertimeListCtl.index()
 GET		/outputPdf	controllers.OutputPdfCtl.outputPdf()
+
+GET     /regist                                  controllers.RegistEmpCtl.index()
+POST    /regist/emp                                 controllers.RegistEmpCtl.registEmp()
