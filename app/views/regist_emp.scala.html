@@ -1,23 +1,210 @@
-@(sesEmpNo: String, sesEmpName:String,registEmpForm: Form[models.form.RegistEmpForm])
+@(sesEmpNo: String, sesEmpName:String,registEmpForm: Form[models.form.RegistEmpForm],
+	departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode],
+	businessList: List[models.MsGeneralCode], businessTeamList: List[models.MsGeneralCode])
 @import play.i18n._
 @import helper._
 @main(messages.at("header.title","社員情報登録"),sesEmpNo,sesEmpName) {
 <section class="content">
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
  @form(action = routes.RegistEmpCtl.registEmp, 'id -> "registEmpForm") {
- <div class="registEmp-box">
-  <div class="registEmp-box-body">
-   <h2>社員情報登録</h2>
-   <p class="error text-danger errorMsg"></p>
-   <p class="error text-danger errorMsg2"></p>
-   <p class="error text-danger errorEmpNo"></p>
-   <p class="error text-danger errorEmpName"></p>
-   @inputText(registEmpForm("employeeNo"), 'class -> "form-control", 'placeholder -> "社員番号を入力してください。", '_label ->"社員番号" ,'_showConstraints -> false)
-   @inputText(registEmpForm("employeeName"), 'class -> "form-control", 'placeholder -> "社員名を入力してください。", '_label ->"社員名" ,'_showConstraints -> false)
-   <button type="button" class="btn btn-info" id="registEmpBtn">登録</button>
+    <h2>社員情報登録</h2>
+       <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="col-md-12 col-sm-12 col-xs-12 well">
+          <div class="col-md-8 col-sm-8 col-xs-12">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <h3>@messages.at("attendance.yourStatus")</h3>
+            </div>
+            <div class="col-md-2 col-sm-2 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.employeeNo")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="employeeNo" class="form-control" value="">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.employeeName")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="employeeName" class="form-control" value="">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.department")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                  <select id="departmentCode" name="departmentCode" class="form-control departmentCode changeDepartmentCd departmentCode" required>
+				  <option value="" disabled selected></option>
+				  @departList.map{ dpl =>
+                    <option value="@dpl.code">@dpl.codeName</option>
+                  }
+                    <script>
+                    var departmentCode = '@registEmpForm.get().departmentCode';
+                    if(departmentCode != ""){
+                      var target = "#departmentCode"
+                      $(target).val(departmentCode)
+                    }
+                    </script>
+				  </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.division")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+					<select id="divisionCode" class="division form-control" name="divisionCode" required>
+					<option value="" class="msg" disabled selected></option>
+					@divisionList.map{ dvl =>
+                      <option value="@dvl.code">@dvl.codeName</option>
+                    }
+	                    <script>
+	                    var divisionCode = '@registEmpForm.get().divisionCode';
+	                    if(divisionCode != ""){
+	                      var target = "#divisionCode"
+	                      $(target).val(divisionCode)
+	                    }
+	                    </script>
+					</select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.workName")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+	                <select id="businessCode" name="businessCode" class="form-control businessCode changeBusinessCd businessCode" required>
+					  <option value="" disabled selected></option>
+					  @businessList.map{ dpl =>
+	                    <option value="@dpl.code">@dpl.codeName</option>
+	                  }
+	                    <script>
+	                    var businessCode = '@registEmpForm.get().businessCode';
+	                    if(businessCode != ""){
+	                      var target = "#businessCode"
+	                      $(target).val(businessCode)
+	                    }
+	                    </script>
+					</select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.workTeamName")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+	                 <select id="businessTeamCode" class="businessTeamCode form-control" name="businessTeamCode" required>
+					  <option value="" class="msg" disabled selected></option>
+					  @businessTeamList.map{ dvl =>
+	                     <option value="@dvl.code">@dvl.codeName</option>
+	                  }
+	                    <script>
+	                    var businessTeamCode = '@registEmpForm.get().businessTeamCode';
+	                    if(businessTeamCode != ""){
+	                      var target = "#businessTeamCode"
+	                      $(target).val(businessTeamCode)
+	                    }
+	                    </script>
+					 </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 col-sm-4 col-xs-12">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <h3>@messages.at("attendance.workingContents")</h3>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.work1")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="breakdownName1" class="form-control" value="@registEmpForm.get().breakdownName1">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.work2")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="breakdownName2" class="form-control" value="@registEmpForm.get().breakdownName2">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.work3")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="breakdownName3" class="form-control" value="@registEmpForm.get().breakdownName3">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.work4")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="breakdownName4" class="form-control" value="@registEmpForm.get().breakdownName4">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+            </div>
+          </div>
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+            <button type="button" id="statusAndWorksaveBtn" class="btn btn-success" style="margin-top: 15px;">
+              <i class="fa fa-clipboard"></i> @messages.at("attendance.statusSave")
+            </button>
+              </div>
+          </div>
+        </div>
+      </div>
+}
+    </div>
   </div>
- </div>
- }
 </section>
+
 <script>
   $(function() {
     $("#registEmpBtn").click(function () {

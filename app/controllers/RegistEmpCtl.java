@@ -2,6 +2,7 @@ package controllers;
 
 import models.TblLoginInfo;
 import models.TblYearMonthAttribute;
+import models.form.ApproveFormList;
 import models.form.AttendanceInputFormList;
 import models.form.RegistEmpForm;
 import models.form.StatusAndWorkForm;
@@ -21,10 +22,12 @@ import com.mysql.jdbc.Messages;
 
 import common.Const;
 import models.MsEmployee;
+import models.MsGeneralCode;
 import play.Logger;
 import views.html.*;
 import play.data.validation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 public class RegistEmpCtl extends Controller {
@@ -36,10 +39,16 @@ public class RegistEmpCtl extends Controller {
      * @return ログイン画面
      */
     public Result index() {
-        Form<RegistEmpForm> registEmpForm = formFactory.form(RegistEmpForm.class);
+    	 // 表示用フォーム
+    	RegistEmpForm apfl = new RegistEmpForm();
+        Form<RegistEmpForm> registEmpForm = formFactory.form(RegistEmpForm.class).fill(apfl);
+        List<MsGeneralCode> departList = MakeModelUtil.makeCodeTypeList(Const.DEPARTMENT_CODE_NAME);
+        List<MsGeneralCode> divisionList = MakeModelUtil.makeCodeTypeList(Const.DIVISION_CODE_NAME);
+        List<MsGeneralCode> businessList = MakeModelUtil.makeCodeTypeList(Const.BUSINESS_CODE_NAME);
+        List<MsGeneralCode> businessTeamList = MakeModelUtil.makeCodeTypeList(Const.BUSINESS_TEAM_CODE_NAME);
     	String sesEmpNo = session("employeeNo");
     	String sesEmpName = session("employeeName");
-        return ok(regist_emp.render(sesEmpNo,sesEmpName, registEmpForm));
+        return ok(regist_emp.render(sesEmpNo,sesEmpName, registEmpForm,departList,divisionList,businessList,businessTeamList));
     }
 
     /**
@@ -96,7 +105,6 @@ public class RegistEmpCtl extends Controller {
      * @return 勤怠入力画面
      */
     public Result menuAttendance() {
-    	Form<RegistEmpForm> form = formFactory.form(RegistEmpForm.class).bindFromRequest();
     	String empNo = session("employeeNo");
     	try {
 		    	String yyyyMM = DateUtil.getNowYYYYMM();
