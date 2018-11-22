@@ -27,6 +27,8 @@ import play.Logger;
 import views.html.*;
 import play.data.validation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +58,10 @@ public class RegistEmpCtl extends Controller {
      * @return 結果
      */
     public Result registEmp() {
+        // エラーメッセージを詰め込むためのリスト
+        ArrayList<HashMap> errorMsgList = new ArrayList<>();
+        HashMap<String, String> map = new HashMap<>();
+
         Form<RegistEmpForm> form = formFactory.form(RegistEmpForm.class).bindFromRequest();
         if (form.hasErrors()) {
             ValidationError errorEmpNo = form.error("employeeNo");
@@ -68,11 +74,14 @@ public class RegistEmpCtl extends Controller {
             if (errorEmpName != null) {
             	errorEmpNameMsg = errorEmpName.message();
             }
+            map.put("errorEmpNo", errorEmpNoMsg);
+            map.put("errorEmpName", errorEmpNameMsg);
+            errorMsgList.add(map);
+
             return ok(Json.toJson(
                     ImmutableMap.of(
                             "result", "ng",
-                            "errorEmpNo",errorEmpNoMsg,
-                            "errorEmpName",errorEmpNameMsg
+                            "msg",errorMsgList
                     )));
         }
         //入力値エラーがなかった場合
@@ -89,11 +98,13 @@ public class RegistEmpCtl extends Controller {
                     )));
 
         } else {
+            map.put("errorEmpName", "入力された社員番号は既に存在しています。");
+            errorMsgList.add(map);
 
             return ok(Json.toJson(
                     ImmutableMap.of(
                             "result", "ng",
-                            "msg1","入力された社員番号は既に登録されています。"
+                            "msg",errorMsgList
                     )));
         }
         //return notFound();
