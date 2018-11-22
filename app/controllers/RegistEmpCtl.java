@@ -37,7 +37,9 @@ public class RegistEmpCtl extends Controller {
      */
     public Result index() {
         Form<RegistEmpForm> registEmpForm = formFactory.form(RegistEmpForm.class);
-        return ok(regist_emp.render(registEmpForm));
+    	String sesEmpNo = session("employeeNo");
+    	String sesEmpName = session("employeeName");
+        return ok(regist_emp.render(sesEmpNo,sesEmpName, registEmpForm));
     }
 
     /**
@@ -47,45 +49,42 @@ public class RegistEmpCtl extends Controller {
     public Result registEmp() {
         Form<RegistEmpForm> form = formFactory.form(RegistEmpForm.class).bindFromRequest();
         if (form.hasErrors()) {
-            ValidationError errorEmployeeNo = form.error("employeeNo");
-            ValidationError errorPassword = form.error("password");
-            String errorEmployeeNoMsg = "";
-            String errorPasswordMsg = "";
-            if (errorEmployeeNo != null) {
-                errorEmployeeNoMsg = errorEmployeeNo.message();
+            ValidationError errorEmpNo = form.error("employeeNo");
+            ValidationError errorEmpName = form.error("employeeName");
+            String errorEmpNoMsg = "";
+            String errorEmpNameMsg = "";
+            if (errorEmpNo != null) {
+            	errorEmpNoMsg = errorEmpNo.message();
             }
-            if (errorPassword != null) {
-                errorPasswordMsg = errorPassword.message();
+            if (errorEmpName != null) {
+            	errorEmpNameMsg = errorEmpName.message();
             }
             return ok(Json.toJson(
                     ImmutableMap.of(
                             "result", "ng",
-                            "errorEmployeeNo",errorEmployeeNoMsg,
-                            "errorPassword",errorPasswordMsg
+                            "errorEmpNo",errorEmpNoMsg,
+                            "errorEmpName",errorEmpNameMsg
                     )));
         }
-        //ログインの入力値エラーがなかった場合
+        //入力値エラーがなかった場合
         RegistEmpForm registEmpForm = form.get();
         String employeeNo = registEmpForm.employeeNo;
-        if (MsEmployee.isRegistEmp(employeeNo)) {
+        if (!MsEmployee.isRegistEmp(employeeNo)) {
 
-           // 権限が05：自陣のみ閲覧以外の場合はメニュー画面に遷移
+            // TODO ポップアップで入力値確認
+            // TODO 社員マスタに登録
+        	// TODO ログイン情報に登録
             return ok(Json.toJson(
                     ImmutableMap.of(
                             "result", "ok"
                     )));
 
         } else {
-        	// ログインNG回数カウントアップ
-            int registEmpNgCount  = TblLoginInfo.getLoginInfo(employeeNo).getInteger("registEmp_ng_count");
-            registEmpNgCount ++;
-            TblLoginInfo.loginNgCountUp(employeeNo,registEmpNgCount);
 
             return ok(Json.toJson(
                     ImmutableMap.of(
                             "result", "ng",
-                            "msg1","ログインできませんでした。" ,
-                            "msg2","社員番号とパスワードをお確かめの上、もう一度お試しください。"
+                            "msg1","入力された社員番号は既に登録されています。"
                     )));
         }
         //return notFound();

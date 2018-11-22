@@ -20,6 +20,7 @@ create table ms_employee (
   breakdown_name3               varchar(255) not null,
   breakdown_name4               varchar(255) not null,
   authority_class               varchar(255) not null,
+  retirement_date               varchar(255),
   regist_date                   datetime(6) not null,
   update_date                   datetime(6) not null
 );

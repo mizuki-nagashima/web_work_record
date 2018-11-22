@@ -1,30 +1,19 @@
-@(registEmpForm: Form[models.form.RegistEmpForm])
+@(sesEmpNo: String, sesEmpName:String,registEmpForm: Form[models.form.RegistEmpForm])
 @import play.i18n._
 @import helper._
-@login_main(messages.at("header.title","ユーザ登録")) {
+@main(messages.at("header.title","社員情報登録"),sesEmpNo,sesEmpName) {
 <section class="content">
  @form(action = routes.RegistEmpCtl.registEmp, 'id -> "registEmpForm") {
  <div class="registEmp-box">
   <div class="registEmp-box-body">
-   <h2>KMS勤怠【WEB】</h2>
-               <div class="col-md-6 col-sm-6 col-xs-12">
-              <div class="form-horizontal">
-                <div class="form-group">
-                  <label class="col-md-12 col-sm-12 col-xs-12">
-                    @messages.at("attendance.work4")
-                  </label>
-                  <div class="col-md-12 col-sm-12 col-xs-12">
-                    @inputText(registEmpForm("employeeNo"), 'class -> "form-control", 'placeholder -> "社員番号を入力してください。", '_label ->"社員番号" ,'_showConstraints -> false)
-                  </div>
-                </div>
-              </div>
-            </div>
+   <h2>社員情報登録</h2>
    <p class="error text-danger errorMsg"></p>
    <p class="error text-danger errorMsg2"></p>
-   <p class="error text-danger errorEmployeeNo"></p>
-   <p class="error text-danger errorPassword"></p>
-   @inputText(registEmpForm("password"), 'type -> "password", 'class -> "form-control", 'placeholder -> "パスワードを入力してください。", '_label ->"パスワード" ,'_showConstraints -> false)
-   <button type="button" class="btn btn-info" id="registEmpBtn">ログイン</button>
+   <p class="error text-danger errorEmpNo"></p>
+   <p class="error text-danger errorEmpName"></p>
+   @inputText(registEmpForm("employeeNo"), 'class -> "form-control", 'placeholder -> "社員番号を入力してください。", '_label ->"社員番号" ,'_showConstraints -> false)
+   @inputText(registEmpForm("employeeName"), 'class -> "form-control", 'placeholder -> "社員名を入力してください。", '_label ->"社員名" ,'_showConstraints -> false)
+   <button type="button" class="btn btn-info" id="registEmpBtn">登録</button>
   </div>
  </div>
  }
@@ -35,29 +24,14 @@
       $(".error").empty();
       $.postAjax('#registEmpForm', function(data){
         if(data.result == "ok"){
-          window.location.href = data.link;
+          alert('成功');
         }else{
           $(".errorMsg").text(data.msg1);
           $(".errorMsg2").text(data.msg2);
-          $(".errorEmployeeNo").text(data.errorEmployeeNo);
-          $(".errorPassword").text(data.errorPassword);
+          $(".errorEmpNo").text(data.errorEmpNo);
+          $(".errorEmpName").text(data.errorEmpName);
         }
       });
-    });
-
-    $("#password").keypress( function ( e ) {
-	    if ( e.which == 13 ) {
-	      $(".error").empty();
-        $.postAjax('#registEmpForm', function(data){
-          if(data.result == "ok"){
-            window.location.href = data.link;
-          }else{
-            $(".errorMsg").text(data.msg1);
-            $(".errorEmployeeNo").text(data.errorEmployeeNo);
-            $(".errorPassword").text(data.errorPassword);
-          }
-        });
-	    }
     });
 
     $.postAjax = function(formId, callBack, url) {

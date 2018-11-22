@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
+import com.avaje.ebean.SqlUpdate;
 
 /**
  * 社員マスタ
@@ -98,6 +99,11 @@ public class MsEmployee extends CommonModel {
     public String authorityClass;
 
     /**
+     * 退職日
+     */
+    public String retirementDate;
+
+    /**
      * 社員登録有無チェック
      * @param empNo 社員番号
      * @param pass パスワード
@@ -133,6 +139,25 @@ public class MsEmployee extends CommonModel {
             row = o;
         }
         return row;
+    }
+
+    /**
+     * 社員情報登録
+     * @param empInfo 社員情報
+     */
+    public static void insertMsEmployee(MsEmployee empInfo) throws Exception {
+        Ebean.beginTransaction();
+        try {
+        	empInfo.insert();
+            Ebean.commitTransaction();
+        } catch (Exception e) {
+            // debug
+            System.out.println("社員マスタ登録失敗："+ e);
+            Ebean.rollbackTransaction();
+            throw e;
+        } finally {
+            Ebean.endTransaction();
+        }
     }
 
 }
