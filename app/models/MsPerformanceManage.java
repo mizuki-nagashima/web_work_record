@@ -18,7 +18,7 @@ import play.Logger;
 import services.utils.DateUtil;
 
 /**
- * 実績テーブル
+ * 社員業務管理テーブル
  */
 @Entity
 public class MsPerformanceManage extends CommonModel {
@@ -92,6 +92,25 @@ public class MsPerformanceManage extends CommonModel {
 //        Logger.debug("sql:" + String.valueOf(sql));
 
         return sqlRows;
+    }
+
+    /**
+     * 社員業務管理テーブル登録
+     * @param empInfo 社員情報
+     */
+    public static void insertMsPerManage(MsPerformanceManage msManage) throws Exception {
+        Ebean.beginTransaction();
+        try {
+        	msManage.insert();
+            Ebean.commitTransaction();
+        } catch (Exception e) {
+            // debug
+            System.out.println("社員業務管理テーブル登録失敗："+ e);
+            Ebean.rollbackTransaction();
+            throw e;
+        } finally {
+            Ebean.endTransaction();
+        }
     }
 
 }

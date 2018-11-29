@@ -1,4 +1,5 @@
 @(sesEmpNo: String, sesEmpName:String,registEmpForm: Form[models.form.RegistEmpForm],
+	positionList: List[models.MsGeneralCode],
 	departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode],
 	businessList: List[models.MsGeneralCode], businessTeamList: List[models.MsGeneralCode])
 @import play.i18n._
@@ -43,11 +44,74 @@
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.employeeName")カナ
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="employeeNameKana" class="form-control" value="@registEmpForm.get().employeeNameKana">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2 col-sm-2 col-xs-12">
+              <div class="form-check">
+                  <label class="col-md-12 col-sm-12 col-xs-12 form-check-label">雇用区分</label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="radio" name="employmentClass" class="form-check-input checked"
+                    value="00">社員
+                  </div>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+					<input type="radio" name="employmentClass" class="form-check-input"
+					value="01">協力会社
+				  </div>
+              </div>
+            </div>
+            <div class="col-md-2 col-sm-2 col-xs-12">
+              <div class="form-check">
+                  <label class="col-md-12 col-sm-12 col-xs-12 form-check-label">承認権限</label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+					<input type="radio" name="authorityClass" class="form-check-input checked"
+					value="05">なし
+				  </div>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="radio" name="authorityClass" class="form-check-input"
+                    value="03">あり
+                  </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+             		       役職
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                  <select id="positionCode" name="positionCode" class="form-control positionCode" required>
+				  <option value="" disabled selected>選択してください</option>
+				  @positionList.map{ list =>
+                    <option value="@list.code">@list.codeName</option>
+                  }
+                    <script>
+                    var positionCode = '@registEmpForm.get().positionCode';
+                    if(positionCode != ""){
+                      var target = "#positionCode"
+                      $(target).val(positionCode)
+                    }
+                    </script>
+				  </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
                     @messages.at("attendance.department")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                  <select id="departmentCode" name="departmentCode" class="form-control departmentCode changeDepartmentCd departmentCode" required>
-				  <option value="" disabled selected></option>
+                  <select id="departmentCode" name="departmentCode" class="form-control departmentCode changeDepartmentCd
+                  departmentCode" required>
+				  <option value="" disabled selected>選択してください</option>
 				  @departList.map{ dpl =>
                     <option value="@dpl.code">@dpl.codeName</option>
                   }
@@ -71,7 +135,7 @@
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
 					<select id="divisionCode" class="division form-control" name="divisionCode" required>
-					<option value="" class="msg" disabled selected></option>
+					<option value="" class="msg" disabled selected>選択してください</option>
 					@divisionList.map{ dvl =>
                       <option value="@dvl.code">@dvl.codeName</option>
                     }
@@ -94,8 +158,9 @@
                     @messages.at("attendance.workName")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-	                <select id="businessCode" name="businessCode" class="form-control businessCode changeBusinessCd businessCode" required>
-					  <option value="" disabled selected></option>
+	                <select id="businessCode" name="businessCode" class="form-control businessCode changeBusinessCd
+	                businessCode" required>
+					  <option value="" disabled selected>選択してください</option>
 					  @businessList.map{ dpl =>
 	                    <option value="@dpl.code">@dpl.codeName</option>
 	                  }
@@ -119,7 +184,7 @@
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
 	                 <select id="businessTeamCode" class="businessTeamCode form-control" name="businessTeamCode" required>
-					  <option value="" class="msg" disabled selected></option>
+					  <option value="" disabled selected>選択してください</option>
 					  @businessTeamList.map{ dvl =>
 	                     <option value="@dvl.code">@dvl.codeName</option>
 	                  }
@@ -204,7 +269,7 @@
     </div>
   </div>
 </section>
-
+<!-- TODO 社員一覧表 -->
 <div class="hidden warn-msg">
   <p id="warn-msg-title"><i class="fa fa-exclamation-circle"></i>@messages.at("errorModal.message.header")</p>
   <div align="right">
@@ -231,25 +296,28 @@
        $('.warn-msg-contents').remove();
       $.postAjax('#registEmpForm', function(data){
         if(data.result == "ok"){
-          alert('成功');
-        }else{
-         $(".warn-msg").removeClass("hidden");
-	          var errorMsgList = data.msg;
-	          var alertMsgContents = "";
-	          $.each(errorMsgList, function(key, obj) {
-	            $.each(obj, function(dId, msg) {
+          localStorage.saveMsg = '社員情報を登録しました。';
+          location.reload();
+        }else if(data.result == "ng"){
+          $(".warn-msg").removeClass("hidden");
+	      var errorMsgList = data.msg;
+	      var alertMsgContents = "";
+	      $.each(errorMsgList, function(key, obj) {
+	         $.each(obj, function(dId, msg) {
 	              var dateId = dId;
 	              var dataMsg = msg;
 	              var msgContents = '<p id=' + dateId + ' class=' + 'warn-msg-contents' + '>' + dataMsg + '<p>';
 	              alertMsgContents = msgContents + '\n'
 	              $('#warn-msg-title').after(msgContents);
-	            });
-	          });
+	         });
+	      });
+        }else{
+        	alert('エラーが発生しました。ｓ');
         }
       });
     });
 
-        $(".changeDepartmentCd").change(function(){
+    $(".changeDepartmentCd").change(function(){
       var departmentCode = $('#departmentCode').val();
       if(departmentCode != 00 || departmentCode != ""){
         var url = '@routes.AttendanceCtl.getDivisionList("0")';

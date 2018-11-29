@@ -8,10 +8,21 @@ public class Const {
 
     private Const() {}
 
+    /** デフォルト作業内訳名1 */
+    public static final String DEFAULT_BREAKDOWN_NAME1 = "開発/保守/維持";
+    /** デフォルト作業内訳名2  */
+    public static final String DEFAULT_BREAKDOWN_NAME2 = "調査/分析";
+    /** デフォルト作業内訳名3  */
+    public static final String DEFAULT_BREAKDOWN_NAME3 = "資料作成";
+    /** デフォルト作業内訳名4  */
+    public static final String DEFAULT_BREAKDOWN_NAME4 = "その他";
+
     /** 休暇区分コード名 */
     public static final String HOLIDAY_CODE_NAME = "HOLIDAY_CLASS";
     /** シフト区分コード名 */
     public static final String SHIFT_CODE_NAME = "SHIFT_CLASS";
+    /** 役職コード名 */
+    public static final String POSITION_CODE_NAME = "POSITION_CODE";
     /** 部署コード名 */
     public static final String DEPARTMENT_CODE_NAME = "DEPARTMENT_CODE";
     /** 課コード名 */

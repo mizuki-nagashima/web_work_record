@@ -16,9 +16,9 @@ public class RegistEmpForm {
     @Constraints.Required(message = "社員名を入力してください。")
     @Constraints.Pattern(value = "^[^ -~｡-ﾟ]*$", message = "社員名は全角のみで入力してください。")
     public String employeeName;
-    /*@Constraints.Required(message = "社員名カナを入力してください。")
+    @Constraints.Required(message = "社員名カナを入力してください。")
     @Constraints.Pattern(value = "^[ァ-ヶー]*$", message = "社員名カナは全角カナのみで入力してください。")
-    public String employeeNameKana;*/
+    public String employeeNameKana;
     public String authorityClass;
     public String employmentClass;
     public String positionCode;

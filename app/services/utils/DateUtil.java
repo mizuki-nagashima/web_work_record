@@ -80,6 +80,52 @@ public class DateUtil {
         return sdf.format(date);
     }
 
+    /*
+     * 今日の日付をyyyy-MM-dd形式で取得します。
+     */
+    public static String getDateFormat(){
+    	Date date = new Date();
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	    return sdf.format(date);
+    }
+
+    /**年度末の日付を取得
+     * @param target yyyy/MM/dd
+     * @return yyyy-MM-dd
+     */
+    public static String getEndOfFiscalYear(String target){
+    	String year = "0000";
+        try{
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date day = sdf.parse(target);
+            // 呼び出し
+            year = getYear(day);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		return String.valueOf(year);
+    }
+
+    // 今年度末月を返す
+    static String getYear(Date day) {
+    	String year = "0";
+        SimpleDateFormat sdf = new SimpleDateFormat("MM");
+        Calendar calendar = Calendar.getInstance();
+        // 月の取得
+        String dateStr = sdf.format(day);
+        int month = Integer.parseInt(dateStr);
+        calendar.setTime(day);
+        if (month < 4) {
+            // 1～3月の場合西暦から-1する
+            year = String.valueOf(calendar.get(Calendar.YEAR));
+        }else{
+            calendar.add(Calendar.YEAR,1);
+            // 4～12月の場合年のみ取得
+            year = String.valueOf(calendar.get(Calendar.YEAR));
+        }
+        return year;
+    }
+
 
     /**
      * 引数で渡されたカレンダーを表示します。
