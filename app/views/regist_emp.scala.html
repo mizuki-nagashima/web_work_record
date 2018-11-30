@@ -4,8 +4,9 @@
 	businessList: List[models.MsGeneralCode], businessTeamList: List[models.MsGeneralCode])
 @import play.i18n._
 @import helper._
-@main(messages.at("header.title","社員情報登録"),sesEmpNo,sesEmpName) {
+@main(messages.at("header.title","ユーザ情報登録"),sesEmpNo,sesEmpName) {
 <section class="content">
+<!-- TODO 登録前確認ポップアップ -->
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
  @form(action = routes.RegistEmpCtl.registEmp, 'id -> "registEmpForm") {
@@ -23,7 +24,7 @@
                     @messages.at("attendance.employeeNo")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text" name="employeeNo" class="form-control" value="@registEmpForm.get().employeeNo">
+                    <input type="text" name="employeeNo" class="form-control" value="@registEmpForm.get().employeeNo" placeholder="00000">
                   </div>
                 </div>
               </div>
@@ -35,7 +36,7 @@
                     @messages.at("attendance.employeeName")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text" name="employeeName" class="form-control" value="@registEmpForm.get().employeeName">
+                    <input type="text" name="employeeName" class="form-control" value="@registEmpForm.get().employeeName" placeholder="田中 太郎">
                   </div>
                 </div>
               </div>
@@ -47,7 +48,7 @@
                     @messages.at("attendance.employeeName")カナ
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text" name="employeeNameKana" class="form-control" value="@registEmpForm.get().employeeNameKana">
+                    <input type="text" name="employeeNameKana" class="form-control" value="@registEmpForm.get().employeeNameKana" placeholder="タナカ タロウ">
                   </div>
                 </div>
               </div>
