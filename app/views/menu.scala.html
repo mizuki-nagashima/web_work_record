@@ -1,4 +1,4 @@
-@(loginForm: Form[models.form.LoginForm],empNo: String, empName: String)
+@(loginForm: Form[models.form.LoginForm],empNo: String, empName: String,year: String, month: String)
 @import play.i18n._
 @import helper._
 @main(messages.at("header.title","管理者メニュー"),empNo,empName) {
@@ -11,32 +11,14 @@ background-color:#f8f8f8;
  <div class="login-box">
     <h2>管理者メニュー</h2>
   <div class="login-box-body">
-   @form(action = routes.AuthCtl.menuAttendance, 'id -> "attendance") {
-   	  <h4><p>・<a id="attendanceBtn" class="cp_link">@messages.at("attendance")</a></p></h4>
- 　　}
-   @form(action = routes.AuthCtl.menuApprove, 'id -> "approve") {
- 	  <h4><p>・<a id="approveBtn" class="cp_link">@messages.at("approve")</a></p></h4>
-   }
+   <h4><p>・<a class="cp_link" href="@routes.AttendanceCtl.index(empNo,year,month)">@messages.at("attendance")</a></p></h4>
+   <h4><p>・<a class="cp_link" href="@routes.ApproveCtl.index(year,month)">@messages.at("approve")</a></p></h4>
+   <h4><p>・<a class="cp_link" href="@routes.RegistEmpCtl.index">@messages.at("registemp")</a></p></h4>
   </div>
  </div>
 </section>
 <script>
   $(function() {
-	$("#attendanceBtn").click(function () {
-      $.postAjax('#attendance', function(data){
-        if(data.result == "ok"){
-          window.location.href = data.link;
-        }
-      });
-    });
-
-	$("#approveBtn").click(function () {
-	  $.postAjax('#approve', function(data){
-	    if(data.result == "ok"){
-	      window.location.href = data.link;
-	    }
-	  });
-	});
 
     $.postAjax = function(formId, callBack, url) {
       var form = (typeof formId == "string" ? $(formId) : formId);

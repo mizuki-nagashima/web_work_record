@@ -49,7 +49,10 @@ public class AuthCtl extends Controller {
     	Form<LoginForm> loginForm = formFactory.form(LoginForm.class).fill(lForm);
         final String employeeNo = session("employeeNo");
         final String employeeName = session("employeeName");
-        return ok(menu.render(loginForm,employeeNo,employeeName));
+        String yyyyMM = DateUtil.getNowYYYYMM();
+        String year = yyyyMM.substring(0,4);
+        String month = yyyyMM.substring(4,6);
+        return ok(menu.render(loginForm,employeeNo,employeeName,year,month));
     }
 
     /**
@@ -124,49 +127,6 @@ public class AuthCtl extends Controller {
                     )));
         }
 //        return notFound();
-    }
-
-    /*
-     * メニュー画面から勤怠入力画面への遷移です。
-     * @param name 移動画面名
-     * @return 勤怠入力画面
-     */
-    public Result menuAttendance() {
-    	Form<LoginForm> form = formFactory.form(LoginForm.class).bindFromRequest();
-    	String empNo = session("employeeNo");
-    	try {
-		    	String yyyyMM = DateUtil.getNowYYYYMM();
-		        String Year = yyyyMM.substring(0,4);
-		        String Month = yyyyMM.substring(4,6);
-    	        return ok(Json.toJson(
-    	                ImmutableMap.of(
-    	                        "result", "ok",
-    	                        "link", java.lang.String.valueOf(routes.AttendanceCtl.index(empNo,Year,Month))
-    	                )));
-		} catch (Exception e) {
-			return notFound();
-		}
-    }
-
-    /*
-     * メニュー画面から承認一覧画面への遷移です。
-     * @param name 移動画面名
-     * @return 承認一覧画面
-     */
-    public Result menuApprove() {
-    	Form<LoginForm> form = formFactory.form(LoginForm.class).bindFromRequest();
-    	try {
-		    	String yyyyMM = DateUtil.getNowYYYYMM();
-		        String Year = yyyyMM.substring(0,4);
-		        String Month = yyyyMM.substring(4,6);
-    	        return ok(Json.toJson(
-    	                ImmutableMap.of(
-    	                        "result", "ok",
-    	                        "link", java.lang.String.valueOf(routes.ApproveCtl.index(Year,Month))
-    	                )));
-		} catch (Exception e) {
-			return notFound();
-		}
     }
 
     /**
