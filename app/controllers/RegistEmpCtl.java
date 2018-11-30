@@ -68,7 +68,6 @@ public class RegistEmpCtl extends Controller {
 		// エラーメッセージを詰め込むためのリスト
 		ArrayList<HashMap> errorMsgList = new ArrayList<>();
 		HashMap<String, String> map = new HashMap<>();
-		try {
 			Form<RegistEmpForm> form = formFactory.form(RegistEmpForm.class).bindFromRequest();
 			//フォームエラー処理
 			if (form.hasErrors()) {
@@ -89,28 +88,33 @@ public class RegistEmpCtl extends Controller {
 				RegistEmpForm registEmpForm = form.get();
 
 				if (!MsEmployee.isRegistEmp(registEmpForm.employeeNo)) {
+					try {
+					// 社員マスタに登録
 					MsEmployee ymat = MakeModelUtil.makeMsEmployeeTbl(registEmpForm);
+					System.out.println(registEmpForm.positionCode);
 					ymat.registUserId = session("employeeNo");
 					ymat.updateUserId = session("employeeNo");
+					MsEmployee.insertMsEmployee(ymat);
+					// 社員業務管理マスタに登録
 					MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(registEmpForm);
 					perManage.registUserId = session("employeeNo");
 					perManage.updateUserId = session("employeeNo");
-					// 社員マスタに登録
-					MsEmployee.insertMsEmployee(ymat);
-					// 社員業務管理マスタに登録
 					MsPerformanceManage.insertMsPerManage(perManage);
+					// TODO ログインマスタに登録 パスワードどうするか？
+					TblLoginInfo tblInfo = MakeModelUtil.makeTblInfo(registEmpForm.employeeNo,session("employeeNo"));
+					TblLoginInfo.insertTblInfo(tblInfo);
+				} catch (Exception e) {
+					//  debug
+					System.out.println(e);
+					map.put("isRegistEmp", "社員情報を登録中にエラーが発生しました。");
+					errorMsgList.add(map);
+				}
 				} else {
 					map.put("isRegistEmp", "入力された社員番号は既に存在します。");
 					errorMsgList.add(map);
 				}
 				// TODO ログイン情報に登録
 			}
-		} catch (Exception e) {
-			//  debug
-			System.out.println(e);
-			map.put("isRegistEmp", "社員情報を登録中にエラーが発生しました。");
-			errorMsgList.add(map);
-		}
 		if (!errorMsgList.isEmpty()) {
 			return ok(Json.toJson(
 					ImmutableMap.of(

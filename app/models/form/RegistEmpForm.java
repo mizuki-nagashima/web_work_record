@@ -3,11 +3,12 @@ package models.form;
 import play.data.validation.Constraints;
 
 /**
- * Created by suzuki-daisuke on 2017/04/07.
+ * @author nagashima-mizuki
+ *
  */
 
 /**
- * ログイン用フォーム
+ * 社員情報用フォーム
  */
 public class RegistEmpForm {
     @Constraints.Required(message = "社員番号を入力してください。")
@@ -19,7 +20,9 @@ public class RegistEmpForm {
     @Constraints.Required(message = "社員名カナを入力してください。")
     @Constraints.Pattern(value = "^[ァ-ヶー]*$", message = "社員名カナは全角カナのみで入力してください。")
     public String employeeNameKana;
+    @Constraints.Required(message = "承認権限を選択してください。")
     public String authorityClass;
+    @Constraints.Required(message = "雇用区分を選択してください。")
     public String employmentClass;
     public String positionCode;
     public String departmentCode;

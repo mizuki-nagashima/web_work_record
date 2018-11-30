@@ -38,6 +38,7 @@ public class MsEmployee extends CommonModel {
     /**
      * 役職コード
      */
+    @NotNull
     public String positionCode;
 
     /**
@@ -59,37 +60,31 @@ public class MsEmployee extends CommonModel {
     /**
      * 業務コード
      */
-    @NotNull
     public String businessCode;
 
     /**
      * 業務チームコード
      */
-    @NotNull
     public String businessTeamCode;
 
     /**
      * 作業内訳名1
      */
-    @NotNull
     public String breakdownName1;
 
     /**
      * 作業内訳名2
      */
-    @NotNull
     public String breakdownName2;
 
     /**
      * 作業内訳名3
      */
-    @NotNull
     public String breakdownName3;
 
     /**
      * 作業内訳名4
      */
-    @NotNull
     public String breakdownName4;
 
     /**

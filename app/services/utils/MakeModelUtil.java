@@ -14,6 +14,7 @@ import common.Const;
 import models.MsEmployee;
 import models.MsGeneralCode;
 import models.MsPerformanceManage;
+import models.TblLoginInfo;
 import models.TblPerformance;
 import models.TblYearMonthAttribute;
 import models.form.ApproveForm;
@@ -21,6 +22,7 @@ import models.form.ApproveFormList;
 import models.form.AttendanceInputForm;
 import models.form.AttendanceSumForm;
 import models.form.DateList;
+import models.form.LoginForm;
 import models.form.RegistEmpForm;
 import models.form.StatusAndWorkForm;
 
@@ -70,6 +72,18 @@ public class MakeModelUtil {
     	mst.businessManageAuthClass = "02";
     	mst.registUserId = registEmpForm.employeeNo;
     	mst.updateUserId = registEmpForm.employeeNo;
+        return mst;
+    }
+
+    public static TblLoginInfo makeTblInfo(String empNo,String sesEmpNo){
+    	TblLoginInfo mst = new TblLoginInfo();
+    	mst.employeeNo = empNo;
+    	mst.password = services.PasswordGenerator.main();
+    	mst.loginNgCount = 0;
+    	mst.isAccountLock = "0";
+    	mst.isDelete = "0";
+    	mst.registUserId = sesEmpNo;
+    	mst.updateUserId = sesEmpNo;
         return mst;
     }
 

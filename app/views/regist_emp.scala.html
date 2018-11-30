@@ -55,30 +55,32 @@
             <div class="col-md-2 col-sm-2 col-xs-12">
               <div class="form-check">
                   <label class="col-md-12 col-sm-12 col-xs-12 form-check-label">雇用区分</label>
+                  <label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="radio" name="employmentClass" class="form-check-input checked"
-                    value="00">社員
+                    <input type="radio" name="employmentClass" class="form-check-input" checked value="00">社員
                   </div>
                   <div class="col-md-12 col-sm-12 col-xs-12">
 					<input type="radio" name="employmentClass" class="form-check-input"
 					value="01">協力会社
 				  </div>
+				  </label>
               </div>
             </div>
             <div class="col-md-2 col-sm-2 col-xs-12">
               <div class="form-check">
                   <label class="col-md-12 col-sm-12 col-xs-12 form-check-label">承認権限</label>
+                  <label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-					<input type="radio" name="authorityClass" class="form-check-input checked"
-					value="05">なし
+					<input type="radio" name="authorityClass" class="form-check-input" checked value="05">なし
 				  </div>
                   <div class="col-md-12 col-sm-12 col-xs-12">
                     <input type="radio" name="authorityClass" class="form-check-input"
                     value="03">あり
                   </div>
+                  </label>
               </div>
             </div>
-            <div class="col-md-3 col-sm-3 col-xs-12">
+            <div class="col-md-4 col-sm-4 col-xs-12">
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
@@ -109,8 +111,7 @@
                     @messages.at("attendance.department")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                  <select id="departmentCode" name="departmentCode" class="form-control departmentCode changeDepartmentCd
-                  departmentCode" required>
+                  <select id="departmentCode" name="departmentCode" class="form-control departmentCode changeDepartmentCd departmentCode" required>
 				  <option value="" disabled selected>選択してください</option>
 				  @departList.map{ dpl =>
                     <option value="@dpl.code">@dpl.codeName</option>
@@ -158,8 +159,7 @@
                     @messages.at("attendance.workName")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-	                <select id="businessCode" name="businessCode" class="form-control businessCode changeBusinessCd
-	                businessCode" required>
+	                <select id="businessCode" name="businessCode" class="form-control businessCode changeBusinessCd businessCode" required>
 					  <option value="" disabled selected>選択してください</option>
 					  @businessList.map{ dpl =>
 	                    <option value="@dpl.code">@dpl.codeName</option>
