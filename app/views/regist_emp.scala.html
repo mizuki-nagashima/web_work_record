@@ -1,0 +1,398 @@
+@(sesEmpNo: String, sesEmpName:String,registEmpForm: Form[models.form.RegistEmpForm],
+	positionList: List[models.MsGeneralCode],
+	departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode],
+	businessList: List[models.MsGeneralCode], businessTeamList: List[models.MsGeneralCode])
+@import play.i18n._
+@import helper._
+@main(messages.at("header.title","社員情報登録"),sesEmpNo,sesEmpName) {
+<section class="content">
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+ @form(action = routes.RegistEmpCtl.registEmp, 'id -> "registEmpForm") {
+    <h2>@messages.at("registemp")</h2>
+       <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="col-md-12 col-sm-12 col-xs-12 well">
+          <div class="col-md-8 col-sm-8 col-xs-12">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <h3>@messages.at("attendance.yourStatus")</h3>
+            </div>
+            <div class="col-md-2 col-sm-2 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.employeeNo")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="employeeNo" class="form-control" value="@registEmpForm.get().employeeNo">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.employeeName")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="employeeName" class="form-control" value="@registEmpForm.get().employeeName">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.employeeName")カナ
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="employeeNameKana" class="form-control" value="@registEmpForm.get().employeeNameKana">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2 col-sm-2 col-xs-12">
+              <div class="form-check">
+                  <label class="col-md-12 col-sm-12 col-xs-12 form-check-label">雇用区分</label>
+                  <label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="radio" name="employmentClass" class="form-check-input" checked value="00">社員
+                  </div>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+					<input type="radio" name="employmentClass" class="form-check-input"
+					value="01">協力会社
+				  </div>
+				  </label>
+              </div>
+            </div>
+            <div class="col-md-2 col-sm-2 col-xs-12">
+              <div class="form-check">
+                  <label class="col-md-12 col-sm-12 col-xs-12 form-check-label">承認権限</label>
+                  <label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+					<input type="radio" name="authorityClass" class="form-check-input" checked value="05">なし
+				  </div>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="radio" name="authorityClass" class="form-check-input"
+                    value="03">あり
+                  </div>
+                  </label>
+              </div>
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+             		       役職
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                  <select id="positionCode" name="positionCode" class="form-control positionCode" required>
+				  <option value="" disabled selected>選択してください</option>
+				  @positionList.map{ list =>
+                    <option value="@list.code">@list.codeName</option>
+                  }
+                    <script>
+                    var positionCode = '@registEmpForm.get().positionCode';
+                    if(positionCode != ""){
+                      var target = "#positionCode"
+                      $(target).val(positionCode)
+                    }
+                    </script>
+				  </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.department")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                  <select id="departmentCode" name="departmentCode" class="form-control departmentCode changeDepartmentCd departmentCode" required>
+				  <option value="" disabled selected>選択してください</option>
+				  @departList.map{ dpl =>
+                    <option value="@dpl.code">@dpl.codeName</option>
+                  }
+                    <script>
+                    var departmentCode = '@registEmpForm.get().departmentCode';
+                    if(departmentCode != ""){
+                      var target = "#departmentCode"
+                      $(target).val(departmentCode)
+                    }
+                    </script>
+				  </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.division")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+					<select id="divisionCode" class="division form-control" name="divisionCode" required>
+					<option value="" class="msg" disabled selected>選択してください</option>
+					@divisionList.map{ dvl =>
+                      <option value="@dvl.code">@dvl.codeName</option>
+                    }
+	                    <script>
+	                    var divisionCode = '@registEmpForm.get().divisionCode';
+	                    if(divisionCode != ""){
+	                      var target = "#divisionCode"
+	                      $(target).val(divisionCode)
+	                    }
+	                    </script>
+					</select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.workName")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+	                <select id="businessCode" name="businessCode" class="form-control businessCode changeBusinessCd businessCode" required>
+					  <option value="" disabled selected>選択してください</option>
+					  @businessList.map{ dpl =>
+	                    <option value="@dpl.code">@dpl.codeName</option>
+	                  }
+	                    <script>
+	                    var businessCode = '@registEmpForm.get().businessCode';
+	                    if(businessCode != ""){
+	                      var target = "#businessCode"
+	                      $(target).val(businessCode)
+	                    }
+	                    </script>
+					</select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.workTeamName")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+	                 <select id="businessTeamCode" class="businessTeamCode form-control" name="businessTeamCode" required>
+					  <option value="" disabled selected>選択してください</option>
+					  @businessTeamList.map{ dvl =>
+	                     <option value="@dvl.code">@dvl.codeName</option>
+	                  }
+	                    <script>
+	                    var businessTeamCode = '@registEmpForm.get().businessTeamCode';
+	                    if(businessTeamCode != ""){
+	                      var target = "#businessTeamCode"
+	                      $(target).val(businessTeamCode)
+	                    }
+	                    </script>
+					 </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 col-sm-4 col-xs-12">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <h3>@messages.at("attendance.workingContents")</h3>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.work1")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="breakdownName1" class="form-control" value="@registEmpForm.get().breakdownName1">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.work2")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="breakdownName2" class="form-control" value="@registEmpForm.get().breakdownName2">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.work3")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="breakdownName3" class="form-control" value="@registEmpForm.get().breakdownName3">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    @messages.at("attendance.work4")
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <input type="text" name="breakdownName4" class="form-control" value="@registEmpForm.get().breakdownName4">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+            </div>
+          </div>
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+            <button type="button" id="registEmpBtn" class="btn btn-success" style="margin-top: 15px;">
+              <i class="fa fa-clipboard"></i> @messages.at("attendance.statusSave")
+            </button>
+              </div>
+          </div>
+        </div>
+      </div>
+}
+    </div>
+  </div>
+</section>
+<!-- TODO 社員一覧表 -->
+<div class="hidden warn-msg">
+  <p id="warn-msg-title"><i class="fa fa-exclamation-circle"></i>@messages.at("errorModal.message.header")</p>
+  <div align="right">
+    <small>@messages.at("errorModal.message.footer")</small>
+  </div>
+</div>
+<div class="hidden success-msg fa fa-thumbs-o-up">
+</div>
+
+<script>
+  $(function() {
+      if(localStorage.saveMsg){
+      $(".success-msg").removeClass("hidden");
+      $('.success-msg').text(" " + localStorage.saveMsg).fadeIn(1000).delay(2000).fadeOut(2000);
+      localStorage.removeItem('saveMsg');
+    }else if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
+      $(document).ready(function () {
+        setTimeout(function() { window.scrollTo(0,$('#attendanceSaveTop').offset().top); }, 1);
+      });
+    }
+
+    $("#registEmpBtn").click(function () {
+       $(".warn-msg").addClass("hidden");
+       $('.warn-msg-contents').remove();
+      $.postAjax('#registEmpForm', function(data){
+        if(data.result == "ok"){
+          localStorage.saveMsg = '社員情報を登録しました。';
+          location.reload();
+        }else if(data.result == "ng"){
+          $(".warn-msg").removeClass("hidden");
+	      var errorMsgList = data.msg;
+	      var alertMsgContents = "";
+	      $.each(errorMsgList, function(key, obj) {
+	         $.each(obj, function(dId, msg) {
+	              var dateId = dId;
+	              var dataMsg = msg;
+	              var msgContents = '<p id=' + dateId + ' class=' + 'warn-msg-contents' + '>' + dataMsg + '<p>';
+	              alertMsgContents = msgContents + '\n'
+	              $('#warn-msg-title').after(msgContents);
+	         });
+	      });
+        }else{
+        	alert('エラーが発生しました。ｓ');
+        }
+      });
+    });
+
+    $(".changeDepartmentCd").change(function(){
+      var departmentCode = $('#departmentCode').val();
+      if(departmentCode != 00 || departmentCode != ""){
+        var url = '@routes.AttendanceCtl.getDivisionList("0")';
+        url = url.substring(0, url.length - 1) + departmentCode;
+        $.ajax({
+          type : 'GET',
+          url : url,
+          success : function(data) {
+            if(data.result == "ok"){
+            	var divisionList = data.value;
+	            $('#divisionCode').html("");
+	            $.each(divisionList, function (i, val) {
+	               $('#divisionCode').append($("<option>").val(val.code).text(val.codeName));
+                });
+            }
+          }
+        });
+      }else{
+        $('#divisionCode').html("");
+		$('#divisionCode').append($("<option>").val("00").text("該当なし"));
+	  }
+    });
+
+    $(".changeBusinessCd").change(function(){
+      var businessCode = $('#businessCode').val();
+      if(businessCode != 00 || businessCode != ""){
+        var url = '@routes.AttendanceCtl.getBusinessTeamList("0")';
+        url = url.substring(0, url.length - 1) + businessCode;
+        $.ajax({
+          type : 'GET',
+          url : url,
+          success : function(data) {
+            if(data.result == "ok"){
+            	var businessTeamList = data.value;
+	            $('#businessTeamCode').html("");
+	            $.each(businessTeamList, function (i, val) {
+	               $('#businessTeamCode').append($("<option>").val(val.code).text(val.codeName));
+                });
+            }
+          }
+        });
+      }else{
+        $('#businessTeamCode').html("");
+		$('#businessTeamCode').append($("<option>").val("00").text("該当なし"));
+	  }
+    });
+
+    $(".warn-msg").click(function () {
+      $(this).addClass("hidden");
+    });
+
+    $.postAjax = function(formId, callBack, url) {
+      var form = (typeof formId == "string" ? $(formId) : formId);
+      var accessUrl = null;
+      try {
+        if(form && form[0]) {
+          accessUrl = url ? url : form.attr('action')
+          $.ajax({
+            url     : accessUrl,
+            data    : form.serialize(),
+            type    : "POST",
+            success : function(data) {
+              callBack(data);
+            },
+            complete : function() {
+            }
+          });
+        }
+      } catch(e) {
+        alert('エラーが発生しました。');
+      }
+    };
+    if(!navigator.userAgent.match(/(iPhone|iPod|Android)/)){
+      $(".registEmp-box").css("width", "500px");
+    }
+  });
+</script>
+}

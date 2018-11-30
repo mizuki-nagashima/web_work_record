@@ -24,25 +24,21 @@ public class TblLoginInfo extends CommonModel {
     /**
      * パスワード
      */
-    @NotNull
     public String password;
 
     /**
      * ログインNG回数
      */
-    @NotNull
-    public String loginNgCount;
+    public Integer loginNgCount;
 
     /**
      * アカウントロック
      */
-    @NotNull
     public String isAccountLock;
 
     /**
      * 削除フラグ
      */
-    @NotNull
     public String isDelete;
 
     /**
@@ -86,6 +82,25 @@ public class TblLoginInfo extends CommonModel {
         }
  //       System.out.println("sql:" + String.valueOf(sqlRows));
         return row;
+    }
+
+    /**
+     * ログイン情報登録
+     * @param tblInfo ログイン情報
+     */
+    public static void insertTblInfo(TblLoginInfo tblInfo) throws Exception {
+        Ebean.beginTransaction();
+        try {
+        	tblInfo.insert();
+            Ebean.commitTransaction();
+        } catch (Exception e) {
+            // debug
+            System.out.println("ログイン情報登録失敗："+ e);
+            Ebean.rollbackTransaction();
+            throw e;
+        } finally {
+            Ebean.endTransaction();
+        }
     }
 
     /**

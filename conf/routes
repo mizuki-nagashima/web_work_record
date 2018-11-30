@@ -15,8 +15,6 @@ POST    /login                                 controllers.AuthCtl.login()
 GET     /logout                                controllers.AuthCtl.logout()
 
 GET     /menu                                  controllers.AuthCtl.menu()
-POST     /menu/attendance                        	   controllers.AuthCtl.menuAttendance()
-POST     /menu/approve                        	   controllers.AuthCtl.menuApprove()
 
 POST     /attendance/save                      controllers.AttendanceCtl.save(empNo: String, monthsYears: String)
 POST     /attendance/saveCheck       		   controllers.AttendanceCtl.saveCheck(empNo: String, monthsYears: String)
@@ -41,3 +39,6 @@ GET     /approve/moveAttendanceByApprove/:empNo/:year/:month	controllers.Approve
 
 GET		/overtimeList	controllers.OvertimeListCtl.index()
 GET		/outputPdf	controllers.OutputPdfCtl.outputPdf()
+
+GET     /regist                                  controllers.RegistEmpCtl.index()
+POST    /regist/emp                                 controllers.RegistEmpCtl.registEmp()

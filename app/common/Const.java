@@ -8,8 +8,30 @@ public class Const {
 
     private Const() {}
 
+    /** デフォルト作業内訳名1 */
+    public static final String DEFAULT_BREAKDOWN_NAME1 = "開発/保守/維持";
+    /** デフォルト作業内訳名2  */
+    public static final String DEFAULT_BREAKDOWN_NAME2 = "調査/分析";
+    /** デフォルト作業内訳名3  */
+    public static final String DEFAULT_BREAKDOWN_NAME3 = "資料作成";
+    /** デフォルト作業内訳名4  */
+    public static final String DEFAULT_BREAKDOWN_NAME4 = "その他";
+
     /** 休暇区分コード名 */
     public static final String HOLIDAY_CODE_NAME = "HOLIDAY_CLASS";
+    /** シフト区分コード名 */
+    public static final String SHIFT_CODE_NAME = "SHIFT_CLASS";
+    /** 役職コード名 */
+    public static final String POSITION_CODE_NAME = "POSITION_CODE";
+    /** 部署コード名 */
+    public static final String DEPARTMENT_CODE_NAME = "DEPARTMENT_CODE";
+    /** 課コード名 */
+    public static final String DIVISION_CODE_NAME = "DIVISION_CODE";
+    /** 業務コード名 */
+    public static final String BUSINESS_CODE_NAME = "BUSINESS_CODE";
+    /** 業務チームコード名 */
+    public static final String BUSINESS_TEAM_CODE_NAME = "BUSINESS_TEAM_CODE";
+
     /** 休暇区分：なし */
     public static final String HOLIDAY_CLASS_NOTHING = "00";
     /** 休暇区分：休日出勤 */
@@ -19,8 +41,6 @@ public class Const {
     /** 休暇区分：半休 */
     public static final String HOLIDAY_CLASS_HALF_HOLIDAY = "10";
 
-    /** シフト区分コード名 */
-    public static final String SHIFT_CODE_NAME = "SHIFT_CLASS";
     /** シフト区分：なし */
     public static final String SHIFT_CLASS_NOTHING = "00";
 

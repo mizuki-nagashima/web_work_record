@@ -97,10 +97,10 @@ public class AttendanceCtl extends Controller {
         //ステータスのリスト化
         List<MsGeneralCode> hcmList = MakeModelUtil.makeCodeTypeList(Const.HOLIDAY_CODE_NAME);
         List<MsGeneralCode> shiftList = MakeModelUtil.makeCodeTypeList(Const.SHIFT_CODE_NAME);
-        List<MsGeneralCode> departList = MakeModelUtil.makeCodeTypeList("DEPARTMENT_CODE");
-        List<MsGeneralCode> divisionList = MakeModelUtil.makeCodeTypeList("DIVISION_CODE");
-        List<MsGeneralCode> businessList = MakeModelUtil.makeCodeTypeList("BUSINESS_CODE");
-        List<MsGeneralCode> businessTeamList = MakeModelUtil.makeCodeTypeList("BUSINESS_TEAM_CODE");
+        List<MsGeneralCode> departList = MakeModelUtil.makeCodeTypeList(Const.DEPARTMENT_CODE_NAME);
+        List<MsGeneralCode> divisionList = MakeModelUtil.makeCodeTypeList(Const.DIVISION_CODE_NAME);
+        List<MsGeneralCode> businessList = MakeModelUtil.makeCodeTypeList(Const.BUSINESS_CODE_NAME);
+        List<MsGeneralCode> businessTeamList = MakeModelUtil.makeCodeTypeList(Const.BUSINESS_TEAM_CODE_NAME);
 
         // 1~12(1月~12月以外がパラメータに入ってきたらエラー)
         if (MIN_MONTH <= Integer.parseInt(month) && MAX_MONTH >= Integer.parseInt(month)) {
@@ -346,7 +346,7 @@ public class AttendanceCtl extends Controller {
 		            pft.monthsYears = monthsYears;
 		            // 開始時間と終了時間は所属チームから規定の時間を取得
 		            String teamCode = yearMonthData.getString("business_team_code");
-		            SqlRow msGenList = MsGeneralCode.getCodeMaster("BUSINESS_TEAM_CODE",teamCode);
+		            SqlRow msGenList = MsGeneralCode.getCodeMaster(Const.BUSINESS_TEAM_CODE_NAME,teamCode);
 		            pft.openingTime = msGenList.getString("any_value3");
 		            pft.closingTime = msGenList.getString("any_value4");
 		            // 休日区分とシフト区分は「00:なし」を入れる（sqlにて00以外とする）
@@ -653,7 +653,7 @@ public class AttendanceCtl extends Controller {
     	if (departCode == "" || departCode.isEmpty()) {
     		departCode = "00";
     	}
-    	List<MsGeneralCode> divisionList = MakeModelUtil.makeCodeTypeList("DIVISION_CODE",departCode);
+    	List<MsGeneralCode> divisionList = MakeModelUtil.makeCodeTypeList(Const.DIVISION_CODE_NAME,departCode);
         return ok(Json.toJson(
                 ImmutableMap.of(
                         "result","ok",
@@ -667,7 +667,7 @@ public class AttendanceCtl extends Controller {
      */
     public Result getBusinessTeamList(String businessCode){
 
-    	List<MsGeneralCode> businessTeamList = MakeModelUtil.makeCodeTypeList("BUSINESS_TEAM_CODE",businessCode);
+    	List<MsGeneralCode> businessTeamList = MakeModelUtil.makeCodeTypeList(Const.BUSINESS_TEAM_CODE_NAME,businessCode);
         return ok(Json.toJson(
                 ImmutableMap.of(
                         "result","ok",

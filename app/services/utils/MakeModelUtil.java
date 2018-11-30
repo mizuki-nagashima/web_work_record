@@ -2,16 +2,19 @@ package services.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 import com.avaje.ebean.SqlRow;
 
-import akka.japi.Option;
 import common.Const;
 import models.MsEmployee;
 import models.MsGeneralCode;
+import models.MsPerformanceManage;
+import models.TblLoginInfo;
 import models.TblPerformance;
 import models.TblYearMonthAttribute;
 import models.form.ApproveForm;
@@ -19,12 +22,70 @@ import models.form.ApproveFormList;
 import models.form.AttendanceInputForm;
 import models.form.AttendanceSumForm;
 import models.form.DateList;
+import models.form.LoginForm;
+import models.form.RegistEmpForm;
 import models.form.StatusAndWorkForm;
 
 /**
  * Created by suzuki-daisuke on 2017/04/13.
  */
 public class MakeModelUtil {
+
+
+    /**
+     * 社員マスタ登録用のデータを作成します
+     * @param registEmpForm
+     * @return 社員マスタ
+     */
+    public static MsEmployee makeMsEmployeeTbl(RegistEmpForm registEmpForm){
+
+    	MsEmployee mst = new MsEmployee();
+    	mst.employeeNo = registEmpForm.employeeNo;
+    	mst.employeeName = registEmpForm.employeeName;
+    	mst.employeeNameKana = registEmpForm.employeeNameKana;
+    	mst.positionCode = registEmpForm.positionCode;
+    	mst.employmentClass = registEmpForm.employmentClass;
+    	mst.businessCode   = registEmpForm.businessCode;
+    	mst.businessTeamCode   = registEmpForm.businessTeamCode;
+    	mst.departmentCode = registEmpForm.departmentCode;
+    	mst.divisionCode = registEmpForm.divisionCode;
+    	mst.breakdownName1 = registEmpForm.breakdownName1;
+    	mst.breakdownName2 = registEmpForm.breakdownName2;
+    	mst.breakdownName3 = registEmpForm.breakdownName3;
+    	mst.breakdownName4 = registEmpForm.breakdownName4;
+    	mst.authorityClass = registEmpForm.authorityClass;
+        return mst;
+    }
+
+    /**社員業務管理マスタ登録用のデータを作成します。
+     * @param registEmpForm
+     * @return 社員業務管理マスタ
+     */
+    public static MsPerformanceManage makeMsPerformanceManage(RegistEmpForm registEmpForm){
+    	MsPerformanceManage mst = new MsPerformanceManage();
+
+    	mst.startDate = DateUtil.getDateFormat();
+    	mst.endDate = DateUtil.getEndOfFiscalYear(DateUtil.getDateFormat()) + "-03-31";
+    	mst.employeeNo = registEmpForm.employeeNo;
+    	mst.businessCode   = registEmpForm.businessCode;
+    	mst.businessTeamCode   = registEmpForm.businessTeamCode;
+    	mst.businessManageAuthClass = "02";
+    	mst.registUserId = registEmpForm.employeeNo;
+    	mst.updateUserId = registEmpForm.employeeNo;
+        return mst;
+    }
+
+    public static TblLoginInfo makeTblInfo(String empNo,String sesEmpNo){
+    	TblLoginInfo mst = new TblLoginInfo();
+    	mst.employeeNo = empNo;
+    	mst.password = services.PasswordGenerator.main();
+    	mst.loginNgCount = 0;
+    	mst.isAccountLock = "0";
+    	mst.isDelete = "0";
+    	mst.registUserId = sesEmpNo;
+    	mst.updateUserId = sesEmpNo;
+        return mst;
+    }
 
     /**
      * 年月属性テーブル用のデータを作成します。
@@ -68,21 +129,21 @@ public class MakeModelUtil {
             sawf.businessCode = Optional.ofNullable(ymat.getString("business_code")).orElse("");
 
             sawf.businessCodeDisp = MsGeneralCode.getCodeMaster(
-                    "BUSINESS_CODE", ymat.getString("business_code")).getString("ANY_VALUE1");
+                    Const.BUSINESS_CODE_NAME, ymat.getString("business_code")).getString("ANY_VALUE1");
 
             sawf.businessName = MsGeneralCode.getCodeMaster(
-                    "BUSINESS_CODE", ymat.getString("business_code")).getString("CODE_NAME");
+                    Const.BUSINESS_CODE_NAME, ymat.getString("business_code")).getString("CODE_NAME");
             sawf.businessTeamCode = Optional.ofNullable(ymat.getString("business_team_code")).orElse("");
 
             sawf.businessTeamName = MsGeneralCode.getCodeMaster(
-                    "BUSINESS_TEAM_CODE", ymat.getString("business_team_code")).getString("CODE_NAME");
+                    Const.BUSINESS_TEAM_CODE_NAME, ymat.getString("business_team_code")).getString("CODE_NAME");
             sawf.departmentCode = ymat.getString("department_code");
 
             sawf.departmentName = MsGeneralCode.getCodeMaster(
-                    "DEPARTMENT_CODE", ymat.getString("department_code")).getString("CODE_NAME");
+                    Const.DEPARTMENT_CODE_NAME, ymat.getString("department_code")).getString("CODE_NAME");
             sawf.divisionCode = ymat.getString("division_code");
             sawf.divisionName = MsGeneralCode.getCodeMaster(
-                    "DIVISION_CODE", ymat.getString("division_code")).getString("CODE_NAME");
+                    Const.DIVISION_CODE_NAME, ymat.getString("division_code")).getString("CODE_NAME");
             sawf.breakdownName1 = ymat.getString("breakdown_name1");
             sawf.breakdownName2 = Optional.ofNullable(ymat.getString("breakdown_name2")).orElse("");
             sawf.breakdownName3 = Optional.ofNullable(ymat.getString("breakdown_name3")).orElse("");
@@ -102,22 +163,22 @@ public class MakeModelUtil {
             sawf.businessCode = empInfo.getString("business_code");
 
             sawf.businessCodeDisp = MsGeneralCode.getCodeMaster(
-                    "BUSINESS_CODE", empInfo.getString("business_code")).getString("ANY_VALUE1");
+                    Const.BUSINESS_CODE_NAME, empInfo.getString("business_code")).getString("ANY_VALUE1");
 
             sawf.businessName = MsGeneralCode.getCodeMaster(
-                    "BUSINESS_CODE", empInfo.getString("business_code")).getString("CODE_NAME");
+                    Const.BUSINESS_CODE_NAME, empInfo.getString("business_code")).getString("CODE_NAME");
             sawf.businessTeamCode = empInfo.getString("business_team_code");
 
             sawf.businessTeamName = MsGeneralCode.getCodeMaster(
-                    "BUSINESS_TEAM_CODE", empInfo.getString("business_team_code")).getString("CODE_NAME");
+                    Const.BUSINESS_TEAM_CODE_NAME, empInfo.getString("business_team_code")).getString("CODE_NAME");
             sawf.departmentCode = empInfo.getString("department_code");
 
             sawf.departmentName = MsGeneralCode.getCodeMaster(
-                    "DEPARTMENT_CODE", empInfo.getString("department_code")).getString("CODE_NAME");
+                    Const.DEPARTMENT_CODE_NAME, empInfo.getString("department_code")).getString("CODE_NAME");
             sawf.divisionCode = empInfo.getString("division_code");
 
             sawf.divisionName = MsGeneralCode.getCodeMaster(
-                    "DIVISION_CODE", empInfo.getString("division_code")).getString("CODE_NAME");
+                    Const.DIVISION_CODE_NAME, empInfo.getString("division_code")).getString("CODE_NAME");
             sawf.breakdownName1 = empInfo.getString("breakdown_name1");
             sawf.breakdownName2 = empInfo.getString("breakdown_name2");
             sawf.breakdownName3 = empInfo.getString("breakdown_name3");
@@ -247,7 +308,7 @@ public class MakeModelUtil {
     		appNo ++;
     		// 業務コード(BUSINESS_CODE)の名称を取得
     		SqlRow bsCode = null;
-    		bsCode = MsGeneralCode.getCodeMaster("BUSINESS_CODE", appList.getString("bs_code"));
+    		bsCode = MsGeneralCode.getCodeMaster(Const.BUSINESS_CODE_NAME, appList.getString("bs_code"));
     		businessCode = bsCode.getString("code_name");
     		// 社員番号
     		employeeNo = appList.getString("emp_no");

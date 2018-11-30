@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
+import com.avaje.ebean.SqlUpdate;
 
 /**
  * 社員マスタ
@@ -37,6 +38,7 @@ public class MsEmployee extends CommonModel {
     /**
      * 役職コード
      */
+    @NotNull
     public String positionCode;
 
     /**
@@ -58,37 +60,31 @@ public class MsEmployee extends CommonModel {
     /**
      * 業務コード
      */
-    @NotNull
     public String businessCode;
 
     /**
      * 業務チームコード
      */
-    @NotNull
     public String businessTeamCode;
 
     /**
      * 作業内訳名1
      */
-    @NotNull
     public String breakdownName1;
 
     /**
      * 作業内訳名2
      */
-    @NotNull
     public String breakdownName2;
 
     /**
      * 作業内訳名3
      */
-    @NotNull
     public String breakdownName3;
 
     /**
      * 作業内訳名4
      */
-    @NotNull
     public String breakdownName4;
 
     /**
@@ -96,6 +92,31 @@ public class MsEmployee extends CommonModel {
      */
     @NotNull
     public String authorityClass;
+
+    /**
+     * 退職日
+     */
+    public String retirementDate;
+
+    /**
+     * 社員登録有無チェック
+     * @param empNo 社員番号
+     * @param pass パスワード
+     * @return boolean
+     */
+    public static boolean isRegistEmp(String empNo) {
+        String sql = "SELECT COUNT(*) as cnt FROM MS_EMPLOYEE " +
+        		"WHERE EMPLOYEE_NO = :emp";
+
+        List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
+                .setParameter("emp", empNo)
+                .findList();
+
+        if (sqlRows.get(0).getInteger("cnt") >= 1) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * 社員情報取得
@@ -113,6 +134,25 @@ public class MsEmployee extends CommonModel {
             row = o;
         }
         return row;
+    }
+
+    /**
+     * 社員情報登録
+     * @param empInfo 社員情報
+     */
+    public static void insertMsEmployee(MsEmployee empInfo) throws Exception {
+        Ebean.beginTransaction();
+        try {
+        	empInfo.insert();
+            Ebean.commitTransaction();
+        } catch (Exception e) {
+            // debug
+            System.out.println("社員マスタ登録失敗："+ e);
+            Ebean.rollbackTransaction();
+            throw e;
+        } finally {
+            Ebean.endTransaction();
+        }
     }
 
 }

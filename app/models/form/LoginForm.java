@@ -16,4 +16,7 @@ public class LoginForm {
     @Constraints.Required(message = "パスワードを入力してください。")
     @Constraints.Pattern(value = "^[a-zA-Z0-9]+$", message = "パスワードは半角英数字のみで入力してください。")
     public String password;
+    public Integer loginNgCount =0;
+    public String isAccountLock = "0";
+    public String isDelete = "0";
 }
