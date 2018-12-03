@@ -1,6 +1,7 @@
 package controllers;
 
 import models.TblLoginInfo;
+import models.TblPerformance;
 import models.TblYearMonthAttribute;
 import models.form.ApproveFormList;
 import models.form.AttendanceInputFormList;
@@ -48,6 +49,7 @@ public class RegistEmpCtl extends Controller {
 		apfl.breakdownName2 = Const.DEFAULT_BREAKDOWN_NAME2;
 		apfl.breakdownName3 = Const.DEFAULT_BREAKDOWN_NAME3;
 		apfl.breakdownName4 = Const.DEFAULT_BREAKDOWN_NAME4;
+		//TODO 編集
 		Form<RegistEmpForm> registEmpForm = formFactory.form(RegistEmpForm.class).fill(apfl);
 		List<MsGeneralCode> positionList = MakeModelUtil.makeCodeTypeList(Const.POSITION_CODE_NAME);
 		List<MsGeneralCode> departList = MakeModelUtil.makeCodeTypeList(Const.DEPARTMENT_CODE_NAME);
@@ -56,8 +58,13 @@ public class RegistEmpCtl extends Controller {
 		List<MsGeneralCode> businessTeamList = MakeModelUtil.makeCodeTypeList(Const.BUSINESS_TEAM_CODE_NAME);
 		String sesEmpNo = session("employeeNo");
 		String sesEmpName = session("employeeName");
+
+		// 登録されたデータを取得
+    	List<SqlRow> sqlList = MsEmployee.getEmployeeInfoList();
+    	List<RegistEmpForm> registEmpForms = MakeModelUtil.makeMsEmployeeTbl(sqlList);
+
 		return ok(regist_emp.render(sesEmpNo, sesEmpName, registEmpForm, positionList,departList, divisionList, businessList,
-				businessTeamList));
+				businessTeamList,registEmpForms));
 	}
 
 	/**

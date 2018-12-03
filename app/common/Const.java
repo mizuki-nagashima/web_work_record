@@ -21,6 +21,10 @@ public class Const {
     public static final String HOLIDAY_CODE_NAME = "HOLIDAY_CLASS";
     /** シフト区分コード名 */
     public static final String SHIFT_CODE_NAME = "SHIFT_CLASS";
+    /** 権限コード名 */
+    public static final String AUTHORITY_CODE_NAME = "AUTHORITY_CLASS";
+    /** 社員コード名 */
+    public static final String EMPLOYMENT_CODE_NAME = "EMPLOYMENT_CLASS";
     /** 役職コード名 */
     public static final String POSITION_CODE_NAME = "POSITION_CODE";
     /** 部署コード名 */

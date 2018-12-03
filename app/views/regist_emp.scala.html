@@ -1,7 +1,9 @@
 @(sesEmpNo: String, sesEmpName:String,registEmpForm: Form[models.form.RegistEmpForm],
 	positionList: List[models.MsGeneralCode],
 	departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode],
-	businessList: List[models.MsGeneralCode], businessTeamList: List[models.MsGeneralCode])
+	businessList: List[models.MsGeneralCode], businessTeamList: List[models.MsGeneralCode],
+	registEmpFormList: List[models.form.RegistEmpForm]
+	)
 @import play.i18n._
 @import helper._
 @main(messages.at("header.title","ユーザ情報登録"),sesEmpNo,sesEmpName) {
@@ -9,10 +11,10 @@
 <!-- TODO 登録前確認ポップアップ -->
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
- @form(action = routes.RegistEmpCtl.registEmp, 'id -> "registEmpForm") {
     <h2>@messages.at("registemp")</h2>
        <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="col-md-12 col-sm-12 col-xs-12 well">
+        @form(action = routes.RegistEmpCtl.registEmp, 'id -> "registEmpForm") {
           <div class="col-md-8 col-sm-8 col-xs-12">
             <div class="col-md-12 col-sm-12 col-xs-12">
               <h3>@messages.at("attendance.yourStatus")</h3>
@@ -58,11 +60,11 @@
                   <label class="col-md-12 col-sm-12 col-xs-12 form-check-label">雇用区分</label>
                   <label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="radio" name="employmentClass" class="form-check-input" checked value="00">社員
+                    <input type="radio" name="employmentClass" class="form-check-input" checked value="01">社員
                   </div>
                   <div class="col-md-12 col-sm-12 col-xs-12">
 					<input type="radio" name="employmentClass" class="form-check-input"
-					value="01">協力会社
+					value="02">協力会社
 				  </div>
 				  </label>
               </div>
@@ -264,13 +266,52 @@
             </button>
               </div>
           </div>
+           }
         </div>
       </div>
-}
+      <div class="col-md-12 col-sm-12 col-xs-12">
+ 		<table id="tabelData" class="table table-bordered">
+          <thead style="background: #d3e5ff;">
+          <tr>
+          	<th width="6%">雇用区分</th>
+          	<th width="8%">社員番号</th>
+            <th width="10%">社員名</th>
+            <th width="10%">社員名カナ</th>
+            <th width="6%">役職</th>
+            <th width="12%">所属部署</th>
+            <th width="12%">所属課</th>
+            <th width="10%">業務名</th>
+            <th width="10%">業務チーム名</th>
+            <th width="10%">承認権限</th>
+          </tr>
+          </thead>
+          <tbody>
+          @for(rel <- registEmpFormList ){
+	          @form(action = routes.ApproveCtl.updateApprove(sesEmpNo,sesEmpNo,sesEmpNo,0), 'id -> "inputForm") {
+	          <tr id="@rel.employeeNo">
+	         	 <input type="hidden" id="employeeNo@rel.employeeNo" name="employeeNo" value="@rel.employeeNo">
+	         	<td>@rel.employmentClass</td>
+	            <td>@rel.employeeNo</td>
+	            <td>@rel.employeeName</td>
+	            <td>@rel.employeeNameKana</td>
+	            <td>@rel.positionCode</td>
+	            <td>@rel.departmentCode</td>
+	            <td>@rel.divisionCode</td>
+	            <td class="hidden-xs">@rel.businessCode</td>
+	            <td class="hidden-xs">@rel.businessTeamCode</td>
+	            <td>@rel.authorityClass</td>
+		            <td><button id="editButton-@rel.employeeNo" type="button" class="btn btn-success editButton">編集</button></td>
+		            <td><button id="deleteButton-@rel.employeeNo"type="button" class="btn btn-danger deleteButton">削除</button></td>
+	          </tr>
+	          }
+			}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </section>
-<!-- TODO 社員一覧表 -->
+<!-- TODO 社員編集ボタン・削除ボタン処理 -->
 <div class="hidden warn-msg">
   <p id="warn-msg-title"><i class="fa fa-exclamation-circle"></i>@messages.at("errorModal.message.header")</p>
   <div align="right">
@@ -315,6 +356,49 @@
         }else{
         	alert('エラーが発生しました。ｓ');
         }
+      });
+    });
+
+    $(".approveButton").click(function () {
+        $(".warn-msg").addClass("hidden");
+        $('.warn-msg-contents').remove();
+        $('.save-warn-msg-contents').remove();
+	    var targetTr = $(this).closest('tr');
+        var targetTrId = targetTr.attr('id');
+        var empNo = $('#employeeNo' + targetTrId).val();
+        var date = $('#date' + targetTrId).val();
+	    var url = '@routes.ApproveCtl.updateApprove("0","0","0",0)';
+	    url = url.substring(0, url.length - 7) + empNo + '/'  + date + '/0';
+   	 	$.ajax({
+          type : 'POST',
+          url : url,
+          data : $(this.form).serialize(),
+     	  success : function(data) {
+            if(data.result == "ok"){
+              localStorage.saveMsg = '承認を確定しました。';
+          	  location.reload();
+          	}else if(data.result == "ng"){
+              $(".warn-msg").removeClass("hidden");
+	          var errorMsgList = data.msg;
+	          var alertMsgContents = "";
+	          $.each(errorMsgList, function(key, obj) {
+	            $.each(obj, function(dId, msg) {
+	              var dateId = dId;
+	              var dataMsg = msg;
+	              var stringDate = dateId + '日';
+	              var msgContents = '<p id=' + dateId + ' class=' + 'save-warn-msg-contents' + '>' + stringDate + '&nbsp;-&nbsp;' + dataMsg + '<p>';
+	              alertMsgContents = msgContents + '\n'
+	              $('#warn-msg-title').after(msgContents);
+	              if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
+	                $(".warn-msg").removeAttr('style');
+	                $(".warn-msg").css('bottom','20px');
+	              }
+	            });
+	          });
+            }else{
+               alert('エラーが発生しました。');
+            }
+          }
       });
     });
 
