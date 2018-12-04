@@ -50,6 +50,7 @@ public class ApproveCtl extends Controller {
     	String yearMonth = year + DateUtil.getZeroPadding(month);
     	String appEmp = session("employeeNo");
     	String appName = session("employeeName");
+    	String authorityClass = session("authorityClass");
 
     	if(!session("authorityClass").equals(Const.AUTHORITY_CLASS_CHECK) ||
     			!session("authorityClass").equals(Const.AUTHORITY_CLASS_SELF)) {
@@ -73,7 +74,7 @@ public class ApproveCtl extends Controller {
         return ok(approve.render("承認画面",
          		year,month,
          		apfl.approveFormList
-         		,appEmp,appName
+         		,appEmp,appName,authorityClass
         		));
 
     	} else {

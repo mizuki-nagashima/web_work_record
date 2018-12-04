@@ -1,7 +1,8 @@
-@(message: String,year:String, month:String, appFormList: List[models.form.ApproveForm],empNo: String, empName: String)
+@(message: String,year:String, month:String, appFormList: List[models.form.ApproveForm],
+	empNo: String, empName: String, authClass: String)
 @import play.i18n._
 @import helper._
-@main(messages.at("header.title","承認一覧"),empNo,empName) {
+@main(messages.at("header.title","承認一覧"),empNo,empName,authClass) {
 <section class="content">
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
