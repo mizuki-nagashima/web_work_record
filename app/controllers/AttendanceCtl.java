@@ -65,6 +65,8 @@ public class AttendanceCtl extends Controller {
         final String employeeNo = session("employeeNo");
         // 社員名
         final String employeeName = session("employeeName");
+        // 権限
+        final String authorityClass = session("authorityClass");
         // 日付
         List<DateList> dateList = DateUtil.getDateList(year, DateUtil.getZeroPadding(month));
 
@@ -115,6 +117,7 @@ public class AttendanceCtl extends Controller {
                     refEmpNo,
                     employeeNo,
                     employeeName,
+                    authorityClass,
                     defalutWorkTime,
                     departList,
                     divisionList,

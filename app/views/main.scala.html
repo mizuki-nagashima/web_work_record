@@ -4,7 +4,7 @@
  * two arguments, a `String` for the title of the page and an `Html`
  * object to insert into the body of the page.
  *@
-@(title: String,empNo: String,empName:String)(content: Html)
+@(title: String,empNo: String,empName:String,authClass:String)(content: Html)
 <!DOCTYPE html>
 <html lang="ja">
     <head>
@@ -57,8 +57,12 @@
        <section class="content-header" id="header">
          <h1><i class="fa fa-list-alt"></i> @messages.at("title")
          <button type="button" id="logoutBtn" class="btn btn-default pull-right" style="margin-bottom: 10px;">
-          <span class="glyphicon glyphicon-log-out"></span>ログアウト</button>
-         <span class="pull-right" style="font-size:15px;  margin-right:10px; margin-bottom: 20px;">@messages.at("header.name",empNo,empName)</span>
+          <span class="glyphicon glyphicon-log-out"></span> ログアウト</button>
+         <span style="font-size:15px; margin-right:10px; margin-bottom: 10px;">@messages.at("header.name",empNo,empName)</span>
+         @if(authClass=="03"){
+         <button type="button" id="pageoutBtn" class="btn btn-default pull-right" style="margin-bottom: 10px; margin-right: 5px;">
+          <span class="glyphicon glyphicon-th-list"></span> 管理者メニュー</button>
+         }
          </h1>
          <div id="menu">
 		<span class="hidden fixRemand label label-danger fa fa-exclamation-triangle"> @messages.at("approve.form.alreadyFixRemand")あり</span>
@@ -76,6 +80,19 @@
 			// ログアウト
 	        $("#logoutBtn").click(function () {
 		      	var url = '@routes.AuthCtl.logout'
+		      	$.ajax({
+		        	type : 'GET',
+			        url : url,
+			        success : function(data) {
+			          if (data.result == "ok") {
+			            window.location.href = data.link;
+			          }
+			        }
+		      	});
+		    });
+			// 管理者ページへ
+	        $("#pageoutBtn").click(function () {
+		      	var url = '@routes.AuthCtl.menuRedirect()'
 		      	$.ajax({
 		        	type : 'GET',
 			        url : url,

@@ -56,7 +56,8 @@ public class RegistEmpCtl extends Controller {
 		List<MsGeneralCode> businessTeamList = MakeModelUtil.makeCodeTypeList(Const.BUSINESS_TEAM_CODE_NAME);
 		String sesEmpNo = session("employeeNo");
 		String sesEmpName = session("employeeName");
-		return ok(regist_emp.render(sesEmpNo, sesEmpName, registEmpForm, positionList,departList, divisionList, businessList,
+		String sesAuthClass = session("authorityClass");
+		return ok(regist_emp.render(sesEmpNo, sesEmpName,sesAuthClass, registEmpForm, positionList,departList, divisionList, businessList,
 				businessTeamList));
 	}
 

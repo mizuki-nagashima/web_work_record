@@ -15,6 +15,7 @@ POST    /login                                 controllers.AuthCtl.login()
 GET     /logout                                controllers.AuthCtl.logout()
 
 GET     /menu                                  controllers.AuthCtl.menu()
+GET     /menuRedirect                           controllers.AuthCtl.menuRedirect()
 
 POST     /attendance/save                      controllers.AttendanceCtl.save(empNo: String, monthsYears: String)
 POST     /attendance/saveCheck       		   controllers.AttendanceCtl.saveCheck(empNo: String, monthsYears: String)

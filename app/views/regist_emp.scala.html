@@ -1,10 +1,11 @@
-@(sesEmpNo: String, sesEmpName:String,registEmpForm: Form[models.form.RegistEmpForm],
+@(sesEmpNo: String, sesEmpName: String, sesAuthClass: String,
+	registEmpForm: Form[models.form.RegistEmpForm],
 	positionList: List[models.MsGeneralCode],
 	departList: List[models.MsGeneralCode], divisionList: List[models.MsGeneralCode],
 	businessList: List[models.MsGeneralCode], businessTeamList: List[models.MsGeneralCode])
 @import play.i18n._
 @import helper._
-@main(messages.at("header.title","ユーザ情報登録"),sesEmpNo,sesEmpName) {
+@main(messages.at("header.title","ユーザ情報登録"),sesEmpNo,sesEmpName,sesAuthClass) {
 <section class="content">
 <!-- TODO 登録前確認ポップアップ -->
   <div class="row">

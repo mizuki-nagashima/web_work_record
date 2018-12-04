@@ -49,10 +49,11 @@ public class AuthCtl extends Controller {
     	Form<LoginForm> loginForm = formFactory.form(LoginForm.class).fill(lForm);
         final String employeeNo = session("employeeNo");
         final String employeeName = session("employeeName");
+        final String authorityClass = session("authorityClass");
         String yyyyMM = DateUtil.getNowYYYYMM();
         String year = yyyyMM.substring(0,4);
         String month = yyyyMM.substring(4,6);
-        return ok(menu.render(loginForm,employeeNo,employeeName,year,month));
+        return ok(menu.render(loginForm,employeeNo,employeeName,authorityClass,year,month));
     }
 
     /**
@@ -127,6 +128,14 @@ public class AuthCtl extends Controller {
                     )));
         }
 //        return notFound();
+    }
+
+    public Result menuRedirect() {
+    return ok(Json.toJson(
+            ImmutableMap.of(
+                    "result", "ok",
+                    "link", java.lang.String.valueOf(routes.AuthCtl.menu())
+            )));
     }
 
     /**
