@@ -1,10 +1,13 @@
 package controllers;
 
+import com.avaje.ebean.SqlRow;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Inject;
+
+import common.Const;
+import models.MsEmployee;
 import models.TblLoginInfo;
-import models.TblYearMonthAttribute;
-import models.form.AttendanceInputFormList;
 import models.form.LoginForm;
-import models.form.StatusAndWorkForm;
 import play.data.Form;
 import play.data.FormFactory;
 import play.data.validation.ValidationError;
@@ -12,20 +15,8 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import services.utils.DateUtil;
-import services.utils.MakeModelUtil;
-
-import com.avaje.ebean.SqlRow;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Inject;
-import com.mysql.jdbc.Messages;
-
-import common.Const;
-import models.MsEmployee;
-import play.Logger;
-import views.html.*;
-import play.data.validation.*;
-
-import java.util.Optional;
+import views.html.login;
+import views.html.menu;
 
 public class AuthCtl extends Controller {
     @Inject
@@ -94,6 +85,14 @@ public class AuthCtl extends Controller {
 
             // 社員情報を取得し権限情報をセッションへ
             SqlRow result = MsEmployee.getEmployeeInfo(employeeNo);
+            if(result.isEmpty()) {
+            	 return ok(Json.toJson(
+                         ImmutableMap.of(
+                                 "result", "ng",
+                                 "msg1","ログインできませんでした。" ,
+                                 "msg2","社員番号とパスワードをお確かめの上、もう一度お試しください。"
+                         )));
+            }
             String authority = result.getString("authority_class");
             session("authorityClass", authority);
             session("employeeName", result.getString("employee_name"));

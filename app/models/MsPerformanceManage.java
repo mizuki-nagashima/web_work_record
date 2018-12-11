@@ -1,21 +1,13 @@
 package models;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
-import org.omg.CORBA.Current;
-
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
 import com.avaje.ebean.SqlUpdate;
-
-import models.form.ApproveFormList;
-import play.Logger;
-import services.utils.DateUtil;
 
 /**
  * 社員業務管理テーブル
@@ -82,8 +74,8 @@ public class MsPerformanceManage extends CommonModel {
      * @return sqlRows
      */
     public static List<SqlRow> getApproveYearMonth(String emp) {
-        String sql = "select min(start_date) from ms_performance_manage " +
-                     "where employee_no = :empNo";
+        String sql = "SELECT MIN(START_DATE) FROM MS_PERFORMANCE_MANAGE " +
+                     "WHERE EMPLOYEE_NO = :empNo";
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
         		.setParameter("empNo", emp)
@@ -106,6 +98,55 @@ public class MsPerformanceManage extends CommonModel {
         } catch (Exception e) {
             // debug
             System.out.println("社員業務管理テーブル登録失敗："+ e);
+            Ebean.rollbackTransaction();
+            throw e;
+        } finally {
+            Ebean.endTransaction();
+        }
+    }
+
+    /**
+     * 社員業務管理テーブル削除
+     * @param empNo
+     */
+    public static void deleteMsPerManage(String empNo) {
+        String sql = "DELETE FROM MS_PERFORMANCE_MANAGE WHERE EMPLOYEE_NO = :emp";
+        Ebean.beginTransaction();
+        try {
+	        SqlUpdate create = Ebean.createSqlUpdate(sql)
+	                .setParameter("emp",empNo);
+	        Ebean.execute(create);
+	        Ebean.commitTransaction();
+	    } catch (Exception e) {
+	        // debug
+	        System.out.println("社員業務管理テーブル削除失敗："+ e);
+	        Ebean.rollbackTransaction();
+	        throw e;
+	    } finally {
+	        Ebean.endTransaction();
+	    }
+    }
+
+    /**
+     * 終了日を本日で更新
+     * @param empNo
+     */
+    public static void updateEndDate(String empNo,String busCode,String busTeamCode) {
+        String sql = "UPDATE MS_PERFORMANCE_MANAGE " +
+        		"SET END_DATE = CURRENT_DATE " +
+        		"WHERE EMPLOYEE_NO=:EMP AND BUSINESS_CODE=:bus AND BUSINESS_TEAM_CODE=:busteam";
+        Ebean.beginTransaction();
+        try {
+            SqlUpdate create = Ebean.createSqlUpdate(sql)
+            .setParameter("emp",empNo)
+            .setParameter("bus",busCode)
+            .setParameter("busteam",busTeamCode);
+
+            Ebean.execute(create);
+            Ebean.commitTransaction();
+        } catch (Exception e) {
+            // debug
+            System.out.println("社員業務管理テーブルデータ更新失敗："+ e);
             Ebean.rollbackTransaction();
             throw e;
         } finally {

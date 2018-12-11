@@ -49,7 +49,7 @@ public class TblLoginInfo extends CommonModel {
      */
     public static boolean isLogin(String empNo, String pass) {
         String sql = "SELECT COUNT(*) as cnt FROM TBL_LOGIN_INFO " +
-                "WHERE EMPLOYEE_NO = :emp AND PASSWORD = :pass";
+                "WHERE EMPLOYEE_NO = :emp AND PASSWORD = :pass AND IS_DELETE = 0";
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
                 .setParameter("emp", empNo)
@@ -183,5 +183,26 @@ public class TblLoginInfo extends CommonModel {
 	    }
     }
 
+    /**
+     * ログイン情報の物理削除
+     * @param empNo
+     */
+    public static void deleteTblInfo(String empNo) {
+        String sql = "DELETE FROM TBL_LOGIN_INFO WHERE EMPLOYEE_NO = :emp";
+        Ebean.beginTransaction();
+        try {
+	        SqlUpdate create = Ebean.createSqlUpdate(sql)
+	                .setParameter("emp",empNo);
+	        Ebean.execute(create);
+	        Ebean.commitTransaction();
+	    } catch (Exception e) {
+	        // debug
+	        System.out.println("ログイン情報削除失敗："+ e);
+	        Ebean.rollbackTransaction();
+	        throw e;
+	    } finally {
+	        Ebean.endTransaction();
+	    }
+    }
 
 }

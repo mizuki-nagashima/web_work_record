@@ -7,8 +7,14 @@
 	)
 @import play.i18n._
 @import helper._
+        @javascriptRouter("jsRoutes")(
+            routes.javascript.AttendanceCtl.getBusinessTeamList,
+            routes.javascript.AttendanceCtl.getDivisionList,
+            routes.javascript.RegistEmpCtl.deleteEmp
+        )
 @main(messages.at("header.title","ユーザ情報登録"),sesEmpNo,sesEmpName,sesAuthClass) {
 <section class="content">
+<script src="@routes.Assets.versioned("javascripts/regist_emp.js")" type="text/javascript"></script>
 <!-- TODO 登録前確認ポップアップ -->
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -321,164 +327,4 @@
 </div>
 <div class="hidden success-msg fa fa-thumbs-o-up">
 </div>
-
-<script>
-  $(function() {
-      if(localStorage.saveMsg){
-      $(".success-msg").removeClass("hidden");
-      $('.success-msg').text(" " + localStorage.saveMsg).fadeIn(1000).delay(2000).fadeOut(2000);
-      localStorage.removeItem('saveMsg');
-    }else if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
-      $(document).ready(function () {
-        setTimeout(function() { window.scrollTo(0,$('#attendanceSaveTop').offset().top); }, 1);
-      });
-    }
-
-    $("#registEmpBtn").click(function () {
-       $(".warn-msg").addClass("hidden");
-       $('.warn-msg-contents').remove();
-      $.postAjax('#registEmpForm', function(data){
-        if(data.result == "ok"){
-          localStorage.saveMsg = '社員情報を登録しました。';
-          location.reload();
-        }else if(data.result == "ng"){
-          $(".warn-msg").removeClass("hidden");
-	      var errorMsgList = data.msg;
-	      var alertMsgContents = "";
-	      $.each(errorMsgList, function(key, obj) {
-	         $.each(obj, function(dId, msg) {
-	              var dateId = dId;
-	              var dataMsg = msg;
-	              var msgContents = '<p id=' + dateId + ' class=' + 'warn-msg-contents' + '>' + dataMsg + '<p>';
-	              alertMsgContents = msgContents + '\n'
-	              $('#warn-msg-title').after(msgContents);
-	         });
-	      });
-        }else{
-        	alert('エラーが発生しました。ｓ');
-        }
-      });
-    });
-
-    $(".approveButton").click(function () {
-        $(".warn-msg").addClass("hidden");
-        $('.warn-msg-contents').remove();
-        $('.save-warn-msg-contents').remove();
-	    var targetTr = $(this).closest('tr');
-        var targetTrId = targetTr.attr('id');
-        var empNo = $('#employeeNo' + targetTrId).val();
-        var date = $('#date' + targetTrId).val();
-	    var url = '@routes.ApproveCtl.updateApprove("0","0","0",0)';
-	    url = url.substring(0, url.length - 7) + empNo + '/'  + date + '/0';
-   	 	$.ajax({
-          type : 'POST',
-          url : url,
-          data : $(this.form).serialize(),
-     	  success : function(data) {
-            if(data.result == "ok"){
-              localStorage.saveMsg = '承認を確定しました。';
-          	  location.reload();
-          	}else if(data.result == "ng"){
-              $(".warn-msg").removeClass("hidden");
-	          var errorMsgList = data.msg;
-	          var alertMsgContents = "";
-	          $.each(errorMsgList, function(key, obj) {
-	            $.each(obj, function(dId, msg) {
-	              var dateId = dId;
-	              var dataMsg = msg;
-	              var stringDate = dateId + '日';
-	              var msgContents = '<p id=' + dateId + ' class=' + 'save-warn-msg-contents' + '>' + stringDate + '&nbsp;-&nbsp;' + dataMsg + '<p>';
-	              alertMsgContents = msgContents + '\n'
-	              $('#warn-msg-title').after(msgContents);
-	              if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
-	                $(".warn-msg").removeAttr('style');
-	                $(".warn-msg").css('bottom','20px');
-	              }
-	            });
-	          });
-            }else{
-               alert('エラーが発生しました。');
-            }
-          }
-      });
-    });
-
-    $(".changeDepartmentCd").change(function(){
-      var departmentCode = $('#departmentCode').val();
-      if(departmentCode != 00 || departmentCode != ""){
-        var url = '@routes.AttendanceCtl.getDivisionList("0")';
-        url = url.substring(0, url.length - 1) + departmentCode;
-        $.ajax({
-          type : 'GET',
-          url : url,
-          success : function(data) {
-            if(data.result == "ok"){
-            	var divisionList = data.value;
-	            $('#divisionCode').html("");
-	            $.each(divisionList, function (i, val) {
-	               $('#divisionCode').append($("<option>").val(val.code).text(val.codeName));
-                });
-            }
-          }
-        });
-      }else{
-        $('#divisionCode').html("");
-		$('#divisionCode').append($("<option>").val("00").text("該当なし"));
-	  }
-    });
-
-    $(".changeBusinessCd").change(function(){
-      var businessCode = $('#businessCode').val();
-      if(businessCode != 00 || businessCode != ""){
-        var url = '@routes.AttendanceCtl.getBusinessTeamList("0")';
-        url = url.substring(0, url.length - 1) + businessCode;
-        $.ajax({
-          type : 'GET',
-          url : url,
-          success : function(data) {
-            if(data.result == "ok"){
-            	var businessTeamList = data.value;
-	            $('#businessTeamCode').html("");
-	            $.each(businessTeamList, function (i, val) {
-	               $('#businessTeamCode').append($("<option>").val(val.code).text(val.codeName));
-                });
-            }
-          }
-        });
-      }else{
-        $('#businessTeamCode').html("");
-		$('#businessTeamCode').append($("<option>").val("00").text("該当なし"));
-	  }
-    });
-
-    $(".warn-msg").click(function () {
-      $(this).addClass("hidden");
-    });
-
-    $.postAjax = function(formId, callBack, url) {
-      var form = (typeof formId == "string" ? $(formId) : formId);
-      var accessUrl = null;
-      try {
-        if(form && form[0]) {
-          accessUrl = url ? url : form.attr('action')
-          $.ajax({
-            url     : accessUrl,
-            data    : form.serialize(),
-            type    : "POST",
-            success : function(data) {
-              callBack(data);
-            },
-            complete : function() {
-            }
-          });
-        }
-      } catch(e) {
-        alert('エラーが発生しました。');
-      }
-    };
-    if(!navigator.userAgent.match(/(iPhone|iPod|Android)/)){
-      $(".registEmp-box").css("width", "500px");
-    }
-  });
-</script>
 }

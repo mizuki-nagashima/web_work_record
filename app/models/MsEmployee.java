@@ -124,7 +124,8 @@ public class MsEmployee extends CommonModel {
      * @return sqlRow
      */
     public static SqlRow getEmployeeInfo(String empNo) {
-        String sql = "SELECT * FROM MS_EMPLOYEE EMP WHERE EMP.EMPLOYEE_NO = :empNo";
+        String sql = "SELECT * FROM MS_EMPLOYEE EMP WHERE EMP.EMPLOYEE_NO = :empNo "
+        		+ "AND EMP.RETIREMENT_DATE IS NULL";
         SqlRow row = null;
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
@@ -147,7 +148,6 @@ public class MsEmployee extends CommonModel {
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
                 .findList();
-        System.out.println(String.valueOf(sqlRows));
         return sqlRows;
     }
 
@@ -163,6 +163,53 @@ public class MsEmployee extends CommonModel {
         } catch (Exception e) {
             // debug
             System.out.println("社員マスタ登録失敗："+ e);
+            Ebean.rollbackTransaction();
+            throw e;
+        } finally {
+            Ebean.endTransaction();
+        }
+    }
+
+    /**
+     * 社員情報を削除
+     * @param empNo
+     */
+    public static void deleteMsEmployee(String empNo) {
+        String sql = "DELETE FROM MS_EMPLOYEE WHERE EMPLOYEE_NO = :emp";
+        Ebean.beginTransaction();
+        try {
+	        SqlUpdate create = Ebean.createSqlUpdate(sql)
+	                .setParameter("emp",empNo);
+	        Ebean.execute(create);
+	        Ebean.commitTransaction();
+	    } catch (Exception e) {
+	        // debug
+	        System.out.println("社員情報削除失敗："+ e);
+	        Ebean.rollbackTransaction();
+	        throw e;
+	    } finally {
+	        Ebean.endTransaction();
+	    }
+    }
+
+    /**
+     * 退職日を本日で設定する（ユーザ論理削除）
+     * @param empNo
+     */
+    public static void updateRetirementDate(String empNo) {
+        String sql = "UPDATE MS_EMPLOYEE " +
+        		"SET RETIREMENT_DATE = CURRENT_DATE " +
+        		"WHERE EMPLOYEE_NO=:EMP";
+        Ebean.beginTransaction();
+        try {
+            SqlUpdate create = Ebean.createSqlUpdate(sql)
+            		.setParameter("emp",empNo);
+
+            Ebean.execute(create);
+            Ebean.commitTransaction();
+        } catch (Exception e) {
+            // debug
+            System.out.println("実績データ更新失敗："+ e);
             Ebean.rollbackTransaction();
             throw e;
         } finally {

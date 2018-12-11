@@ -97,21 +97,62 @@ public class RegistEmpCtl extends Controller {
 					perManage.registUserId = session("employeeNo");
 					perManage.updateUserId = session("employeeNo");
 					MsPerformanceManage.insertMsPerManage(perManage);
-					// TODO ログインマスタに登録 パスワードどうするか？
+					// TODO
 					TblLoginInfo tblInfo = MakeModelUtil.makeTblInfo(registEmpForm.employeeNo,session("employeeNo"));
 					TblLoginInfo.insertTblInfo(tblInfo);
-				} catch (Exception e) {
-					//  debug
-					System.out.println(e);
-					map.put("isRegistEmp", "社員情報を登録中にエラーが発生しました。");
-					errorMsgList.add(map);
-				}
+					} catch (Exception e) {
+						MsEmployee.deleteMsEmployee(registEmpForm.employeeNo);
+						MsPerformanceManage.deleteMsPerManage(registEmpForm.employeeNo);
+						TblLoginInfo.deleteTblInfo(registEmpForm.employeeNo);
+						//  debug
+						System.out.println(e);
+						map.put("isRegistEmp", "社員情報を登録中にエラーが発生しました。");
+						errorMsgList.add(map);
+					}
 				} else {
 					map.put("isRegistEmp", "入力された社員番号は既に存在します。");
 					errorMsgList.add(map);
 				}
-				// TODO ログイン情報に登録
 			}
+		if (!errorMsgList.isEmpty()) {
+			return ok(Json.toJson(
+					ImmutableMap.of(
+							"result", "ng",
+							"msg", errorMsgList)));
+		}
+		return ok(Json.toJson(
+				ImmutableMap.of(
+						"result", "ok")));
+		//return notFound();
+	}
+
+	/**
+	 * ユーザ情報の削除
+	 * @param empNo
+	 * @return
+	 */
+	public Result deleteEmp(String empNo) {
+		// エラーメッセージを詰め込むためのリスト
+		ArrayList<HashMap> errorMsgList = new ArrayList<>();
+		HashMap<String, String> map = new HashMap<>();
+		try {
+			// 社員マスタ削除
+			MsEmployee.updateRetirementDate(empNo);
+			// 社員業務管理マスタ削除
+			SqlRow empInfo = MsEmployee.getEmployeeInfo(empNo);
+			String businessCode = empInfo.getString("business_code");
+			String businessTeamCode = empInfo.getString("business_team_code");
+			MsPerformanceManage.updateEndDate(empNo,businessCode,businessTeamCode);
+			// ログイン情報を削除
+			TblLoginInfo.updateDeleteFlg(empNo,"1");
+		} catch (Exception e) {
+			//  debug
+			System.out.println(e);
+			map.put("isRegistEmp", "社員情報を削除中にエラーが発生しました。");
+			errorMsgList.add(map);
+		}
+		map.put("isRegistEmp", "入力された社員番号は既に存在します。");
+		errorMsgList.add(map);
 		if (!errorMsgList.isEmpty()) {
 			return ok(Json.toJson(
 					ImmutableMap.of(

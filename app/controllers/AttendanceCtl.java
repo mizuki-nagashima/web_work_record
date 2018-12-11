@@ -1,12 +1,6 @@
 package controllers;
 
-import static models.TblPerformance.*;
-import static models.TblYearMonthAttribute.*;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,7 +9,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 
 import common.Const;
-import models.MsEmployee;
 import models.MsGeneralCode;
 import models.TblPerformance;
 import models.TblYearMonthAttribute;
@@ -23,7 +16,6 @@ import models.form.AttendanceInputForm;
 import models.form.AttendanceInputFormList;
 import models.form.DateList;
 import models.form.StatusAndWorkForm;
-import models.form.StatusAndWorkFormList;
 import play.data.Form;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -76,8 +68,8 @@ public class AttendanceCtl extends Controller {
         Boolean existsDefaultValue = false;
 
         // 保存済実績を取得
-        List<SqlRow> performanceData = getPerformanceData(refEmpNo, monthsYears);
-        SqlRow monthStatusData = getYearMonthData(refEmpNo, monthsYears);
+        List<SqlRow> performanceData = TblPerformance.getPerformanceData(refEmpNo, monthsYears);
+        SqlRow monthStatusData = TblYearMonthAttribute.getYearMonthData(refEmpNo, monthsYears);
         try {
         // 表示用Form
         AttendanceInputFormList aifl = new AttendanceInputFormList();
@@ -203,7 +195,7 @@ public class AttendanceCtl extends Controller {
 
                 // フォームの"始業"と"終業"が入力されている または 休暇等区分が選択されているフォームのみ処理する。
                 if ((!emptyChar.equals(op) && !emptyChar.equals(cl))
-                        || !Const.HOLIDAY_CLASS_NOTHING.equals(inputForm.holidayClassCode)) {
+                        || !Const.DEFAULT_CODE.equals(inputForm.holidayClassCode)) {
                         TblPerformance pft = new TblPerformance();
                         String holidayClassCode = inputForm.holidayClassCode;
                         if (holidayClassCode.isEmpty()) {
@@ -300,7 +292,7 @@ public class AttendanceCtl extends Controller {
 
                 // フォームの"始業"と"終業"が入力されているまたは 休暇等区分が選択されているフォームのみ処理する。
                 if ((!emptyChar.equals(op) && !emptyChar.equals(cl))
-                        || !Const.HOLIDAY_CLASS_NOTHING.equals(inputForm.holidayClassCode)) {
+                        || !Const.DEFAULT_CODE.equals(inputForm.holidayClassCode)) {
 
                     // エラーメッセージがあるかチェック
                     ArrayList<HashMap> errorMsg = checkAttendanceInputForm(inputForm);
@@ -353,8 +345,8 @@ public class AttendanceCtl extends Controller {
 		            pft.openingTime = msGenList.getString("any_value3");
 		            pft.closingTime = msGenList.getString("any_value4");
 		            // 休日区分とシフト区分は「00:なし」を入れる（sqlにて00以外とする）
-		            pft.holidayClass = Const.HOLIDAY_CLASS_NOTHING;
-		            pft.shiftClass = Const.SHIFT_CLASS_NOTHING;
+		            pft.holidayClass = Const.DEFAULT_CODE;
+		            pft.shiftClass = Const.DEFAULT_CODE;
 
 		            // 承認申請するデータ(承認済以外)を取得
 		            List<SqlRow> appData= TblPerformance.getApproveNecessaryData(pft);
@@ -375,7 +367,7 @@ public class AttendanceCtl extends Controller {
 
 			                    // フォームの"始業"と"終業"が入力されている または 休暇等区分が選択されているフォームのみ処理する。
 			                    if ((!emptyChar.equals(op) && !emptyChar.equals(cl))
-			                            || !Const.HOLIDAY_CLASS_NOTHING.equals(inputForm.holidayClassCode)) {
+			                            || !Const.DEFAULT_CODE.equals(inputForm.holidayClassCode)) {
 			                            String holidayClassCode = inputForm.holidayClassCode;
 			                            if (holidayClassCode.isEmpty()) {
 			                            }
@@ -441,7 +433,7 @@ public class AttendanceCtl extends Controller {
 
             // フォームの"始業"と"終業"が入力されているまたは 休暇等区分が選択されているフォームのみ処理する。
             if ((!emptyChar.equals(op) && !emptyChar.equals(cl))
-                    || !Const.HOLIDAY_CLASS_NOTHING.equals(inputForm.holidayClassCode)) {
+                    || !Const.DEFAULT_CODE.equals(inputForm.holidayClassCode)) {
 		        // エラーメッセージがあるかチェック
 		        ArrayList<HashMap> errorMsg = checkAttendanceInputForm(inputForm);
 		        // エラーがある場合エラーメッセージのリストにメッセージを詰め込む
@@ -523,7 +515,7 @@ public class AttendanceCtl extends Controller {
         ArrayList<HashMap> errorMsgList = new ArrayList<>();
 
         // 休暇区分が設定されていない場合か休日出勤が選ばれている場合
-        if (Const.HOLIDAY_CLASS_NOTHING.equals(inputForm.holidayClassCode)
+        if (Const.DEFAULT_CODE.equals(inputForm.holidayClassCode)
                 || Const.HOLIDAY_CLASS_HOLIDAY_WORK.equals(inputForm.holidayClassCode)) {
             // 作業実績内訳と作業計が合っていない場合エラー
             if (!CheckUtil.isBreakDownAndDeduction(
@@ -597,7 +589,7 @@ public class AttendanceCtl extends Controller {
         }
         Double salariedTime = 0.0;
         // 休暇区分が設定されている場合休暇区分の時間を取得
-        if (!holidayClassCode.equals(Const.HOLIDAY_CLASS_NOTHING)) {
+        if (!holidayClassCode.equals(Const.DEFAULT_CODE)) {
             salariedTime = MsGeneralCode.getAnyValue1ByCode(holidayClassCode,Const.HOLIDAY_CODE_NAME);
         }
         double doubleDeduction = Double.parseDouble(deduction);
@@ -637,7 +629,7 @@ public class AttendanceCtl extends Controller {
      */
     public Result getSalaried(String holidayClassCode){
         double salaried = 0.0;
-        if (!Const.HOLIDAY_CLASS_NOTHING.equals(holidayClassCode)) {
+        if (!Const.DEFAULT_CODE.equals(holidayClassCode)) {
             salaried = MsGeneralCode.getAnyValue1ByCode(holidayClassCode,Const.HOLIDAY_CODE_NAME);
         }
         return ok(Json.toJson(
@@ -657,7 +649,7 @@ public class AttendanceCtl extends Controller {
     		departCode = "00";
     	}
     	List<MsGeneralCode> divisionList = MakeModelUtil.makeCodeTypeList(Const.DIVISION_CODE_NAME,departCode);
-        return ok(Json.toJson(
+    	return ok(Json.toJson(
                 ImmutableMap.of(
                         "result","ok",
                         "value", divisionList

@@ -1,9 +1,6 @@
 package services.utils;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -15,17 +12,13 @@ import models.MsEmployee;
 import models.MsGeneralCode;
 import models.MsPerformanceManage;
 import models.TblLoginInfo;
-import models.TblPerformance;
 import models.TblYearMonthAttribute;
 import models.form.ApproveForm;
-import models.form.ApproveFormList;
 import models.form.AttendanceInputForm;
 import models.form.AttendanceSumForm;
 import models.form.DateList;
-import models.form.LoginForm;
 import models.form.RegistEmpForm;
 import models.form.StatusAndWorkForm;
-import play.data.validation.Constraints;
 
 /**
  * Created by suzuki-daisuke on 2017/04/13.
@@ -71,10 +64,10 @@ public class MakeModelUtil {
             String authorityClass = "";
             String employmentClass = "";
             String positionCode = "";
-            String departmentCode = "";
-            String divisionCode = "";
-            String businessCode = "";
-            String businessTeamCode = "";
+            String departmentCode = Const.DEFAULT_CODE;
+            String divisionCode = Const.DEFAULT_CODE;
+            String businessCode = Const.DEFAULT_CODE;
+            String businessTeamCode = Const.DEFAULT_CODE;
             String breakdownName1 = Const.DEFAULT_BREAKDOWN_NAME1;
             String breakdownName2 = Const.DEFAULT_BREAKDOWN_NAME2;
             String breakdownName3 = Const.DEFAULT_BREAKDOWN_NAME3;
@@ -289,9 +282,9 @@ public class MakeModelUtil {
             double deductionNight = 0.0;
             double deductionOther = 0.0;
             double performanceTime = 0.0;
-            String holidayClassCode = Const.HOLIDAY_CLASS_NOTHING;
+            String holidayClassCode = Const.DEFAULT_CODE;
             String holidayClassName = "";
-            String shiftClassCode = Const.SHIFT_CLASS_NOTHING;
+            String shiftClassCode = Const.DEFAULT_CODE;
             String shiftClassName = "";
             String performanceStatus = "";
 
@@ -394,14 +387,14 @@ public class MakeModelUtil {
     		// 休暇区分
     		String holidayClass =  appList.getString("ho_cl");
     		contents = holidayClass;
-    		if(!holidayClass.equals(Const.HOLIDAY_CLASS_NOTHING)) {
+    		if(!holidayClass.equals(Const.DEFAULT_CODE)) {
     			holidayClass = MsGeneralCode.getCodeMaster(Const.HOLIDAY_CODE_NAME,holidayClass).getString("code_name");
     			map.put("休暇区分",holidayClass);
     			contentsList.add(map);
     		}
     		// シフト区分
     		String shiftClass =  appList.getString("shi_cl");
-    		if(!shiftClass.equals(Const.SHIFT_CLASS_NOTHING)){
+    		if(!shiftClass.equals(Const.DEFAULT_CODE)){
     			shiftClass = MsGeneralCode.getCodeMaster(Const.SHIFT_CODE_NAME,shiftClass).getString("code_name");
     			map.put("シフト区分",shiftClass);
     			contentsList.add(map);

@@ -10,7 +10,6 @@ import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
 
 import common.Const;
-import play.Logger;
 
 /**
  * 汎用コード管理マスタ
@@ -204,7 +203,7 @@ public class MsGeneralCode extends CommonModel {
     public static String getClassNameByCode(String type,String code) {
 
         // 休暇区分コード00：無しの場合は取得不要のためreturn
-        if (Const.HOLIDAY_CLASS_NOTHING.equals(code)) {
+        if (Const.DEFAULT_CODE.equals(code)) {
             return "";
         }
         String sql = "SELECT CODE_NAME as code_name FROM MS_GENERAL_CODE " +

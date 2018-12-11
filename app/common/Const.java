@@ -8,6 +8,9 @@ public class Const {
 
     private Const() {}
 
+    /** デフォルトコード(該当なし) */
+    public static final String DEFAULT_CODE = "00";
+
     /** デフォルト作業内訳名1 */
     public static final String DEFAULT_BREAKDOWN_NAME1 = "開発/保守/維持";
     /** デフォルト作業内訳名2  */
@@ -36,18 +39,12 @@ public class Const {
     /** 業務チームコード名 */
     public static final String BUSINESS_TEAM_CODE_NAME = "BUSINESS_TEAM_CODE";
 
-    /** 休暇区分：なし */
-    public static final String HOLIDAY_CLASS_NOTHING = "00";
     /** 休暇区分：休日出勤 */
     public static final String HOLIDAY_CLASS_HOLIDAY_WORK = "01";
     /** 休暇区分：代休**/
     public static final String HOLIDAY_CLASS_CUMP_DAY = "02";
     /** 休暇区分：半休 */
     public static final String HOLIDAY_CLASS_HALF_HOLIDAY = "10";
-
-    /** シフト区分：なし */
-    public static final String SHIFT_CLASS_NOTHING = "00";
-
 
     /** 権限：システム管理者権限 */
     public static final String AUTHORITY_CLASS_SYSTEM = "01";
