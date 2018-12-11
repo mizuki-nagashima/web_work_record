@@ -1,4 +1,4 @@
-name := """kms-kintai"""
+name := """web_work_record"""
 
 version := "1.0-SNAPSHOT"
 

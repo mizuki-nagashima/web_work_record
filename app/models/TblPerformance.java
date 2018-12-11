@@ -309,13 +309,13 @@ public class TblPerformance extends CommonModel {
      * @param yearMonth 年月
      */
     public static List<SqlRow> getApproveList(List<String> businessTeamCodeList, String yearMonth) {
-    	String sql = "select per.opening_time as opn_time, per.closing_time as clo_time, yma.business_code as bs_code, per.employee_no as emp_no, emp.employee_name as emp_name, per.months_years as mon_yr, per.performance_date as per_date, per.holiday_class as ho_cl, per.shift_class as shi_cl , " +
-    				 "per.remarks as rem, per.performance_status as per_st, per.approval_employee_no as app_emp_no, per.approval_date as app_date, appemp.position_code as app_emp_position, appemp.employee_name as app_emp_name, " +
-    				 "yma.months_years_status as mon_yr_st " +
-    				 "from tbl_performance per inner join ms_employee emp join tbl_year_month_attribute yma on per.employee_no = emp.employee_no and per.employee_no = yma.employee_no " +
-    				 "left outer join ( select employee_no, employee_name, position_code from ms_employee ) appemp on per.approval_employee_no = appemp.employee_no " +
-    				 "where yma.months_years_status in ('02', '03') and per.performance_status != :status and per.months_years = :yearmonth and yma.business_team_code in (:btc) " +
-    				 "group by per_date  order by emp_no , per_date";
+    	String sql = "SELECT PER.OPENING_TIME AS OPN_TIME, PER.CLOSING_TIME AS CLO_TIME, YMA.BUSINESS_CODE AS BS_CODE, PER.EMPLOYEE_NO AS EMP_NO, EMP.EMPLOYEE_NAME AS EMP_NAME, PER.MONTHS_YEARS AS MON_YR, PER.PERFORMANCE_DATE AS PER_DATE, PER.HOLIDAY_CLASS AS HO_CL, PER.SHIFT_CLASS AS SHI_CL , " +
+    				 "PER.REMARKS AS REM, PER.PERFORMANCE_STATUS AS PER_ST, PER.APPROVAL_EMPLOYEE_NO AS APP_EMP_NO, PER.APPROVAL_DATE AS APP_DATE, APPEMP.POSITION_CODE AS APP_EMP_POSITION, APPEMP.EMPLOYEE_NAME AS APP_EMP_NAME, " +
+    				 "YMA.MONTHS_YEARS_STATUS AS MON_YR_ST " +
+    				 "FROM TBL_PERFORMANCE PER INNER JOIN MS_EMPLOYEE EMP JOIN TBL_YEAR_MONTH_ATTRIBUTE YMA ON PER.EMPLOYEE_NO = EMP.EMPLOYEE_NO AND PER.EMPLOYEE_NO = YMA.EMPLOYEE_NO " +
+    				 "LEFT OUTER JOIN ( SELECT EMPLOYEE_NO, EMPLOYEE_NAME, POSITION_CODE FROM MS_EMPLOYEE ) APPEMP ON PER.APPROVAL_EMPLOYEE_NO = APPEMP.EMPLOYEE_NO " +
+    				 "WHERE YMA.MONTHS_YEARS_STATUS IN ('02', '03') AND PER.PERFORMANCE_STATUS != :status AND PER.MONTHS_YEARS = :yearmonth AND YMA.BUSINESS_TEAM_CODE IN (:btc) " +
+    				 "GROUP BY PER_DATE  ORDER BY EMP_NO , PER_DATE";
 //    	String sql = "SELECT * FROM TBL_PERFORMANCE T " +
 //    			"WHERE  T.MONTHS_YEARS = :yearmonth " +
 //    			"AND T.PERFORMANCE_STATUS != :status";
