@@ -25,6 +25,7 @@ import models.form.DateList;
 import models.form.LoginForm;
 import models.form.RegistEmpForm;
 import models.form.StatusAndWorkForm;
+import play.data.validation.Constraints;
 
 /**
  * Created by suzuki-daisuke on 2017/04/13.
@@ -55,6 +56,74 @@ public class MakeModelUtil {
     	mst.breakdownName4 = registEmpForm.breakdownName4;
     	mst.authorityClass = registEmpForm.authorityClass;
         return mst;
+    }
+
+    /**
+     * 社員情報取得用のフォームを作成します
+     * @param 社員情報sqlリスト
+     * @return 社員登録用フォーム
+     */
+    public static List<RegistEmpForm> makeMsEmployeeTbl(List<SqlRow> sqlList){
+        List<RegistEmpForm> refList = new ArrayList<>();
+            String employeeNo = "";
+            String employeeName = "";
+            String employeeNameKana = "";
+            String authorityClass = "";
+            String employmentClass = "";
+            String positionCode = "";
+            String departmentCode = "";
+            String divisionCode = "";
+            String businessCode = "";
+            String businessTeamCode = "";
+            String breakdownName1 = Const.DEFAULT_BREAKDOWN_NAME1;
+            String breakdownName2 = Const.DEFAULT_BREAKDOWN_NAME2;
+            String breakdownName3 = Const.DEFAULT_BREAKDOWN_NAME3;
+            String breakdownName4 = Const.DEFAULT_BREAKDOWN_NAME4;
+            String retirementDate = "";
+
+            for(SqlRow pd : sqlList) {
+            	employeeNo = pd.getString("employee_no");
+            	employeeName = Optional.ofNullable(pd.getString("employee_name")).orElse(employeeName);
+            	employeeNameKana = Optional.ofNullable(pd.getString("employee_name_kana")).orElse(employeeNameKana);
+            	authorityClass = MsGeneralCode.getCodeMaster(
+                        Const.AUTHORITY_CODE_NAME, pd.getString("authority_class")).getString("CODE_NAME");
+            	employmentClass = MsGeneralCode.getCodeMaster(
+                        Const.EMPLOYMENT_CODE_NAME, pd.getString("employment_class")).getString("CODE_NAME");
+            	positionCode = MsGeneralCode.getCodeMaster(
+                        Const.POSITION_CODE_NAME, pd.getString("position_code")).getString("CODE_NAME");
+            	departmentCode = MsGeneralCode.getCodeMaster(
+                        Const.DEPARTMENT_CODE_NAME, pd.getString("department_code")).getString("CODE_NAME");
+            	divisionCode = MsGeneralCode.getCodeMaster(
+                        Const.DIVISION_CODE_NAME, pd.getString("division_code")).getString("CODE_NAME");
+            	businessCode = MsGeneralCode.getCodeMaster(
+                        Const.BUSINESS_CODE_NAME, pd.getString("business_code")).getString("CODE_NAME");
+            	businessTeamCode = MsGeneralCode.getCodeMaster(
+                        Const.BUSINESS_TEAM_CODE_NAME, pd.getString("business_team_code")).getString("CODE_NAME");
+            	Optional.ofNullable(pd.getString("business_team_code")).orElse(businessTeamCode);
+            	breakdownName1 = Optional.ofNullable(pd.getString("breakdown_name1")).orElse(breakdownName1);
+            	breakdownName2 = Optional.ofNullable(pd.getString("breakdown_name2")).orElse(breakdownName2);
+            	breakdownName3 = Optional.ofNullable(pd.getString("breakdown_name3")).orElse(breakdownName3);
+            	breakdownName4 = Optional.ofNullable(pd.getString("breakdown_name4")).orElse(breakdownName4);
+            	retirementDate = Optional.ofNullable(pd.getString("retirement_date")).orElse(retirementDate);
+
+            RegistEmpForm ref = new RegistEmpForm();
+        	ref.employeeNo = employeeNo;
+        	ref.employeeName = employeeName;
+        	ref.employeeNameKana = employeeNameKana;
+        	ref.positionCode = positionCode;
+        	ref.employmentClass = employmentClass;
+        	ref.businessCode   = businessCode;
+        	ref.businessTeamCode   = businessTeamCode;
+        	ref.departmentCode = departmentCode;
+        	ref.divisionCode = divisionCode;
+        	ref.breakdownName1 = breakdownName1;
+        	ref.breakdownName2 = breakdownName2;
+        	ref.breakdownName3 = breakdownName3;
+        	ref.breakdownName4 = breakdownName4;
+        	ref.authorityClass = authorityClass;
+        	refList.add(ref);
+            }
+        return refList;
     }
 
     /**社員業務管理マスタ登録用のデータを作成します。

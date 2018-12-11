@@ -1,11 +1,19 @@
 package controllers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.avaje.ebean.SqlRow;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Inject;
+
+import common.Const;
+import models.MsEmployee;
+import models.MsGeneralCode;
+import models.MsPerformanceManage;
 import models.TblLoginInfo;
-import models.TblYearMonthAttribute;
-import models.form.ApproveFormList;
-import models.form.AttendanceInputFormList;
 import models.form.RegistEmpForm;
-import models.form.StatusAndWorkForm;
 import play.data.Form;
 import play.data.FormFactory;
 import play.data.validation.ValidationError;
@@ -14,24 +22,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import services.utils.DateUtil;
 import services.utils.MakeModelUtil;
-
-import com.avaje.ebean.SqlRow;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Inject;
-import com.mysql.jdbc.Messages;
-
-import common.Const;
-import models.MsEmployee;
-import models.MsGeneralCode;
-import models.MsPerformanceManage;
-import play.Logger;
-import views.html.*;
-import play.data.validation.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import views.html.regist_emp;
 
 public class RegistEmpCtl extends Controller {
 	@Inject
@@ -48,6 +39,7 @@ public class RegistEmpCtl extends Controller {
 		apfl.breakdownName2 = Const.DEFAULT_BREAKDOWN_NAME2;
 		apfl.breakdownName3 = Const.DEFAULT_BREAKDOWN_NAME3;
 		apfl.breakdownName4 = Const.DEFAULT_BREAKDOWN_NAME4;
+		//TODO 編集
 		Form<RegistEmpForm> registEmpForm = formFactory.form(RegistEmpForm.class).fill(apfl);
 		List<MsGeneralCode> positionList = MakeModelUtil.makeCodeTypeList(Const.POSITION_CODE_NAME);
 		List<MsGeneralCode> departList = MakeModelUtil.makeCodeTypeList(Const.DEPARTMENT_CODE_NAME);
@@ -57,8 +49,12 @@ public class RegistEmpCtl extends Controller {
 		String sesEmpNo = session("employeeNo");
 		String sesEmpName = session("employeeName");
 		String sesAuthClass = session("authorityClass");
-		return ok(regist_emp.render(sesEmpNo, sesEmpName,sesAuthClass, registEmpForm, positionList,departList, divisionList, businessList,
-				businessTeamList));
+		// 登録されたデータを取得
+    	List<SqlRow> sqlList = MsEmployee.getEmployeeInfoList();
+    	List<RegistEmpForm> registEmpForms = MakeModelUtil.makeMsEmployeeTbl(sqlList);
+
+		return ok(regist_emp.render(sesEmpNo, sesEmpName, sesAuthClass,registEmpForm, positionList,departList, divisionList, businessList,
+				businessTeamList,registEmpForms));
 	}
 
 	/**

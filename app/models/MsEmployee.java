@@ -137,6 +137,21 @@ public class MsEmployee extends CommonModel {
     }
 
     /**
+     * 社員リスト取得
+     * @param empNo 社員番号
+     * @return sqlRow
+     */
+    public static List<SqlRow> getEmployeeInfoList() {
+        String sql = "SELECT * FROM MS_EMPLOYEE EMP WHERE EMP.RETIREMENT_DATE IS NULL "
+        		+ "OR EMP.RETIREMENT_DATE >= CURRENT_DATE";
+
+        List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
+                .findList();
+        System.out.println(String.valueOf(sqlRows));
+        return sqlRows;
+    }
+
+    /**
      * 社員情報登録
      * @param empInfo 社員情報
      */
