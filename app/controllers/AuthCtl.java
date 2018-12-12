@@ -97,6 +97,11 @@ public class AuthCtl extends Controller {
             session("authorityClass", authority);
             session("employeeName", result.getString("employee_name"));
 
+        	// ログイン回数カウントアップ
+            int loginCount  = TblLoginInfo.getLoginInfo(employeeNo).getInteger("login_count");
+            loginCount ++;
+            TblLoginInfo.loginCountUp(employeeNo,loginCount);
+
            // 権限が05：自陣のみ閲覧以外の場合はメニュー画面に遷移
             if (!Const.AUTHORITY_CLASS_SELF.equals(authority)) {
             	return ok(Json.toJson(
@@ -126,7 +131,6 @@ public class AuthCtl extends Controller {
                             "msg2","社員番号とパスワードをお確かめの上、もう一度お試しください。"
                     )));
         }
-//        return notFound();
     }
 
     public Result menuRedirect() {

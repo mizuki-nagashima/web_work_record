@@ -294,7 +294,6 @@
           </thead>
           <tbody>
           @for(rel <- registEmpFormList ){
-	          @form(action = routes.ApproveCtl.updateApprove(sesEmpNo,sesEmpNo,sesEmpNo,0), 'id -> "inputForm") {
 	          <tr id="@rel.employeeNo">
 	         	 <input type="hidden" id="employeeNo@rel.employeeNo" name="employeeNo" value="@rel.employeeNo">
 	         	<td>@rel.employmentClass</td>
@@ -308,9 +307,8 @@
 	            <td class="hidden-xs">@rel.businessTeamCode</td>
 	            <td>@rel.authorityClass</td>
 		            <td><button id="editButton-@rel.employeeNo" type="button" class="btn btn-success editButton">編集</button></td>
-		            <td><button id="deleteButton-@rel.employeeNo"type="button" class="btn btn-danger deleteButton">削除</button></td>
+		            <td><button id="deleteButton-@rel.employeeNo" type="button" class="btn btn-danger deleteButton">削除</button></td>
 	          </tr>
-	          }
 			}
           </tbody>
         </table>

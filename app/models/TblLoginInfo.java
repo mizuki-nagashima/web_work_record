@@ -24,21 +24,31 @@ public class TblLoginInfo extends CommonModel {
     /**
      * パスワード
      */
+    @NotNull
     public String password;
+
+    /**
+     * ログイン回数
+     */
+    @NotNull
+    public Integer loginCount;
 
     /**
      * ログインNG回数
      */
+    @NotNull
     public Integer loginNgCount;
 
     /**
      * アカウントロック
      */
+    @NotNull
     public String isAccountLock;
 
     /**
      * 削除フラグ
      */
+    @NotNull
     public String isDelete;
 
     /**
@@ -104,12 +114,39 @@ public class TblLoginInfo extends CommonModel {
     }
 
     /**
+     * ログイン回数カウントアップ
+     * @param empNo 社員番号
+     * @param loginCount  ログイン回数
+     */
+    public static void loginCountUp(String empNo, int loginCount) {
+       // int count = loginCount + 1;
+
+        String sql = "UPDATE TBL_LOGIN_INFO SET " +
+        		"LOGIN_COUNT = :count " +
+                "WHERE EMPLOYEE_NO = :emp";
+        Ebean.beginTransaction();
+        try {
+	        SqlUpdate create = Ebean.createSqlUpdate(sql)
+	                .setParameter("emp", empNo)
+	                .setParameter("count", loginCount);
+	        Ebean.execute(create);
+	        Ebean.commitTransaction();
+	    } catch (Exception e) {
+	        // debug
+	        System.out.println("ログイン回数カウント更新失敗："+ e);
+	        Ebean.rollbackTransaction();
+	        throw e;
+	    } finally {
+	        Ebean.endTransaction();
+	    }
+    }
+
+    /**
      * ログインNG回数カウントアップ
      * @param empNo 社員番号
      * @param loginNgCount  ログインNG回数
      */
     public static void loginNgCountUp(String empNo, int loginNgCount) {
-        int count = loginNgCount + 1;
 
         String sql = "UPDATE TBL_LOGIN_INFO SET " +
         		"LOGIN_NG_COUNT = :count " +
@@ -118,7 +155,7 @@ public class TblLoginInfo extends CommonModel {
         try {
 	        SqlUpdate create = Ebean.createSqlUpdate(sql)
 	                .setParameter("emp", empNo)
-	                .setParameter("count", count);
+	                .setParameter("count", loginNgCount);
 	        Ebean.execute(create);
 	        Ebean.commitTransaction();
 	    } catch (Exception e) {
@@ -176,6 +213,32 @@ public class TblLoginInfo extends CommonModel {
 	    } catch (Exception e) {
 	        // debug
 	        System.out.println("削除フラグ更新失敗："+ e);
+	        Ebean.rollbackTransaction();
+	        throw e;
+	    } finally {
+	        Ebean.endTransaction();
+	    }
+    }
+
+    /**
+     * 削除フラグ更新
+     * @param empNo 社員番号
+     * @param loginNgCount  ログインNG回数
+     */
+    public static void updatePassword(String empNo, String password) {
+        String sql = "UPDATE TBL_LOGIN_INFO SET " +
+        		"PASSWORD = :pass " +
+                "WHERE EMPLOYEE_NO = :emp AND PASSWORD = :pass ";
+        Ebean.beginTransaction();
+        try {
+	        SqlUpdate create = Ebean.createSqlUpdate(sql)
+	                .setParameter("emp", empNo)
+	                .setParameter("pass", password);
+		   Ebean.execute(create);
+		   Ebean.commitTransaction();
+	    } catch (Exception e) {
+	        // debug
+	        System.out.println("パスワード更新失敗："+ e);
 	        Ebean.rollbackTransaction();
 	        throw e;
 	    } finally {

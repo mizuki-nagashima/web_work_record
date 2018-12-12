@@ -35,18 +35,17 @@
       });
     });
 
-    $("#deleteButton").click(function () {
-    	alert();
+    $(".deleteButton").click(function () {
         $(".warn-msg").addClass("hidden");
         $('.warn-msg-contents').remove();
 	    var targetTr = $(this).closest('tr');
         var targetTrId = targetTr.attr('id');
         var empNo = $('#employeeNo' + targetTrId).val();
-        var date = $('#date' + targetTrId).val();
 	    var url = jsRoutes.controllers.RegistEmpCtl.deleteEmp(empNo);
    	 	$.ajax({
           type : 'POST',
           url : url.url,
+          data : $(this.form).serialize(),
      	  success : function(data) {
             if(data.result == "ok"){
               localStorage.saveMsg = 'ユーザ情報を削除しました。';
@@ -56,18 +55,13 @@
 	          var errorMsgList = data.msg;
 	          var alertMsgContents = "";
 	          $.each(errorMsgList, function(key, obj) {
-	            $.each(obj, function(dId, msg) {
-	              var dateId = dId;
-	              var dataMsg = msg;
-	              var stringDate = dateId + '日';
-	              var msgContents = '<p id=' + dateId + ' class=' + 'save-warn-msg-contents' + '>' + stringDate + '&nbsp;-&nbsp;' + dataMsg + '<p>';
-	              alertMsgContents = msgContents + '\n'
-	              $('#warn-msg-title').after(msgContents);
-	              if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
-	                $(".warn-msg").removeAttr('style');
-	                $(".warn-msg").css('bottom','20px');
-	              }
-	            });
+	 	         $.each(obj, function(dId, msg) {
+		              var dateId = dId;
+		              var dataMsg = msg;
+		              var msgContents = '<p id=' + dateId + ' class=' + 'warn-msg-contents' + '>' + dataMsg + '<p>';
+		              alertMsgContents = msgContents + '\n'
+		              $('#warn-msg-title').after(msgContents);
+		         });
 	          });
             }else{
                alert('エラーが発生しました。');

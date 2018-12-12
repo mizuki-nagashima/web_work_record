@@ -123,7 +123,6 @@ public class RegistEmpCtl extends Controller {
 		return ok(Json.toJson(
 				ImmutableMap.of(
 						"result", "ok")));
-		//return notFound();
 	}
 
 	/**
@@ -151,8 +150,6 @@ public class RegistEmpCtl extends Controller {
 			map.put("isRegistEmp", "社員情報を削除中にエラーが発生しました。");
 			errorMsgList.add(map);
 		}
-		map.put("isRegistEmp", "入力された社員番号は既に存在します。");
-		errorMsgList.add(map);
 		if (!errorMsgList.isEmpty()) {
 			return ok(Json.toJson(
 					ImmutableMap.of(
@@ -162,7 +159,6 @@ public class RegistEmpCtl extends Controller {
 		return ok(Json.toJson(
 				ImmutableMap.of(
 						"result", "ok")));
-		//return notFound();
 	}
 
 	/*
