@@ -141,6 +141,7 @@ public class MakeModelUtil {
     	TblLoginInfo mst = new TblLoginInfo();
     	mst.employeeNo = empNo;
     	mst.password = services.PasswordGenerator.main();
+    	mst.loginCount = 0;
     	mst.loginNgCount = 0;
     	mst.isAccountLock = "0";
     	mst.isDelete = "0";

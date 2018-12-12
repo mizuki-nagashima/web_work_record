@@ -33,13 +33,19 @@ public class RegistEmpCtl extends Controller {
 	 * @return 社員登録画面
 	 */
 	public Result index() {
+		// 登録されたデータを取得
+    	List<SqlRow> sqlList = MsEmployee.getEmployeeInfoList();
+    	List<RegistEmpForm> registEmpFormList = MakeModelUtil.makeMsEmployeeTbl(sqlList);
+
 		// 表示用フォーム
 		RegistEmpForm apfl = new RegistEmpForm();
 		apfl.breakdownName1 = Const.DEFAULT_BREAKDOWN_NAME1;
 		apfl.breakdownName2 = Const.DEFAULT_BREAKDOWN_NAME2;
 		apfl.breakdownName3 = Const.DEFAULT_BREAKDOWN_NAME3;
 		apfl.breakdownName4 = Const.DEFAULT_BREAKDOWN_NAME4;
-		//TODO 編集
+		SqlRow empInfo = MsEmployee.getEmployeeInfo(apfl.employeeNo);
+
+		//TODO 編集ボタン
 		Form<RegistEmpForm> registEmpForm = formFactory.form(RegistEmpForm.class).fill(apfl);
 		List<MsGeneralCode> positionList = MakeModelUtil.makeCodeTypeList(Const.POSITION_CODE_NAME);
 		List<MsGeneralCode> departList = MakeModelUtil.makeCodeTypeList(Const.DEPARTMENT_CODE_NAME);
@@ -49,12 +55,9 @@ public class RegistEmpCtl extends Controller {
 		String sesEmpNo = session("employeeNo");
 		String sesEmpName = session("employeeName");
 		String sesAuthClass = session("authorityClass");
-		// 登録されたデータを取得
-    	List<SqlRow> sqlList = MsEmployee.getEmployeeInfoList();
-    	List<RegistEmpForm> registEmpForms = MakeModelUtil.makeMsEmployeeTbl(sqlList);
 
 		return ok(regist_emp.render(sesEmpNo, sesEmpName, sesAuthClass,registEmpForm, positionList,departList, divisionList, businessList,
-				businessTeamList,registEmpForms));
+				businessTeamList,registEmpFormList));
 	}
 
 	/**
@@ -97,7 +100,7 @@ public class RegistEmpCtl extends Controller {
 					perManage.registUserId = session("employeeNo");
 					perManage.updateUserId = session("employeeNo");
 					MsPerformanceManage.insertMsPerManage(perManage);
-					// TODO
+					// ログイン情報を登録
 					TblLoginInfo tblInfo = MakeModelUtil.makeTblInfo(registEmpForm.employeeNo,session("employeeNo"));
 					TblLoginInfo.insertTblInfo(tblInfo);
 					} catch (Exception e) {
@@ -110,7 +113,7 @@ public class RegistEmpCtl extends Controller {
 						errorMsgList.add(map);
 					}
 				} else {
-					map.put("isRegistEmp", "入力された社員番号は既に存在します。");
+					map.put("isRegistEmp", "入力された社員番号は既に使われています。");
 					errorMsgList.add(map);
 				}
 			}

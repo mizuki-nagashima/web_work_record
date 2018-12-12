@@ -71,61 +71,61 @@ public class AttendanceCtl extends Controller {
         List<SqlRow> performanceData = TblPerformance.getPerformanceData(refEmpNo, monthsYears);
         SqlRow monthStatusData = TblYearMonthAttribute.getYearMonthData(refEmpNo, monthsYears);
         try {
-        // 表示用Form
-        AttendanceInputFormList aifl = new AttendanceInputFormList();
+	        // 表示用Form
+	        AttendanceInputFormList aifl = new AttendanceInputFormList();
 
-        if(monthStatusData != null) {
-        	statusDefaultValue = true;
-        }
-        aifl.statusAndWorkFormList = MakeModelUtil.makeStatusAndWorkForm(refEmpNo, monthsYears);
+	        if(monthStatusData != null) {
+	        	statusDefaultValue = true;
+	        }
+	        aifl.statusAndWorkFormList = MakeModelUtil.makeStatusAndWorkForm(refEmpNo, monthsYears);
 
-        // 指定した年月の実績データが一件でもある場合は初期値をセット
-        if (performanceData.size() != 0) {
-            existsDefaultValue = true;
-        }
-        aifl.attendanceInputFormList = MakeModelUtil.makeAttendanceInputFormList(dateList, performanceData);
+	        // 指定した年月の実績データが一件でもある場合は初期値をセット
+	        if (performanceData.size() != 0) {
+	            existsDefaultValue = true;
+	        }
+	        aifl.attendanceInputFormList = MakeModelUtil.makeAttendanceInputFormList(dateList, performanceData);
 
-        Form<StatusAndWorkForm> statusAndWorkForm = formFactory.form(StatusAndWorkForm.class).fill(aifl.statusAndWorkFormList);
-        Form<AttendanceInputFormList> inputForm = formFactory.form(AttendanceInputFormList.class).fill(aifl);
+	        Form<StatusAndWorkForm> statusAndWorkForm = formFactory.form(StatusAndWorkForm.class).fill(aifl.statusAndWorkFormList);
+	        Form<AttendanceInputFormList> inputForm = formFactory.form(AttendanceInputFormList.class).fill(aifl);
 
-        //ステータスのリスト化
-        List<MsGeneralCode> hcmList = MakeModelUtil.makeCodeTypeList(Const.HOLIDAY_CODE_NAME);
-        List<MsGeneralCode> shiftList = MakeModelUtil.makeCodeTypeList(Const.SHIFT_CODE_NAME);
-        List<MsGeneralCode> departList = MakeModelUtil.makeCodeTypeList(Const.DEPARTMENT_CODE_NAME);
-        List<MsGeneralCode> divisionList = MakeModelUtil.makeCodeTypeList(Const.DIVISION_CODE_NAME);
-        List<MsGeneralCode> businessList = MakeModelUtil.makeCodeTypeList(Const.BUSINESS_CODE_NAME);
-        List<MsGeneralCode> businessTeamList = MakeModelUtil.makeCodeTypeList(Const.BUSINESS_TEAM_CODE_NAME);
+	        //ステータスのリスト化
+	        List<MsGeneralCode> hcmList = MakeModelUtil.makeCodeTypeList(Const.HOLIDAY_CODE_NAME);
+	        List<MsGeneralCode> shiftList = MakeModelUtil.makeCodeTypeList(Const.SHIFT_CODE_NAME);
+	        List<MsGeneralCode> departList = MakeModelUtil.makeCodeTypeList(Const.DEPARTMENT_CODE_NAME);
+	        List<MsGeneralCode> divisionList = MakeModelUtil.makeCodeTypeList(Const.DIVISION_CODE_NAME);
+	        List<MsGeneralCode> businessList = MakeModelUtil.makeCodeTypeList(Const.BUSINESS_CODE_NAME);
+	        List<MsGeneralCode> businessTeamList = MakeModelUtil.makeCodeTypeList(Const.BUSINESS_TEAM_CODE_NAME);
 
-        // 1~12(1月~12月以外がパラメータに入ってきたらエラー)
-        if (MIN_MONTH <= Integer.parseInt(month) && MAX_MONTH >= Integer.parseInt(month)) {
-            return ok(attendance.render(
-                    statusAndWorkForm,
-                    inputForm,
-                    dateList,
-                    year,
-                    month,
-                    statusDefaultValue,
-                    existsDefaultValue,
-                    refEmpNo,
-                    employeeNo,
-                    employeeName,
-                    authorityClass,
-                    defalutWorkTime,
-                    departList,
-                    divisionList,
-                    businessList,
-                    businessTeamList,
-                    hcmList,
-                    shiftList
-            ));
-        } else {
-            return notFound();
-        }
-	} catch (Exception e) {
-        //  debug
-        System.out.println(e);
-        return notFound();
-	}
+	        // 1~12(1月~12月以外がパラメータに入ってきたらエラー)
+	        if (MIN_MONTH <= Integer.parseInt(month) && MAX_MONTH >= Integer.parseInt(month)) {
+	            return ok(attendance.render(
+	                    statusAndWorkForm,
+	                    inputForm,
+	                    dateList,
+	                    year,
+	                    month,
+	                    statusDefaultValue,
+	                    existsDefaultValue,
+	                    refEmpNo,
+	                    employeeNo,
+	                    employeeName,
+	                    authorityClass,
+	                    defalutWorkTime,
+	                    departList,
+	                    divisionList,
+	                    businessList,
+	                    businessTeamList,
+	                    hcmList,
+	                    shiftList
+	            ));
+	        } else {
+	            return notFound();
+	        }
+		} catch (Exception e) {
+	        //  debug
+	        System.out.println(e);
+	        return notFound();
+		}
     }
 
     /**
@@ -414,7 +414,6 @@ public class AttendanceCtl extends Controller {
      * @param month 月
      * @return エラーチェック可否
      */
-    // TODO 管理者から修正できるように
     public Result fixCheck(String refEmpNo, String year, String month) {
     	String monthsYears = year+DateUtil.getZeroPadding(month);
 
