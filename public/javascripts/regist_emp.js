@@ -68,6 +68,7 @@
             	$.each(list, function(key, obj) {
             	$('#employeeNo').val();
             	$(".employeeNo1").val();
+            	});
             }else{
                alert('エラーが発生しました。');
             }
