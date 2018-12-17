@@ -35,7 +35,7 @@ public class RegistEmpCtl extends Controller {
 	public Result index() {
 		// 登録されたデータを取得
     	List<SqlRow> sqlList = MsEmployee.getEmployeeInfoList();
-    	List<RegistEmpForm> registEmpFormList = MakeModelUtil.makeMsEmployeeTbl(sqlList);
+    	List<RegistEmpForm> registEmpFormList = MakeModelUtil.makeRegistEmpForm(sqlList);
 
 		// 表示用フォーム
 		RegistEmpForm apfl = new RegistEmpForm();
@@ -43,9 +43,7 @@ public class RegistEmpCtl extends Controller {
 		apfl.breakdownName2 = Const.DEFAULT_BREAKDOWN_NAME2;
 		apfl.breakdownName3 = Const.DEFAULT_BREAKDOWN_NAME3;
 		apfl.breakdownName4 = Const.DEFAULT_BREAKDOWN_NAME4;
-		SqlRow empInfo = MsEmployee.getEmployeeInfo(apfl.employeeNo);
 
-		//TODO 編集ボタン
 		Form<RegistEmpForm> registEmpForm = formFactory.form(RegistEmpForm.class).fill(apfl);
 		List<MsGeneralCode> positionList = MakeModelUtil.makeCodeTypeList(Const.POSITION_CODE_NAME);
 		List<MsGeneralCode> departList = MakeModelUtil.makeCodeTypeList(Const.DEPARTMENT_CODE_NAME);
@@ -61,62 +59,34 @@ public class RegistEmpCtl extends Controller {
 	}
 
 	/**
-	 * 社員登録処理を行います。
+	 * 社員情報登録モーダルボタンが押下されたときのエラーチェックを行います。
 	 * @return 結果
 	 */
-	public Result registEmp() {
+	public Result registEmpCheck() {
 		// エラーメッセージを詰め込むためのリスト
 		ArrayList<HashMap> errorMsgList = new ArrayList<>();
 		HashMap<String, String> map = new HashMap<>();
-			Form<RegistEmpForm> form = formFactory.form(RegistEmpForm.class).bindFromRequest();
-			//フォームエラー処理
-			if (form.hasErrors()) {
-				ValidationError errorEmpNo = form.error("employeeNo");
-				ValidationError errorEmpName = form.error("employeeName");
-				ValidationError errorEmpNameKana = form.error("employeeNameKana");
-				if (errorEmpNo != null) {
-					map.put("errorEmpNo", errorEmpNo.message());
-				}
-				if (errorEmpName != null) {
-					map.put("errorEmpName", errorEmpName.message());
-				}
-				if (errorEmpNameKana != null) {
-					map.put("errorEmpNameKana", errorEmpNameKana.message());
-				}
-				errorMsgList.add(map);
-			} else {
-				RegistEmpForm registEmpForm = form.get();
-
-				if (!MsEmployee.isRegistEmp(registEmpForm.employeeNo)) {
-					try {
-					// 社員マスタに登録
-					MsEmployee ymat = MakeModelUtil.makeMsEmployeeTbl(registEmpForm);
-					System.out.println(registEmpForm.positionCode);
-					ymat.registUserId = session("employeeNo");
-					ymat.updateUserId = session("employeeNo");
-					MsEmployee.insertMsEmployee(ymat);
-					// 社員業務管理マスタに登録
-					MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(registEmpForm);
-					perManage.registUserId = session("employeeNo");
-					perManage.updateUserId = session("employeeNo");
-					MsPerformanceManage.insertMsPerManage(perManage);
-					// ログイン情報を登録
-					TblLoginInfo tblInfo = MakeModelUtil.makeTblInfo(registEmpForm.employeeNo,session("employeeNo"));
-					TblLoginInfo.insertTblInfo(tblInfo);
-					} catch (Exception e) {
-						MsEmployee.deleteMsEmployee(registEmpForm.employeeNo);
-						MsPerformanceManage.deleteMsPerManage(registEmpForm.employeeNo);
-						TblLoginInfo.deleteTblInfo(registEmpForm.employeeNo);
-						//  debug
-						System.out.println(e);
-						map.put("isRegistEmp", "社員情報を登録中にエラーが発生しました。");
-						errorMsgList.add(map);
-					}
-				} else {
-					map.put("isRegistEmp", "入力された社員番号は既に使われています。");
-					errorMsgList.add(map);
-				}
+		Form<RegistEmpForm> form = formFactory.form(RegistEmpForm.class).bindFromRequest();
+		//フォームエラー処理
+		if (form.hasErrors()) {
+			ValidationError errorEmpNo = form.error("employeeNo");
+			ValidationError errorEmpName = form.error("employeeName");
+			ValidationError errorEmpNameKana = form.error("employeeNameKana");
+			if (errorEmpNo != null) {
+				map.put("errorEmpNo", errorEmpNo.message());
 			}
+			if (errorEmpName != null) {
+				map.put("errorEmpName", errorEmpName.message());
+			}
+			if (errorEmpNameKana != null) {
+				map.put("errorEmpNameKana", errorEmpNameKana.message());
+			}
+			errorMsgList.add(map);
+		}
+//		if (MsEmployee.isRegistEmp(form.get().employeeNo)) {
+//			map.put("isRegistEmp", "入力された社員番号は既に使われています。");
+//			errorMsgList.add(map);
+//		}
 		if (!errorMsgList.isEmpty()) {
 			return ok(Json.toJson(
 					ImmutableMap.of(
@@ -126,6 +96,53 @@ public class RegistEmpCtl extends Controller {
 		return ok(Json.toJson(
 				ImmutableMap.of(
 						"result", "ok")));
+	}
+
+	/**
+	 *  社員登録処理を行います。
+	 * @return 結果
+	 */
+	public Result registEmp() {
+		RegistEmpForm registEmpForm = formFactory.form(RegistEmpForm.class).bindFromRequest().get();
+		try {
+			// 社員マスタに登録
+			MsEmployee ymat = MakeModelUtil.makeMsEmployeeTbl(registEmpForm);
+			System.out.println(registEmpForm.positionCode);
+			ymat.registUserId = session("employeeNo");
+			ymat.updateUserId = session("employeeNo");
+			MsEmployee.insertMsEmployee(ymat);
+			// 社員業務管理マスタに登録
+			MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(registEmpForm);
+			perManage.registUserId = session("employeeNo");
+			perManage.updateUserId = session("employeeNo");
+			MsPerformanceManage.insertMsPerManage(perManage);
+			// ログイン情報を登録
+			TblLoginInfo tblInfo = MakeModelUtil.makeTblInfo(registEmpForm.employeeNo,session("employeeNo"));
+			TblLoginInfo.insertTblInfo(tblInfo);
+		} catch (Exception e) {
+			MsEmployee.deleteMsEmployee(registEmpForm.employeeNo);
+			MsPerformanceManage.deleteMsPerManage(registEmpForm.employeeNo);
+			TblLoginInfo.deleteTblInfo(registEmpForm.employeeNo);
+		}
+		return ok(Json.toJson(
+				ImmutableMap.of(
+						"result", "ok")));
+	}
+
+
+	/**
+	 * 社員情報を編集します
+	 * @param refEmpNo 参照社員番号
+	 * @return
+	 */
+	public Result editEmp(String empNo) {
+		// 社員業務管理マスタ削除
+		List<SqlRow> empInfo = (List<SqlRow>) MsEmployee.getEmployeeInfo(empNo);
+		List<RegistEmpForm> empForm= MakeModelUtil.makeRegistEmpForm(empInfo);
+		return ok(Json.toJson(
+				ImmutableMap.of(
+						"result", "ok",
+						"form",empForm)));
 	}
 
 	/**
@@ -161,7 +178,8 @@ public class RegistEmpCtl extends Controller {
 		}
 		return ok(Json.toJson(
 				ImmutableMap.of(
-						"result", "ok")));
+						"result", "ok",
+						"msg","ユーザ情報を削除しました。")));
 	}
 
 	/*

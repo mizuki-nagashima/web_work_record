@@ -10,6 +10,8 @@
         @javascriptRouter("jsRoutes")(
             routes.javascript.AttendanceCtl.getBusinessTeamList,
             routes.javascript.AttendanceCtl.getDivisionList,
+            routes.javascript.RegistEmpCtl.registEmpCheck,
+            routes.javascript.RegistEmpCtl.editEmp,
             routes.javascript.RegistEmpCtl.deleteEmp
         )
 @main(messages.at("header.title","ユーザ情報登録"),sesEmpNo,sesEmpName,sesAuthClass) {
@@ -21,7 +23,7 @@
     <h2>@messages.at("registemp")</h2>
        <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="col-md-12 col-sm-12 col-xs-12 well">
-        @form(action = routes.RegistEmpCtl.registEmp, 'id -> "registEmpForm") {
+        @form(action = routes.RegistEmpCtl.registEmpCheck, 'id -> "registEmpForm") {
           <div class="col-md-8 col-sm-8 col-xs-12">
             <div class="col-md-12 col-sm-12 col-xs-12">
               <h3>@messages.at("attendance.yourStatus")</h3>
@@ -33,7 +35,7 @@
                     @messages.at("attendance.employeeNo")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text" name="employeeNo" class="form-control" value="@registEmpForm.get().employeeNo" placeholder="00000">
+                    <input type="text" id="employeeNo" name="employeeNo" class="form-control" value="@registEmpForm.get().employeeNo" placeholder="00000">
                   </div>
                 </div>
               </div>
@@ -324,5 +326,22 @@
   </div>
 </div>
 <div class="hidden success-msg fa fa-thumbs-o-up">
+</div>
+<!-- TODO 確認モーダル -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
+        <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i>  確認</h4>
+      </div>
+      <div class="modal-body">
+        <p id="messageTitle"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary modalBtn" data-dismiss="modal"> OK </button>
+      </div>
+    </div>
+  </div>
 </div>
 }
