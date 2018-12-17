@@ -56,7 +56,7 @@ public class MakeModelUtil {
      * @param 社員情報sqlリスト
      * @return 社員登録用フォーム
      */
-    public static List<RegistEmpForm> makeMsEmployeeTbl(List<SqlRow> sqlList){
+    public static List<RegistEmpForm> makeRegistEmpForm(List<SqlRow> sqlList){
         List<RegistEmpForm> refList = new ArrayList<>();
             String employeeNo = "";
             String employeeName = "";
