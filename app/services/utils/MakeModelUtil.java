@@ -257,7 +257,6 @@ public class MakeModelUtil {
                 try {
 					TblYearMonthAttribute.insertYearMonthData(tblYearMonthAttribute);
 				} catch (Exception e) {
-					// TODO 自動生成された catch ブロック
 					System.out.println(e);
 				}
         }

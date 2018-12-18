@@ -82,16 +82,24 @@ public class RegistEmpCtl extends Controller {
 				map.put("errorEmpNameKana", errorEmpNameKana.message());
 			}
 			errorMsgList.add(map);
+			if (!errorMsgList.isEmpty()) {
+				return ok(Json.toJson(
+						ImmutableMap.of(
+								"result", "ng",
+								"msg", errorMsgList)));
+			}
 		}
-//		if (MsEmployee.isRegistEmp(form.get().employeeNo)) {
-//			map.put("isRegistEmp", "入力された社員番号は既に使われています。");
-//			errorMsgList.add(map);
-//		}
-		if (!errorMsgList.isEmpty()) {
-			return ok(Json.toJson(
-					ImmutableMap.of(
-							"result", "ng",
-							"msg", errorMsgList)));
+		String empNo = form.get().employeeNo;
+		if (!MsEmployee.isRegistEmp(empNo)) {
+			System.out.println(empNo);
+			map.put("isRegistEmp", "入力された社員番号は既に使われています。");
+			errorMsgList.add(map);
+			if (!errorMsgList.isEmpty()) {
+				return ok(Json.toJson(
+						ImmutableMap.of(
+								"result", "ng",
+								"msg", errorMsgList)));
+			}
 		}
 		return ok(Json.toJson(
 				ImmutableMap.of(
@@ -123,6 +131,10 @@ public class RegistEmpCtl extends Controller {
 			MsEmployee.deleteMsEmployee(registEmpForm.employeeNo);
 			MsPerformanceManage.deleteMsPerManage(registEmpForm.employeeNo);
 			TblLoginInfo.deleteTblInfo(registEmpForm.employeeNo);
+			return ok(Json.toJson(
+					ImmutableMap.of(
+							"result", "ng",
+							"msg", "社員情報登録中にエラーが発生しました。")));
 		}
 		return ok(Json.toJson(
 				ImmutableMap.of(

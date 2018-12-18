@@ -12,14 +12,23 @@
       $("#registEmpBtn").click(function () {
     	  $(".warn-msg").addClass("hidden");
     	  $('.warn-msg-contents').remove();
-    	  $("#messageContents").remove();
-    	  $("#messageContents2").remove();
+    	  $(".messageContents").remove();
+    	  $(".messageContents2").remove();
     	  $.postAjax('#registEmpForm', function(data){
     			  if(data.result == "ok"){
-    				  var msgContents = '<p id= messageContents>該当のデータを登録しますか？</p>';
-    				  $('#messageTitle').after(msgContents);
-    				  $(".modalBtn").addClass('registModalBtn');
-    				  $('#confirmModal').modal('show');
+    	    		  $('#modalEmpNo').text($('input[name="employeeNo"]').val());
+    	    		  $('#modalEmpName').text($('input[name="employeeName"]').val());
+    	    		  $('#modalEmpNameKana').text($('input[name="employeeNameKana"]').val());
+    	    		  var id = $('input[name="employmentClass"]:checked').attr('id');
+    	    		  $('#modalEmpClass').text($('label[for="' + id + '"]').text());
+    	    		  var id = $('input[name="authorityClass"]:checked').attr('id');
+    	    		  $('#modalAuthClass').text($('label[for="' + id + '"]').text());
+    	    		  $('#modalPosition').text($('[name="positionCode"] option:selected').text());
+    	    		  $('#modalDepartment').text($('[name="departmentCode"] option:selected').text());
+    	    		  $('#modalDivision').text($('[name="divisionCode"] option:selected').text());
+    	    		  $('#modalBus').text($('[name="businessCode"] option:selected').text());
+    	    		  $('#modalBusTeam').text($('[name="businessTeamCode"] option:selected').text());
+    				  $('#registModal').modal('show');
     			  }else if(data.result == "ng"){
     				  $(".warn-msg").removeClass("hidden");
     				  var errorMsgList = data.msg;
@@ -39,14 +48,19 @@
     	  });
       });
 
-      $(".registModalBtn").each(function () {
-    	  $('#registEmpForm').attr("action", '/user/regist');
+      // TODO 登録時モーダル→OKボタン押下
+      $(".registModalBtn").click(function () {
+		  $('#registEmpForm').attr("action", '/user/regist');
     	  $.postAjax('#registEmpForm', function(data){
     		  if(data.result == "ok"){
     			  localStorage.saveMsg = '社員情報を登録しました。';
     			  location.reload();
+    		  }else if(data.result == "ng"){
+				  $(".warn-msg").removeClass("hidden");
+				  var msgContents = '<p class=' + 'warn-msg-contents' + '>' + data.msg + '<p>';
+				  $('#warn-msg-title').after(msgContents);
     		  }else{
-    			  alert('社員情報登録中にエラーが発生しました。');
+    			  alert('エラーが発生しました。');
     		  }
     	  });
       });
@@ -81,17 +95,16 @@
     $(".deleteButton").click(function () {
         $(".warn-msg").addClass("hidden");
         $('.warn-msg-contents').remove();
-        $("#messageContents").remove();
-        $("#messageContents2").remove();
+        $(".messageContents").remove();
+        $(".messageContents2").remove();
 	    var targetTr = $(this).closest('tr');
         var targetTrId = targetTr.attr('id');
         var empNo = $('#employeeNo' + targetTrId).val();
         url = jsRoutes.controllers.RegistEmpCtl.deleteEmp(empNo);
-    	var msgContents = '<p id= messageContents>以下のデータを削除しますか？</p>';
-    	msgContents = msgContents+ "<p id= messageContents2>社員番号："+empNo + '</p>';
-        $('#messageTitle').after(msgContents);
-    	$(".modalBtn").addClass('deleteModalBtn');
-    	$('#confirmModal').modal('show');
+    	var msgContents =  "<p class= messageContents2>社員番号："+empNo + '</p>';
+        $('.messageTitle').after(msgContents);
+    	$('#registEmpForm').attr("action", '/user/regist');
+    	$('#deleteModal').modal('show');
     });
 
     $(".deleteModalBtn").click(function () {

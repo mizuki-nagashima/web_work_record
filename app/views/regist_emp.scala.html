@@ -17,7 +17,6 @@
 @main(messages.at("header.title","ユーザ情報登録"),sesEmpNo,sesEmpName,sesAuthClass) {
 <section class="content">
 <script src="@routes.Assets.versioned("javascripts/regist_emp.js")" type="text/javascript"></script>
-<!-- TODO 登録前確認ポップアップ -->
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
     <h2>@messages.at("registemp")</h2>
@@ -35,7 +34,7 @@
                     @messages.at("attendance.employeeNo")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text" id="employeeNo" name="employeeNo" class="form-control" value="@registEmpForm.get().employeeNo" placeholder="00000">
+                    <input type="text"  name="employeeNo" class="form-control" value="00000" placeholder="00000">
                   </div>
                 </div>
               </div>
@@ -47,7 +46,7 @@
                     @messages.at("attendance.employeeName")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text" name="employeeName" class="form-control" value="@registEmpForm.get().employeeName" placeholder="田中 太郎">
+                    <input type="text" name="employeeName" class="form-control" value="田中太郎" placeholder="田中 太郎">
                   </div>
                 </div>
               </div>
@@ -59,35 +58,37 @@
                     @messages.at("attendance.employeeName")カナ
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text" name="employeeNameKana" class="form-control" value="@registEmpForm.get().employeeNameKana" placeholder="タナカ タロウ">
+                    <input type="text"  name="employeeNameKana" class="form-control" value="タナカタロウ" placeholder="タナカ タロウ">
                   </div>
                 </div>
               </div>
             </div>
             <div class="col-md-2 col-sm-2 col-xs-12">
               <div class="form-check">
-                  <label class="col-md-12 col-sm-12 col-xs-12 form-check-label">雇用区分</label>
+                  <label class="col-md-12 col-sm-12 col-xs-12 form-check-label">@messages.at("registemp.employmentClass")</label>
                   <label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="radio" name="employmentClass" class="form-check-input" checked value="01">社員
+                    <input type="radio" id="empClass01" name="employmentClass" class="form-check-input" checked value="01">
+                    <label for="empClass01">@messages.at("registemp.employmentClass.employment")</label>
                   </div>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-					<input type="radio" name="employmentClass" class="form-check-input"
-					value="02">協力会社
+					<input type="radio" id="empClass02" name="employmentClass" class="form-check-input" value="02">
+					<label for="empClass02">@messages.at("registemp.employmentClass.subcontractor")</label>
 				  </div>
 				  </label>
               </div>
             </div>
             <div class="col-md-2 col-sm-2 col-xs-12">
               <div class="form-check">
-                  <label class="col-md-12 col-sm-12 col-xs-12 form-check-label">承認権限</label>
+                  <label class="col-md-12 col-sm-12 col-xs-12 form-check-label">@messages.at("registemp.authorityClass")</label>
                   <label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-					<input type="radio" name="authorityClass" class="form-check-input" checked value="05">なし
+					<input type="radio" id="authClass05" name="authorityClass" class="form-check-input" checked value="05">
+					<label for="authClass05">@messages.at("absent")</label>
 				  </div>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="radio" name="authorityClass" class="form-check-input"
-                    value="03">あり
+                    <input type="radio" id="authClass03" name="authorityClass" class="form-check-input" value="03">
+                    <label for="authClass03">@messages.at("present")</label>
                   </div>
                   </label>
               </div>
@@ -95,12 +96,10 @@
             <div class="col-md-4 col-sm-4 col-xs-12">
               <div class="form-horizontal">
                 <div class="form-group">
-                  <label class="col-md-12 col-sm-12 col-xs-12">
-             		       役職
-                  </label>
+                  <label class="col-md-12 col-sm-12 col-xs-12">@messages.at("registemp.position")</label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
                   <select id="positionCode" name="positionCode" class="form-control positionCode" required>
-				  <option value="" disabled selected>選択してください</option>
+				  <option value="99" disabled selected>@messages.at("absent")</option>
 				  @positionList.map{ list =>
                     <option value="@list.code">@list.codeName</option>
                   }
@@ -124,7 +123,7 @@
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
                   <select id="departmentCode" name="departmentCode" class="form-control departmentCode changeDepartmentCd departmentCode" required>
-				  <option value="" disabled selected>選択してください</option>
+				  <option value="00" disabled selected>@messages.at("notApplicable")</option>
 				  @departList.map{ dpl =>
                     <option value="@dpl.code">@dpl.codeName</option>
                   }
@@ -148,7 +147,7 @@
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
 					<select id="divisionCode" class="division form-control" name="divisionCode" required>
-					<option value="" class="msg" disabled selected>選択してください</option>
+					<option value="00" disabled selected>@messages.at("notApplicable")</option>
 					@divisionList.map{ dvl =>
                       <option value="@dvl.code">@dvl.codeName</option>
                     }
@@ -172,7 +171,7 @@
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
 	                <select id="businessCode" name="businessCode" class="form-control businessCode changeBusinessCd businessCode" required>
-					  <option value="" disabled selected>選択してください</option>
+					  <option value="00" disabled selected>@messages.at("notApplicable")</option>
 					  @businessList.map{ dpl =>
 	                    <option value="@dpl.code">@dpl.codeName</option>
 	                  }
@@ -196,7 +195,7 @@
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
 	                 <select id="businessTeamCode" class="businessTeamCode form-control" name="businessTeamCode" required>
-					  <option value="" disabled selected>選択してください</option>
+					  <option value="00" disabled selected>@messages.at("notApplicable")</option>
 					  @businessTeamList.map{ dvl =>
 	                     <option value="@dvl.code">@dvl.codeName</option>
 	                  }
@@ -216,6 +215,7 @@
           <div class="col-md-4 col-sm-4 col-xs-12">
             <div class="col-md-12 col-sm-12 col-xs-12">
               <h3>@messages.at("attendance.workingContents")</h3>
+                          <small>※勤怠入力画面にて修正可能です。</small>
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12">
               <div class="form-horizontal">
@@ -297,7 +297,7 @@
           <tbody>
           @for(rel <- registEmpFormList ){
 	          <tr id="@rel.employeeNo">
-	         	 <input type="hidden" id="employeeNo@rel.employeeNo" name="employeeNo" value="@rel.employeeNo">
+	         	 <input type="hidden" id="employeeNo@rel.employeeNo" value="@rel.employeeNo">
 	         	<td>@rel.employmentClass</td>
 	            <td>@rel.employeeNo</td>
 	            <td>@rel.employeeName</td>
@@ -327,19 +327,45 @@
 </div>
 <div class="hidden success-msg fa fa-thumbs-o-up">
 </div>
-<!-- TODO 確認モーダル -->
-<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- 登録前確認モーダル -->
+<div class="modal fade" id="registModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
-        <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-exclamation-circle"></i>  確認</h4>
+        <h4 class="modal-title"><i class="fa fa-exclamation-circle"></i>  以下のデータを登録します</h4>
       </div>
       <div class="modal-body">
-        <p id="messageTitle"></p>
+        <p>@messages.at("attendance.employeeNo")：<span id="modalEmpNo"></span></p>
+		<p>@messages.at("attendance.employeeName")：<span id="modalEmpName"></span></p>
+		<p>@messages.at("attendance.employeeName")カナ：<span id="modalEmpNameKana"></span></p>
+		<p>@messages.at("registemp.employmentClass")：<span id="modalEmpClass"></span></p>
+		<p>@messages.at("registemp.authorityClass")：<span id="modalAuthClass"></span></p>
+  		<p>@messages.at("registemp.position")：<span id="modalPosition"></span></p>
+		<p>@messages.at("attendance.department")：<span id="modalDepartment"></span></p>
+		<p>@messages.at("attendance.division")：<span id="modalDivision"></span></p>
+		<p>@messages.at("attendance.workName")：<span id="modalBus"></span></p>
+		<p>@messages.at("attendance.workTeamName")：<span id="modalBusTeam"></span></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary modalBtn" data-dismiss="modal"> OK </button>
+        <button type="button" class="btn btn-secondary registModalBtn" data-dismiss="modal"> OK </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 削除前確認モーダル -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
+        <h4 class="modal-title"><i class="fa fa-exclamation-circle"></i>  削除しますか？</h4>
+      </div>
+      <div class="modal-body">
+        <p class="messageTitle"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary deleteModalBtn" data-dismiss="modal"> OK </button>
       </div>
     </div>
   </div>
