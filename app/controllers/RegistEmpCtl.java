@@ -90,20 +90,19 @@ public class RegistEmpCtl extends Controller {
 			}
 		}
 		//社員番号検索
-		String empNo = form.get().employeeNo;
+		RegistEmpForm registEmpForm = form.get();
+		String empNo = registEmpForm.employeeNo;
 		if (MsEmployee.isRegistEmp(empNo)) {
-			map.put("isRegistEmp", "入力された社員番号は既に使われているか、退職者の使用していた番号です。");
-			errorMsgList.add(map);
-		}
-		if (!errorMsgList.isEmpty()) {
 			return ok(Json.toJson(
 					ImmutableMap.of(
-							"result", "ng",
-							"msg", errorMsgList)));
+							"result", "ok",
+							"msg","※入力された社員番号は既に使われているため、上書きしますがよろしいですか？")));
 		}
 		return ok(Json.toJson(
 				ImmutableMap.of(
-						"result", "ok")));
+						"result", "ok",
+						"msg","")));
+
 	}
 
 	/**
@@ -113,48 +112,44 @@ public class RegistEmpCtl extends Controller {
 	public Result registEmp() {
 		RegistEmpForm registEmpForm = formFactory.form(RegistEmpForm.class).bindFromRequest().get();
 		try {
-			// 社員マスタに登録
-			// TODO updateも作る
-			MsEmployee ymat = MakeModelUtil.makeMsEmployeeTbl(registEmpForm);
-			ymat.registUserId = session("employeeNo");
-			ymat.updateUserId = session("employeeNo");
-			MsEmployee.insertMsEmployee(ymat);
-			// 社員業務管理マスタに登録
-			MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(registEmpForm);
-			perManage.registUserId = session("employeeNo");
-			perManage.updateUserId = session("employeeNo");
-			MsPerformanceManage.insertMsPerManage(perManage);
-			// ログイン情報を登録
-			TblLoginInfo tblInfo = MakeModelUtil.makeTblInfo(registEmpForm.employeeNo,session("employeeNo"));
-			TblLoginInfo.insertTblInfo(tblInfo);
+			String sesEmpNo = session("employeeNo");
+			// 社員情報があった場合は更新する
+			String empNo = registEmpForm.employeeNo;
+			if(!MsEmployee.isRegistEmp(empNo)) {
+				// 社員マスタに登録
+				MsEmployee ymat = MakeModelUtil.makeMsEmployeeTbl(registEmpForm);
+				ymat.registUserId = sesEmpNo;
+				ymat.updateUserId = sesEmpNo;
+				MsEmployee.insertMsEmployee(ymat);
+				// 社員業務管理マスタに登録
+				MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(registEmpForm);
+				perManage.registUserId = sesEmpNo;
+				perManage.updateUserId = sesEmpNo;
+				MsPerformanceManage.insertMsPerManage(perManage);
+				// ログイン情報を登録
+				String password = services.PasswordGenerator.main();
+				TblLoginInfo tblInfo = MakeModelUtil.makeTblInfo(empNo,password);
+				tblInfo.registUserId = sesEmpNo;
+				tblInfo.updateUserId = sesEmpNo;
+				TblLoginInfo.insertLoginInfo(tblInfo);
+
+			} else {
+				// 社員マスタを更新
+				MsEmployee ymat = MakeModelUtil.makeMsEmployeeTbl(registEmpForm);
+				MsEmployee.updateMsEmployee(ymat);
+				// 社員業務管理マスタを更新
+				MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(registEmpForm);
+				MsPerformanceManage.updateMsPerManage(perManage);
+			}
 		} catch (Exception e) {
-			MsEmployee.deleteMsEmployee(registEmpForm.employeeNo);
-			MsPerformanceManage.deleteMsPerManage(registEmpForm.employeeNo);
-			TblLoginInfo.deleteTblInfo(registEmpForm.employeeNo);
+			System.out.println(e);
 			return ok(Json.toJson(
 					ImmutableMap.of(
-							"result", "ng",
-							"msg", "社員情報登録中にエラーが発生しました。")));
+							"result", "ng","msg","社員情報登録中にエラーが発生しました。")));
 		}
 		return ok(Json.toJson(
 				ImmutableMap.of(
 						"result", "ok")));
-	}
-
-
-	/**
-	 * 社員情報を編集します
-	 * @param refEmpNo 参照社員番号
-	 * @return
-	 */
-	public Result editEmp(String empNo) {
-		// 社員業務管理マスタ削除
-		List<SqlRow> empInfo = (List<SqlRow>) MsEmployee.getEmployeeInfo(empNo);
-		List<RegistEmpForm> empForm= MakeModelUtil.makeRegistEmpForm(empInfo);
-		return ok(Json.toJson(
-				ImmutableMap.of(
-						"result", "ok",
-						"form",empForm)));
 	}
 
 	/**

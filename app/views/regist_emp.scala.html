@@ -11,7 +11,6 @@
             routes.javascript.AttendanceCtl.getBusinessTeamList,
             routes.javascript.AttendanceCtl.getDivisionList,
             routes.javascript.RegistEmpCtl.registEmpCheck,
-            routes.javascript.RegistEmpCtl.editEmp,
             routes.javascript.RegistEmpCtl.deleteEmp
         )
 @main(messages.at("header.title","ユーザ情報登録"),sesEmpNo,sesEmpName,sesAuthClass) {
@@ -99,7 +98,7 @@
                   <label class="col-md-12 col-sm-12 col-xs-12">@messages.at("registemp.position")</label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
                   <select id="positionCode" name="positionCode" class="form-control positionCode" required>
-				  <option value="99" disabled selected>@messages.at("absent")</option>
+				  <option value="00" disabled selected>@messages.at("absent")</option>
 				  @positionList.map{ list =>
                     <option value="@list.code">@list.codeName</option>
                   }
@@ -297,17 +296,26 @@
           <tbody>
           @for(rel <- registEmpFormList ){
 	          <tr id="@rel.employeeNo">
-	         	 <input type="hidden" id="employeeNo@rel.employeeNo" value="@rel.employeeNo">
-	         	<td>@rel.employmentClass</td>
+	         	 <input type="hidden" id="employeeNo-@rel.employeeNo" value="@rel.employeeNo">
+	         	 <input type="hidden" id="employeeName-@rel.employeeNo" value="@rel.employeeName">
+	         	 <input type="hidden" id="employeeNameKana-@rel.employeeNo" value="@rel.employeeNameKana">
+	         	 <input type="hidden" id="authority-@rel.employeeNo" value="@rel.authorityClass">
+	         	 <input type="hidden" id="employment-@rel.employeeNo" value="@rel.employmentClass">
+	         	 <input type="hidden" id="position-@rel.employeeNo" value="@rel.positionCode">
+	         	 <input type="hidden" id="department-@rel.employeeNo" value="@rel.departmentCode">
+	         	 <input type="hidden" id="division-@rel.employeeNo" value="@rel.divisionCode">
+	         	 <input type="hidden" id="business-@rel.employeeNo" value="@rel.businessCode">
+	         	 <input type="hidden" id="businessTeam-@rel.employeeNo" value="@rel.businessTeamCode">
+	         	<td>@rel.employmentClassName</td>
 	            <td>@rel.employeeNo</td>
 	            <td>@rel.employeeName</td>
 	            <td>@rel.employeeNameKana</td>
-	            <td>@rel.positionCode</td>
-	            <td>@rel.departmentCode</td>
-	            <td>@rel.divisionCode</td>
-	            <td class="hidden-xs">@rel.businessCode</td>
-	            <td class="hidden-xs">@rel.businessTeamCode</td>
-	            <td>@rel.authorityClass</td>
+	            <td>@rel.positionName</td>
+	            <td>@rel.departmentName</td>
+	            <td>@rel.divisionName</td>
+	            <td class="hidden-xs">@rel.businessName</td>
+	            <td class="hidden-xs">@rel.businessTeamName</td>
+	            <td>@rel.authorityClassName</td>
 		            <td><button id="editButton-@rel.employeeNo" type="button" class="btn btn-success editButton">編集</button></td>
 		            <td><button id="deleteButton-@rel.employeeNo" type="button" class="btn btn-danger deleteButton">削除</button></td>
 	          </tr>
@@ -336,17 +344,7 @@
         <h4 class="modal-title"><i class="fa fa-exclamation-circle"></i>  確認</h4>
       </div>
       <div class="modal-body">
-      <p>登録しますか？</p>
-<!--         <p>@messages.at("attendance.employeeNo")：<span id="modalEmpNo"></span></p>
-		<p>@messages.at("attendance.employeeName")：<span id="modalEmpName"></span></p>
-		<p>@messages.at("attendance.employeeName")カナ：<span id="modalEmpNameKana"></span></p>
-		<p>@messages.at("registemp.employmentClass")：<span id="modalEmpClass"></span></p>
-		<p>@messages.at("registemp.authorityClass")：<span id="modalAuthClass"></span></p>
-  		<p>@messages.at("registemp.position")：<span id="modalPosition"></span></p>
-		<p>@messages.at("attendance.department")：<span id="modalDepartment"></span></p>
-		<p>@messages.at("attendance.division")：<span id="modalDivision"></span></p>
-		<p>@messages.at("attendance.workName")：<span id="modalBus"></span></p>
-		<p>@messages.at("attendance.workTeamName")：<span id="modalBusTeam"></span></p> -->
+      <p class="messageTitle">保存しますか？</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary registModalBtn" data-dismiss="modal"> OK </button>

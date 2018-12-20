@@ -98,7 +98,7 @@ public class TblLoginInfo extends CommonModel {
      * ログイン情報登録
      * @param tblInfo ログイン情報
      */
-    public static void insertTblInfo(TblLoginInfo tblInfo) throws Exception {
+    public static void insertLoginInfo(TblLoginInfo tblInfo) throws Exception {
         Ebean.beginTransaction();
         try {
         	tblInfo.insert();
@@ -221,9 +221,9 @@ public class TblLoginInfo extends CommonModel {
     }
 
     /**
-     * 削除フラグ更新
+     * パスワード更新
      * @param empNo 社員番号
-     * @param loginNgCount  ログインNG回数
+     * @param password  パスワード
      */
     public static void updatePassword(String empNo, String password) {
         String sql = "UPDATE TBL_LOGIN_INFO SET " +

@@ -62,12 +62,19 @@ public class MakeModelUtil {
             String employeeName = "";
             String employeeNameKana = "";
             String authorityClass = "";
+            String authorityClassName = "";
             String employmentClass = "";
+            String employmentClassName = "";
             String positionCode = "";
+            String positionName = "";
             String departmentCode = Const.DEFAULT_CODE;
+            String departmentName = "";
             String divisionCode = Const.DEFAULT_CODE;
+            String divisionName = "";
             String businessCode = Const.DEFAULT_CODE;
+            String businessName = "";
             String businessTeamCode = Const.DEFAULT_CODE;
+            String businessTeamName = "";
             String breakdownName1 = Const.DEFAULT_BREAKDOWN_NAME1;
             String breakdownName2 = Const.DEFAULT_BREAKDOWN_NAME2;
             String breakdownName3 = Const.DEFAULT_BREAKDOWN_NAME3;
@@ -78,21 +85,27 @@ public class MakeModelUtil {
             	employeeNo = pd.getString("employee_no");
             	employeeName = Optional.ofNullable(pd.getString("employee_name")).orElse(employeeName);
             	employeeNameKana = Optional.ofNullable(pd.getString("employee_name_kana")).orElse(employeeNameKana);
-            	authorityClass = MsGeneralCode.getCodeMaster(
-                        Const.AUTHORITY_CODE_NAME, pd.getString("authority_class")).getString("CODE_NAME");
-            	employmentClass = MsGeneralCode.getCodeMaster(
-                        Const.EMPLOYMENT_CODE_NAME, pd.getString("employment_class")).getString("CODE_NAME");
-            	positionCode = MsGeneralCode.getCodeMaster(
-                        Const.POSITION_CODE_NAME, pd.getString("position_code")).getString("CODE_NAME");
-            	departmentCode = MsGeneralCode.getCodeMaster(
-                        Const.DEPARTMENT_CODE_NAME, pd.getString("department_code")).getString("CODE_NAME");
-            	divisionCode = MsGeneralCode.getCodeMaster(
-                        Const.DIVISION_CODE_NAME, pd.getString("division_code")).getString("CODE_NAME");
-            	businessCode = MsGeneralCode.getCodeMaster(
-                        Const.BUSINESS_CODE_NAME, pd.getString("business_code")).getString("CODE_NAME");
-            	businessTeamCode = MsGeneralCode.getCodeMaster(
-                        Const.BUSINESS_TEAM_CODE_NAME, pd.getString("business_team_code")).getString("CODE_NAME");
-            	Optional.ofNullable(pd.getString("business_team_code")).orElse(businessTeamCode);
+            	authorityClass = pd.getString("authority_class");
+            	authorityClassName = MsGeneralCode.getCodeMaster(
+                        Const.AUTHORITY_CODE_NAME, authorityClass).getString("CODE_NAME");
+            	employmentClass = pd.getString("employment_class");
+            	employmentClassName = MsGeneralCode.getCodeMaster(
+                        Const.EMPLOYMENT_CODE_NAME, employmentClass).getString("CODE_NAME");
+            	positionCode = pd.getString("position_code");
+            	positionName = MsGeneralCode.getCodeMaster(
+                        Const.POSITION_CODE_NAME, positionCode).getString("CODE_NAME");
+            	departmentCode = pd.getString("department_code");
+            	departmentName = MsGeneralCode.getCodeMaster(
+                        Const.DEPARTMENT_CODE_NAME, departmentCode).getString("CODE_NAME");
+            	divisionCode = pd.getString("division_code");
+            	divisionName = MsGeneralCode.getCodeMaster(
+                        Const.DIVISION_CODE_NAME, divisionCode).getString("CODE_NAME");
+            	businessCode =  pd.getString("business_code");
+            	businessName = MsGeneralCode.getCodeMaster(
+                        Const.BUSINESS_CODE_NAME,businessCode).getString("CODE_NAME");
+            	businessTeamCode = pd.getString("business_team_code");
+            	businessTeamName = MsGeneralCode.getCodeMaster(
+                        Const.BUSINESS_TEAM_CODE_NAME,businessTeamCode ).getString("CODE_NAME");
             	breakdownName1 = Optional.ofNullable(pd.getString("breakdown_name1")).orElse(breakdownName1);
             	breakdownName2 = Optional.ofNullable(pd.getString("breakdown_name2")).orElse(breakdownName2);
             	breakdownName3 = Optional.ofNullable(pd.getString("breakdown_name3")).orElse(breakdownName3);
@@ -103,17 +116,24 @@ public class MakeModelUtil {
         	ref.employeeNo = employeeNo;
         	ref.employeeName = employeeName;
         	ref.employeeNameKana = employeeNameKana;
-        	ref.positionCode = positionCode;
+        	ref.authorityClass = authorityClass;
         	ref.employmentClass = employmentClass;
-        	ref.businessCode   = businessCode;
-        	ref.businessTeamCode   = businessTeamCode;
+        	ref.positionCode = positionCode;
         	ref.departmentCode = departmentCode;
         	ref.divisionCode = divisionCode;
+        	ref.businessCode   = businessCode;
+        	ref.businessTeamCode   = businessTeamCode;
+        	ref.authorityClassName = authorityClassName;
+        	ref.employmentClassName = employmentClassName;
+        	ref.positionName = positionName;
+        	ref.departmentName = departmentName;
+        	ref.divisionName = divisionName;
+        	ref.businessName   = businessName;
+        	ref.businessTeamName   = businessTeamName;
         	ref.breakdownName1 = breakdownName1;
         	ref.breakdownName2 = breakdownName2;
         	ref.breakdownName3 = breakdownName3;
         	ref.breakdownName4 = breakdownName4;
-        	ref.authorityClass = authorityClass;
         	refList.add(ref);
             }
         return refList;
@@ -132,21 +152,17 @@ public class MakeModelUtil {
     	mst.businessCode   = registEmpForm.businessCode;
     	mst.businessTeamCode   = registEmpForm.businessTeamCode;
     	mst.businessManageAuthClass = "02";
-    	mst.registUserId = registEmpForm.employeeNo;
-    	mst.updateUserId = registEmpForm.employeeNo;
         return mst;
     }
 
-    public static TblLoginInfo makeTblInfo(String empNo,String sesEmpNo){
+    public static TblLoginInfo makeTblInfo(String empNo,String password){
     	TblLoginInfo mst = new TblLoginInfo();
     	mst.employeeNo = empNo;
-    	mst.password = services.PasswordGenerator.main();
+    	mst.password = password;
     	mst.loginCount = 0;
     	mst.loginNgCount = 0;
     	mst.isAccountLock = "0";
     	mst.isDelete = "0";
-    	mst.registUserId = sesEmpNo;
-    	mst.updateUserId = sesEmpNo;
         return mst;
     }
 
