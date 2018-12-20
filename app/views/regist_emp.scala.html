@@ -34,7 +34,7 @@
                     @messages.at("attendance.employeeNo")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text"  name="employeeNo" class="form-control" value="00000" placeholder="00000">
+                    <input type="text"  name="employeeNo" class="form-control" value="@registEmpForm.get().employeeNo" placeholder="00000">
                   </div>
                 </div>
               </div>
@@ -46,7 +46,7 @@
                     @messages.at("attendance.employeeName")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text" name="employeeName" class="form-control" value="田中太郎" placeholder="田中 太郎">
+                    <input type="text" name="employeeName" class="form-control" value="@registEmpForm.get().employeeName" placeholder="田中 太郎">
                   </div>
                 </div>
               </div>
@@ -58,7 +58,7 @@
                     @messages.at("attendance.employeeName")カナ
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                    <input type="text"  name="employeeNameKana" class="form-control" value="タナカタロウ" placeholder="タナカ タロウ">
+                    <input type="text"  name="employeeNameKana" class="form-control" value="@registEmpForm.get().employeeNameKana" placeholder="タナカ タロウ">
                   </div>
                 </div>
               </div>
@@ -333,10 +333,11 @@
     <div class="modal-content">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
-        <h4 class="modal-title"><i class="fa fa-exclamation-circle"></i>  以下のデータを登録します</h4>
+        <h4 class="modal-title"><i class="fa fa-exclamation-circle"></i>  確認</h4>
       </div>
       <div class="modal-body">
-        <p>@messages.at("attendance.employeeNo")：<span id="modalEmpNo"></span></p>
+      <p>登録しますか？</p>
+<!--         <p>@messages.at("attendance.employeeNo")：<span id="modalEmpNo"></span></p>
 		<p>@messages.at("attendance.employeeName")：<span id="modalEmpName"></span></p>
 		<p>@messages.at("attendance.employeeName")カナ：<span id="modalEmpNameKana"></span></p>
 		<p>@messages.at("registemp.employmentClass")：<span id="modalEmpClass"></span></p>
@@ -345,7 +346,7 @@
 		<p>@messages.at("attendance.department")：<span id="modalDepartment"></span></p>
 		<p>@messages.at("attendance.division")：<span id="modalDivision"></span></p>
 		<p>@messages.at("attendance.workName")：<span id="modalBus"></span></p>
-		<p>@messages.at("attendance.workTeamName")：<span id="modalBusTeam"></span></p>
+		<p>@messages.at("attendance.workTeamName")：<span id="modalBusTeam"></span></p> -->
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary registModalBtn" data-dismiss="modal"> OK </button>
@@ -359,10 +360,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="fa fa-times"></i></a>
-        <h4 class="modal-title"><i class="fa fa-exclamation-circle"></i>  削除しますか？</h4>
+        <h4 class="modal-title"><i class="fa fa-exclamation-circle"></i>  確認</h4>
       </div>
       <div class="modal-body">
-        <p class="messageTitle"></p>
+        <p class="messageTitle">削除しますか？</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary deleteModalBtn" data-dismiss="modal"> OK </button>

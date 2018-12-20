@@ -89,17 +89,17 @@ public class RegistEmpCtl extends Controller {
 								"msg", errorMsgList)));
 			}
 		}
+		//社員番号検索
 		String empNo = form.get().employeeNo;
-		if (!MsEmployee.isRegistEmp(empNo)) {
-			System.out.println(empNo);
-			map.put("isRegistEmp", "入力された社員番号は既に使われています。");
+		if (MsEmployee.isRegistEmp(empNo)) {
+			map.put("isRegistEmp", "入力された社員番号は既に使われているか、退職者の使用していた番号です。");
 			errorMsgList.add(map);
-			if (!errorMsgList.isEmpty()) {
-				return ok(Json.toJson(
-						ImmutableMap.of(
-								"result", "ng",
-								"msg", errorMsgList)));
-			}
+		}
+		if (!errorMsgList.isEmpty()) {
+			return ok(Json.toJson(
+					ImmutableMap.of(
+							"result", "ng",
+							"msg", errorMsgList)));
 		}
 		return ok(Json.toJson(
 				ImmutableMap.of(
@@ -114,8 +114,8 @@ public class RegistEmpCtl extends Controller {
 		RegistEmpForm registEmpForm = formFactory.form(RegistEmpForm.class).bindFromRequest().get();
 		try {
 			// 社員マスタに登録
+			// TODO updateも作る
 			MsEmployee ymat = MakeModelUtil.makeMsEmployeeTbl(registEmpForm);
-			System.out.println(registEmpForm.positionCode);
 			ymat.registUserId = session("employeeNo");
 			ymat.updateUserId = session("employeeNo");
 			MsEmployee.insertMsEmployee(ymat);

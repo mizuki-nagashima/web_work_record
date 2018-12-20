@@ -120,9 +120,12 @@ public class AuthCtl extends Controller {
 
         } else {
         	// ログインNG回数カウントアップ
-            int loginNgCount  = TblLoginInfo.getLoginInfo(employeeNo).getInteger("login_ng_count");
-            loginNgCount ++;
-            TblLoginInfo.loginNgCountUp(employeeNo,loginNgCount);
+            SqlRow info = TblLoginInfo.getLoginInfo(employeeNo);
+            if(!info.isEmpty()) {
+                int loginNgCount  = info.getInteger("login_ng_count");
+                loginNgCount ++;
+                TblLoginInfo.loginNgCountUp(employeeNo,loginNgCount);
+            }
 
             return ok(Json.toJson(
                     ImmutableMap.of(

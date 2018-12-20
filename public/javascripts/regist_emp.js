@@ -16,21 +16,22 @@
     	  $(".messageContents2").remove();
     	  $.postAjax('#registEmpForm', function(data){
     			  if(data.result == "ok"){
-    	    		  $('#modalEmpNo').text($('input[name="employeeNo"]').val());
-    	    		  $('#modalEmpName').text($('input[name="employeeName"]').val());
-    	    		  $('#modalEmpNameKana').text($('input[name="employeeNameKana"]').val());
-    	    		  var id = $('input[name="employmentClass"]:checked').attr('id');
-    	    		  $('#modalEmpClass').text($('label[for="' + id + '"]').text());
-    	    		  var id = $('input[name="authorityClass"]:checked').attr('id');
-    	    		  $('#modalAuthClass').text($('label[for="' + id + '"]').text());
-    	    		  $('#modalPosition').text($('[name="positionCode"] option:selected').text());
-    	    		  $('#modalDepartment').text($('[name="departmentCode"] option:selected').text());
-    	    		  $('#modalDivision').text($('[name="divisionCode"] option:selected').text());
-    	    		  $('#modalBus').text($('[name="businessCode"] option:selected').text());
-    	    		  $('#modalBusTeam').text($('[name="businessTeamCode"] option:selected').text());
+//    	    		  $('#modalEmpNo').text($('input[name="employeeNo"]').val());
+//    	    		  $('#modalEmpName').text($('input[name="employeeName"]').val());
+//    	    		  $('#modalEmpNameKana').text($('input[name="employeeNameKana"]').val());
+//    	    		  var id = $('input[name="employmentClass"]:checked').attr('id');
+//    	    		  $('#modalEmpClass').text($('label[for="' + id + '"]').text());
+//    	    		  var id = $('input[name="authorityClass"]:checked').attr('id');
+//    	    		  $('#modalAuthClass').text($('label[for="' + id + '"]').text());
+//    	    		  $('#modalPosition').text($('[name="positionCode"] option:selected').text());
+//    	    		  $('#modalDepartment').text($('[name="departmentCode"] option:selected').text());
+//    	    		  $('#modalDivision').text($('[name="divisionCode"] option:selected').text());
+//    	    		  $('#modalBus').text($('[name="businessCode"] option:selected').text());
+//    	    		  $('#modalBusTeam').text($('[name="businessTeamCode"] option:selected').text());
     				  $('#registModal').modal('show');
     			  }else if(data.result == "ng"){
     				  $(".warn-msg").removeClass("hidden");
+    				  $('.warn-msg-contents').remove();
     				  var errorMsgList = data.msg;
     				  var alertMsgContents = "";
     				  $.each(errorMsgList, function(key, obj) {
