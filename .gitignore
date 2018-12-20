@@ -9,3 +9,4 @@ target
 /.metadata
 project/plugins.sbt
 bin/
+/.ssh

@@ -43,4 +43,6 @@ GET		/outputPdf	controllers.OutputPdfCtl.outputPdf()
 
 GET     /user                                  controllers.RegistEmpCtl.index()
 POST    /user/regist                                 controllers.RegistEmpCtl.registEmp()
+POST    /user/registCheck                                 controllers.RegistEmpCtl.registEmpCheck()
+GET    /user/edit/:empNo                                 controllers.RegistEmpCtl.editEmp(empNo: String)
 POST    /user/delete/:empNo                                 controllers.RegistEmpCtl.deleteEmp(empNo: String)

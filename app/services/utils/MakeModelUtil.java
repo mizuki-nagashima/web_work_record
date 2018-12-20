@@ -56,7 +56,7 @@ public class MakeModelUtil {
      * @param 社員情報sqlリスト
      * @return 社員登録用フォーム
      */
-    public static List<RegistEmpForm> makeMsEmployeeTbl(List<SqlRow> sqlList){
+    public static List<RegistEmpForm> makeRegistEmpForm(List<SqlRow> sqlList){
         List<RegistEmpForm> refList = new ArrayList<>();
             String employeeNo = "";
             String employeeName = "";
@@ -141,6 +141,7 @@ public class MakeModelUtil {
     	TblLoginInfo mst = new TblLoginInfo();
     	mst.employeeNo = empNo;
     	mst.password = services.PasswordGenerator.main();
+    	mst.loginCount = 0;
     	mst.loginNgCount = 0;
     	mst.isAccountLock = "0";
     	mst.isDelete = "0";
@@ -256,7 +257,6 @@ public class MakeModelUtil {
                 try {
 					TblYearMonthAttribute.insertYearMonthData(tblYearMonthAttribute);
 				} catch (Exception e) {
-					// TODO 自動生成された catch ブロック
 					System.out.println(e);
 				}
         }

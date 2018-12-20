@@ -11,7 +11,11 @@ errorModal.message.header=以下の入力値が誤っているため保存でき
 errorModal.message.footer=※クリックでこのメッセージを閉じます。
 pdfModal.title=PDF出力
 pdfModal.message.header=出力するPDFを選んでください。
-otherModal.message.header=以下を確認のうえ、OKボタンを押して保存してください。
+otherModal.message.header=以下を確認のうえ、OKボタンを押してください。
+selected=選択してください
+present=あり
+absent=なし
+notApplicable=該当なし
 
 attendance=勤怠入力
 attendance.yourStatus=ステータス
@@ -65,3 +69,8 @@ approve.form.alreadyApprovalRequest=承認依頼済
 approve.form.alreadyFixRemand=差し戻し
 
 registemp=ユーザ情報登録
+registemp.employmentClass=雇用区分
+registemp.employmentClass.employment=社員
+registemp.employmentClass.subcontractor=協力会社
+registemp.authorityClass=承認権限
+registemp.position=役職

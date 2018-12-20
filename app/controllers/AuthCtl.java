@@ -97,6 +97,11 @@ public class AuthCtl extends Controller {
             session("authorityClass", authority);
             session("employeeName", result.getString("employee_name"));
 
+        	// ログイン回数カウントアップ
+            int loginCount  = TblLoginInfo.getLoginInfo(employeeNo).getInteger("login_count");
+            loginCount ++;
+            TblLoginInfo.loginCountUp(employeeNo,loginCount);
+
            // 権限が05：自陣のみ閲覧以外の場合はメニュー画面に遷移
             if (!Const.AUTHORITY_CLASS_SELF.equals(authority)) {
             	return ok(Json.toJson(
@@ -115,9 +120,12 @@ public class AuthCtl extends Controller {
 
         } else {
         	// ログインNG回数カウントアップ
-            int loginNgCount  = TblLoginInfo.getLoginInfo(employeeNo).getInteger("login_ng_count");
-            loginNgCount ++;
-            TblLoginInfo.loginNgCountUp(employeeNo,loginNgCount);
+            SqlRow info = TblLoginInfo.getLoginInfo(employeeNo);
+            if(!info.isEmpty()) {
+                int loginNgCount  = info.getInteger("login_ng_count");
+                loginNgCount ++;
+                TblLoginInfo.loginNgCountUp(employeeNo,loginNgCount);
+            }
 
             return ok(Json.toJson(
                     ImmutableMap.of(
@@ -126,7 +134,6 @@ public class AuthCtl extends Controller {
                             "msg2","社員番号とパスワードをお確かめの上、もう一度お試しください。"
                     )));
         }
-//        return notFound();
     }
 
     public Result menuRedirect() {

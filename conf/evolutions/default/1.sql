@@ -73,10 +73,11 @@ create table tbl_login_info (
   regist_user_id                varchar(255) not null,
   update_user_id                varchar(255),
   employee_no                   varchar(255) not null,
-  password                      varchar(255),
-  login_ng_count                integer,
-  is_account_lock               varchar(255),
-  is_delete                     varchar(255),
+  password                      varchar(255) not null,
+  login_count                   integer not null,
+  login_ng_count                integer not null,
+  is_account_lock               varchar(255) not null,
+  is_delete                     varchar(255) not null,
   regist_date                   datetime(6) not null,
   update_date                   datetime(6) not null
 );

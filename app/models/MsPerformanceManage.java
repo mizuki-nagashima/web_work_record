@@ -134,7 +134,7 @@ public class MsPerformanceManage extends CommonModel {
     public static void updateEndDate(String empNo,String busCode,String busTeamCode) {
         String sql = "UPDATE MS_PERFORMANCE_MANAGE " +
         		"SET END_DATE = CURRENT_DATE " +
-        		"WHERE EMPLOYEE_NO=:EMP AND BUSINESS_CODE=:bus AND BUSINESS_TEAM_CODE=:busteam";
+        		"WHERE EMPLOYEE_NO = :emp AND BUSINESS_CODE = :bus AND BUSINESS_TEAM_CODE = :busteam";
         Ebean.beginTransaction();
         try {
             SqlUpdate create = Ebean.createSqlUpdate(sql)

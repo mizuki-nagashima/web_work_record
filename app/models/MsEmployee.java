@@ -124,8 +124,7 @@ public class MsEmployee extends CommonModel {
      * @return sqlRow
      */
     public static SqlRow getEmployeeInfo(String empNo) {
-        String sql = "SELECT * FROM MS_EMPLOYEE EMP WHERE EMP.EMPLOYEE_NO = :empNo "
-        		+ "AND EMP.RETIREMENT_DATE IS NULL";
+        String sql = "SELECT * FROM MS_EMPLOYEE EMP WHERE EMP.EMPLOYEE_NO = :empNo ";
         SqlRow row = null;
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
@@ -143,8 +142,7 @@ public class MsEmployee extends CommonModel {
      * @return sqlRow
      */
     public static List<SqlRow> getEmployeeInfoList() {
-        String sql = "SELECT * FROM MS_EMPLOYEE EMP WHERE EMP.RETIREMENT_DATE IS NULL "
-        		+ "OR EMP.RETIREMENT_DATE >= CURRENT_DATE";
+        String sql = "SELECT * FROM MS_EMPLOYEE EMP WHERE EMP.RETIREMENT_DATE IS NULL ";
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
                 .findList();
@@ -199,7 +197,7 @@ public class MsEmployee extends CommonModel {
     public static void updateRetirementDate(String empNo) {
         String sql = "UPDATE MS_EMPLOYEE " +
         		"SET RETIREMENT_DATE = CURRENT_DATE " +
-        		"WHERE EMPLOYEE_NO=:EMP";
+        		"WHERE EMPLOYEE_NO = :emp";
         Ebean.beginTransaction();
         try {
             SqlUpdate create = Ebean.createSqlUpdate(sql)
@@ -209,7 +207,7 @@ public class MsEmployee extends CommonModel {
             Ebean.commitTransaction();
         } catch (Exception e) {
             // debug
-            System.out.println("実績データ更新失敗："+ e);
+            System.out.println("社員マスタ更新失敗："+ e);
             Ebean.rollbackTransaction();
             throw e;
         } finally {
