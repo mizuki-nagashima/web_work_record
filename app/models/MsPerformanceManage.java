@@ -154,4 +154,31 @@ public class MsPerformanceManage extends CommonModel {
         }
     }
 
+    /**
+     * 更新する
+     * @param empNo
+     */
+    public static void updateMsPerManage(MsPerformanceManage msManage) {
+        String sql = "UPDATE MS_PERFORMANCE_MANAGE MS " +
+        		"SET MS.BUSINESS_CODE=:bus,MS.BUSINESS_TEAM_CODE=:busteam " +
+        		"WHERE MS.EMPLOYEE_NO = :emp";
+        Ebean.beginTransaction();
+        try {
+            SqlUpdate create = Ebean.createSqlUpdate(sql)
+            .setParameter("emp",msManage.employeeNo)
+            .setParameter("bus",msManage.businessCode)
+            .setParameter("busteam",msManage.businessTeamCode);
+
+            Ebean.execute(create);
+            Ebean.commitTransaction();
+        } catch (Exception e) {
+            // debug
+            System.out.println("社員業務管理テーブルデータ更新失敗："+ e);
+            Ebean.rollbackTransaction();
+            throw e;
+        } finally {
+            Ebean.endTransaction();
+        }
+    }
+
 }

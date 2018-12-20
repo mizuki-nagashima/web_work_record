@@ -9,6 +9,8 @@ import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
 import com.avaje.ebean.SqlUpdate;
 
+import models.form.RegistEmpForm;
+
 /**
  * 社員マスタ
  * 最新の状態。年月属性は本テーブルのデータをコピーして作成。
@@ -202,6 +204,49 @@ public class MsEmployee extends CommonModel {
         try {
             SqlUpdate create = Ebean.createSqlUpdate(sql)
             		.setParameter("emp",empNo);
+
+            Ebean.execute(create);
+            Ebean.commitTransaction();
+        } catch (Exception e) {
+            // debug
+            System.out.println("社員マスタ更新失敗："+ e);
+            Ebean.rollbackTransaction();
+            throw e;
+        } finally {
+            Ebean.endTransaction();
+        }
+    }
+
+    /**
+     * 更新する
+     * @param empNo
+     */
+    public static void updateMsEmployee(MsEmployee form) {
+        String sql = "UPDATE MS_EMPLOYEE MS " +
+        		"SET MS.EMPLOYEE_NAME=:empName, MS.EMPLOYEE_NAME_KANA=:empNameKana, " +
+        		"MS.POSITION_CODE=:poCd, MS.EMPLOYMENT_CLASS=:emCl, MS.AUTHORITY_CLASS=:auCl, "+
+        		"MS.DEPARTMENT_CODE=:deCd, MS.DIVISION_CODE=:diCd, " +
+        		"MS.BUSINESS_CODE=:buCd, MS.BUSINESS_TEAM_CODE=:btCd, " +
+        		"MS.BREAKDOWN_NAME1=:bn1, MS.BREAKDOWN_NAME2=:bn2, " +
+        		"MS.BREAKDOWN_NAME3=:bn3, MS.BREAKDOWN_NAME4=:bn4 " +
+        		"WHERE MS.EMPLOYEE_NO=:empNo";
+        Ebean.beginTransaction();
+        try {
+            SqlUpdate create = Ebean.createSqlUpdate(sql)
+            		.setParameter("empNo",form.employeeNo)
+            .setParameter("empName",form.employeeName)
+            .setParameter("empNameKana",form.employeeNameKana)
+            .setParameter("poCd",form.positionCode)
+            .setParameter("emCl",form.employmentClass)
+            .setParameter("auCl",form.authorityClass)
+            .setParameter("deCd",form.departmentCode)
+            .setParameter("diCd",form.divisionCode)
+            .setParameter("buCd",form.businessCode)
+            .setParameter("btCd",form.businessTeamCode)
+            .setParameter("bn1",form.breakdownName1)
+            .setParameter("bn2",form.breakdownName2)
+            .setParameter("bn3",form.breakdownName3)
+            .setParameter("bn4",form.breakdownName4);
 
             Ebean.execute(create);
             Ebean.commitTransaction();
