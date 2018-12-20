@@ -152,22 +152,6 @@ public class RegistEmpCtl extends Controller {
 						"result", "ok")));
 	}
 
-
-	/**
-	 * TODO 社員情報を編集します
-	 * @param refEmpNo 参照社員番号
-	 * @return
-	 */
-	public Result editEmp(String empNo) {
-		// 社員業務管理マスタ削除
-		//社員情報取得
-		SqlRow empInfo = MsEmployee.getEmployeeInfo(empNo);
-		return ok(Json.toJson(
-				ImmutableMap.of(
-						"result", "ok",
-						"form",empInfo)));
-	}
-
 	/**
 	 * ユーザ情報の削除
 	 * @param empNo
