@@ -470,7 +470,7 @@
            var url = jsRoutes.controllers.AttendanceCtl.getNightWork(hiddenClosingTime);
            $.ajax({
              type : 'GET',
-             url : url,
+             url : url.url,
              success : function(data) {
                if (data.result == "ok") {
                  var value = parseFloat(data.value);
