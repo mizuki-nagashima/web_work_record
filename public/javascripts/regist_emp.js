@@ -9,6 +9,14 @@
       });
     }
 
+	  $(".businessCode").change(function() {
+		var text_array = [];
+		$('[name=businessCode] option:selected').each(function() {
+			text_array.push($(this).text());
+		});
+		alert(text_array);
+	 });
+
      // 登録ボタン
       $("#registEmpBtn").click(function () {
     	  $(".warn-msg").addClass("hidden");
@@ -142,9 +150,9 @@
     });
 
     $(".changeBusinessCd").change(function(){
-      var businessCode = $('#businessCode').val();
-      if(businessCode != 00 || businessCode != ""){
-        var url =jsRoutes.controllers.AttendanceCtl.getBusinessTeamList(businessCode);
+      var businessCodeList = $('#businessCode').val();
+      if(businessCodeList != 00 || businessCodeList != ""){
+        var url =jsRoutes.controllers.AttendanceCtl.getBusinessTeamList(businessCodeList);
         $.ajax({
           type : 'GET',
           url : url.url,

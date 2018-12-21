@@ -166,10 +166,10 @@
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
-                    @messages.at("attendance.workName")
+                    @messages.at("attendance.workName") <small style="red">複数選択可</small>
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-	                <select id="businessCode" name="businessCode" class="form-control businessCode changeBusinessCd businessCode" required>
+	                <select id="businessCode" name="businessCode" class="form-control businessCode changeBusinessCd businessCode" multiple>
 					  <option value="00" disabled selected>@messages.at("notApplicable")</option>
 					  @businessList.map{ dpl =>
 	                    <option value="@dpl.code">@dpl.codeName</option>
