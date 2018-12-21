@@ -74,3 +74,5 @@ registemp.employmentClass.employment=社員
 registemp.employmentClass.subcontractor=協力会社
 registemp.authorityClass=承認権限
 registemp.position=役職
+
+overtimeList=残業時間一覧
