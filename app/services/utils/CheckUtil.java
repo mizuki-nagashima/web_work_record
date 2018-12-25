@@ -2,7 +2,9 @@ package services.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import common.Const;
 import models.MsGeneralCode;
@@ -132,4 +134,8 @@ public class CheckUtil {
         return null;
     }
 
+    public static List<String> commaSeparate(String code) {
+		List<String> list = Arrays.asList(code.split(","));
+		return list;
+    }
 }

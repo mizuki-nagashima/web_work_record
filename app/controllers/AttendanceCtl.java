@@ -1,6 +1,7 @@
 package controllers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -643,11 +644,11 @@ public class AttendanceCtl extends Controller {
      * @return 結果
      */
     public Result getDivisionList(String departCode){
-
     	if (departCode == "" || departCode.isEmpty()) {
     		departCode = "00";
     	}
-    	List<MsGeneralCode> divisionList = MakeModelUtil.makeCodeTypeList(Const.DIVISION_CODE_NAME,departCode);
+    	List<String> depCodeList = Arrays.asList(departCode.split(","));
+    	List<MsGeneralCode> divisionList = MakeModelUtil.makeCodeTypeList(Const.DIVISION_CODE_NAME,depCodeList);
     	return ok(Json.toJson(
                 ImmutableMap.of(
                         "result","ok",
@@ -656,12 +657,13 @@ public class AttendanceCtl extends Controller {
     }
 
     /**
-     *選択された業務名に応じた業務チームリストを取得します。
+     * 選択された業務名に応じた業務チームリストを取得します。
+     * @param 業務コード
      * @return 結果
      */
     public Result getBusinessTeamList(String businessCode){
-
-    	List<MsGeneralCode> businessTeamList = MakeModelUtil.makeCodeTypeList(Const.BUSINESS_TEAM_CODE_NAME,businessCode);
+    	List<String> busCodeList = CheckUtil.commaSeparate(businessCode);
+    	List<MsGeneralCode> businessTeamList = MakeModelUtil.makeCodeTypeList(Const.BUSINESS_TEAM_CODE_NAME,busCodeList);
         return ok(Json.toJson(
                 ImmutableMap.of(
                         "result","ok",

@@ -9,14 +9,6 @@
       });
     }
 
-	  $(".businessCode").change(function() {
-		var text_array = [];
-		$('[name=businessCode] option:selected').each(function() {
-			text_array.push($(this).text());
-		});
-		alert(text_array);
-	 });
-
      // 登録ボタン
       $("#registEmpBtn").click(function () {
     	  $(".warn-msg").addClass("hidden");
@@ -150,9 +142,13 @@
     });
 
     $(".changeBusinessCd").change(function(){
-      var businessCodeList = $('#businessCode').val();
+		var text_array = [];
+		$('[name=businessCode] option:selected').each(function() {
+			text_array.push($(this).val());
+		});
+		var businessCodeList = text_array;
       if(businessCodeList != 00 || businessCodeList != ""){
-        var url =jsRoutes.controllers.AttendanceCtl.getBusinessTeamList(businessCodeList);
+        var url =jsRoutes.controllers.AttendanceCtl.getBusinessTeamList(text_array);
         $.ajax({
           type : 'GET',
           url : url.url,
@@ -170,6 +166,13 @@
         $('#businessTeamCode').html("");
 		$('#businessTeamCode').append($("<option>").val("00").text("該当なし"));
 	  }
+    });
+
+    $(".businessTeamCode").change(function(){
+		var text_array = [];
+		$('[name=businessTeamCode] option:selected').each(function() {
+			text_array.push($(this).val());
+		});
     });
 
     $(".warn-msg").click(function () {

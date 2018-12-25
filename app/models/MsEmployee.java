@@ -59,15 +59,15 @@ public class MsEmployee extends CommonModel {
     @NotNull
     public String employmentClass;
 
-    /**
-     * 業務コード
-     */
-    public String businessCode;
-
-    /**
-     * 業務チームコード
-     */
-    public String businessTeamCode;
+//    /**
+//     * 業務コード
+//     */
+//    public String businessCode;
+//
+//    /**
+//     * 業務チームコード
+//     */
+//    public String businessTeamCode;
 
     /**
      * 作業内訳名1
@@ -226,7 +226,6 @@ public class MsEmployee extends CommonModel {
         		"SET MS.EMPLOYEE_NAME=:empName, MS.EMPLOYEE_NAME_KANA=:empNameKana, " +
         		"MS.POSITION_CODE=:poCd, MS.EMPLOYMENT_CLASS=:emCl, MS.AUTHORITY_CLASS=:auCl, "+
         		"MS.DEPARTMENT_CODE=:deCd, MS.DIVISION_CODE=:diCd, " +
-        		"MS.BUSINESS_CODE=:buCd, MS.BUSINESS_TEAM_CODE=:btCd, " +
         		"MS.BREAKDOWN_NAME1=:bn1, MS.BREAKDOWN_NAME2=:bn2, " +
         		"MS.BREAKDOWN_NAME3=:bn3, MS.BREAKDOWN_NAME4=:bn4 " +
         		"WHERE MS.EMPLOYEE_NO=:empNo";
@@ -241,8 +240,6 @@ public class MsEmployee extends CommonModel {
             .setParameter("auCl",form.authorityClass)
             .setParameter("deCd",form.departmentCode)
             .setParameter("diCd",form.divisionCode)
-            .setParameter("buCd",form.businessCode)
-            .setParameter("btCd",form.businessTeamCode)
             .setParameter("bn1",form.breakdownName1)
             .setParameter("bn2",form.breakdownName2)
             .setParameter("bn3",form.breakdownName3)

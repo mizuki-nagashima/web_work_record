@@ -121,7 +121,7 @@
                     @messages.at("attendance.department")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                  <select id="departmentCode" name="departmentCode" class="form-control departmentCode changeDepartmentCd departmentCode" required>
+                  <select id="departmentCode" name="departmentCode" class="form-control departmentCode changeDepartmentCd">
 				  <option value="00" disabled selected>@messages.at("notApplicable")</option>
 				  @departList.map{ dpl =>
                     <option value="@dpl.code">@dpl.codeName</option>
@@ -193,7 +193,7 @@
                     @messages.at("attendance.workTeamName")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-	                 <select id="businessTeamCode" class="businessTeamCode form-control" name="businessTeamCode" required>
+	                 <select id="businessTeamCode" class="businessTeamCode form-control" name="businessTeamCode">
 					  <option value="00" disabled selected>@messages.at("notApplicable")</option>
 					  @businessTeamList.map{ dvl =>
 	                     <option value="@dvl.code">@dvl.codeName</option>

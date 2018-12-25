@@ -39,8 +39,6 @@ public class MakeModelUtil {
     	mst.employeeNameKana = registEmpForm.employeeNameKana;
     	mst.positionCode = registEmpForm.positionCode;
     	mst.employmentClass = registEmpForm.employmentClass;
-    	mst.businessCode   = registEmpForm.businessCode;
-    	mst.businessTeamCode   = registEmpForm.businessTeamCode;
     	mst.departmentCode = registEmpForm.departmentCode;
     	mst.divisionCode = registEmpForm.divisionCode;
     	mst.breakdownName1 = registEmpForm.breakdownName1;
@@ -56,7 +54,7 @@ public class MakeModelUtil {
      * @param 社員情報sqlリスト
      * @return 社員登録用フォーム
      */
-    public static List<RegistEmpForm> makeRegistEmpForm(List<SqlRow> sqlList){
+	public static List<RegistEmpForm> makeRegistEmpForm(List<SqlRow> sqlList){
         List<RegistEmpForm> refList = new ArrayList<>();
             String employeeNo = "";
             String employeeName = "";
@@ -117,18 +115,18 @@ public class MakeModelUtil {
         	ref.employeeName = employeeName;
         	ref.employeeNameKana = employeeNameKana;
         	ref.authorityClass = authorityClass;
-        	ref.employmentClass = employmentClass;
-        	ref.positionCode = positionCode;
-        	ref.departmentCode = departmentCode;
-        	ref.divisionCode = divisionCode;
-        	ref.businessCode   = businessCode;
-        	ref.businessTeamCode   = businessTeamCode;
         	ref.authorityClassName = authorityClassName;
+        	ref.employmentClass = employmentClass;
         	ref.employmentClassName = employmentClassName;
+        	ref.positionCode = positionCode;
         	ref.positionName = positionName;
+        	ref.departmentCode = departmentCode;
         	ref.departmentName = departmentName;
+        	ref.divisionCode = divisionCode;
         	ref.divisionName = divisionName;
+        	ref.businessCode   = businessCode;
         	ref.businessName   = businessName;
+        	ref.businessTeamCode   = businessTeamCode;
         	ref.businessTeamName   = businessTeamName;
         	ref.breakdownName1 = breakdownName1;
         	ref.breakdownName2 = breakdownName2;
@@ -493,7 +491,7 @@ public class MakeModelUtil {
      * コードタイプのリストをanyvalue2から作成します。
      * @return List<MGeneralCode>
      */
-    public static List<MsGeneralCode> makeCodeTypeList(String codeType,String anyValue2){
+    public static List<MsGeneralCode> makeCodeTypeList(String codeType,List<String> anyValue2){
         List<MsGeneralCode> mgcList = new ArrayList<>();
 
         for (SqlRow mgc : MsGeneralCode.getCodeListByAnyValue2(codeType,anyValue2)) {

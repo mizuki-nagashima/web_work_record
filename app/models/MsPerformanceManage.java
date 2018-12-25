@@ -9,6 +9,8 @@ import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
 import com.avaje.ebean.SqlUpdate;
 
+import play.Logger;
+
 /**
  * 社員業務管理テーブル
  */
@@ -49,17 +51,40 @@ public class MsPerformanceManage extends CommonModel {
     public String businessManageAuthClass;
 
     /**
-     * 業務チームコード取得
+     * 社員業務管理マスタ取得
      * @param empNo 社員番号
      * @param yearMonth 年月
      * @return sqlRows
      */
-    public static List<SqlRow> getBusinessTeamCode(String empNo) {
+    public static List<SqlRow> getMsPerManage(String empNo) {
         String sql = "select * from ms_performance_manage " +
-                     "where employee_no = :emp and start_date <= current_timestamp";
+                     "where employee_no = :emp and start_date <= current_timestamp "
+                     + "and end_date > current_timestamp";
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
         		.setParameter("emp" ,empNo)
+                .findList();
+
+        Logger.debug("sql:" + String.valueOf(sqlRows));
+
+        return sqlRows;
+    }
+
+    /**
+     * 社員番号と業務コードからデータ取得
+     * @param empNo 社員番号
+     * @param yearMonth 年月
+     * @return sqlRows
+     */
+    public static List<SqlRow> getBusinessCode(String empNo,String codeName, List<String> code) {
+        String sql = "select * from kintai.ms_performance_manage ms " +
+        		"where ms.employee_no=:emp and ms.start_date <= current_timestamp " +
+        		"and ms.:codeName in(:code) " ;
+
+        List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
+        		.setParameter("emp" ,empNo)
+        		.setParameter("codeName" ,codeName)
+        		.setParameter("code" ,code)
                 .findList();
 
  //       Logger.debug("sql:" + String.valueOf(sql));
