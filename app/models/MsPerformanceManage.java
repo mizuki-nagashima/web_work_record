@@ -79,15 +79,13 @@ public class MsPerformanceManage extends CommonModel {
     public static List<SqlRow> getBusinessCode(String empNo,String codeName, List<String> code) {
         String sql = "select * from kintai.ms_performance_manage ms " +
         		"where ms.employee_no=:emp and ms.start_date <= current_timestamp " +
-        		"and ms.:codeName in(:code) " ;
+        		"and :codeName in(:code) " ;
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
         		.setParameter("emp" ,empNo)
         		.setParameter("codeName" ,codeName)
         		.setParameter("code" ,code)
                 .findList();
-
- //       Logger.debug("sql:" + String.valueOf(sql));
 
         return sqlRows;
     }

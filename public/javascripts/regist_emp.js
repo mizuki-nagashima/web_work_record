@@ -11,6 +11,7 @@
 
      // 登録ボタン
       $("#registEmpBtn").click(function () {
+		alert($('select[id="businessCode"]').val());
     	  $(".warn-msg").addClass("hidden");
     	  $('.warn-msg-contents').remove();
     	  $(".messageContents").remove();
@@ -70,8 +71,8 @@
 		$('select[name="positionCode"]').val($('#position-' + targetTrId).val());
 		$('select[name="departmentCode"]').val($('#department-' + targetTrId).val());
 		$('select[name="divisionCode"]').val($('#division-' + targetTrId).val());
-		$('select[name="businessCode"]').val($('#business-' + targetTrId).val());
-		$('select[name="businessTeamCode"]').val($('#businessTeam-' + targetTrId).val());
+		$('select[id="businessCode"]').val($('#business-' + targetTrId).val());
+		$('select[id="businessTeamCode"]').val($('#businessTeam-' + targetTrId).val());
     });
 
     // TODO 削除前モーダル
@@ -143,7 +144,7 @@
 
     $(".changeBusinessCd").change(function(){
 		var text_array = [];
-		$('[name=businessCode] option:selected').each(function() {
+		$('[id=businessCode] option:selected').each(function() {
 			text_array.push($(this).val());
 		});
 		var businessCodeList = text_array;

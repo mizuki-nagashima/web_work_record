@@ -1,12 +1,8 @@
 package controllers;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.springframework.ui.Model;
 
 import com.avaje.ebean.SqlRow;
 import com.google.common.collect.ImmutableMap;
@@ -125,25 +121,39 @@ public class RegistEmpCtl extends Controller {
 				ymat.registUserId = sesEmpNo;
 				ymat.updateUserId = sesEmpNo;
 				MsEmployee.insertMsEmployee(ymat);
-				// 社員業務管理マスタに登録
-				MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(registEmpForm);
-				perManage.registUserId = sesEmpNo;
-				perManage.updateUserId = sesEmpNo;
-				MsPerformanceManage.insertMsPerManage(perManage);
 				// ログイン情報を登録
 				String password = services.PasswordGenerator.main();
 				TblLoginInfo tblInfo = MakeModelUtil.makeTblInfo(empNo,password);
 				tblInfo.registUserId = sesEmpNo;
 				tblInfo.updateUserId = sesEmpNo;
 				TblLoginInfo.insertLoginInfo(tblInfo);
-
 			} else {
 				// 社員マスタを更新
 				MsEmployee ymat = MakeModelUtil.makeMsEmployeeTbl(registEmpForm);
 				MsEmployee.updateMsEmployee(ymat);
+			}
+			// 同じ社員番号で同じ業務コードがあった場合は更新する
+			if(MsPerformanceManage.getBusinessCode(sesEmpNo, Const.BUSINESS_CODE_NAME, registEmpForm.businessCode).isEmpty()) {
+				// 社員業務管理マスタに登録
+				// TODO 複数登録
+				for (String busCode : registEmpForm.businessCode) {
+//				String busCode = registEmpForm.businessCode;
+					String busTeamCode = registEmpForm.businessTeamCode;
+					MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(empNo,busCode,busTeamCode);
+				perManage.registUserId = sesEmpNo;
+				perManage.updateUserId = sesEmpNo;
+				MsPerformanceManage.insertMsPerManage(perManage);
+				}
+			} else {
 				// 社員業務管理マスタを更新
-				MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(registEmpForm);
+				for (String busCode : registEmpForm.businessCode) {
+					String busTeamCode = registEmpForm.businessTeamCode;
+					MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(empNo,busCode,busTeamCode);
+				perManage.registUserId = sesEmpNo;
+				perManage.updateUserId = sesEmpNo;
+				System.out.println("busCode:" +busCode);
 				MsPerformanceManage.updateMsPerManage(perManage);
+				}
 			}
 		} catch (Exception e) {
 			System.out.println(e);

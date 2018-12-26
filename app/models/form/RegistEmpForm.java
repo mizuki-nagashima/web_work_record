@@ -1,5 +1,7 @@
 package models.form;
 
+import java.util.List;
+
 import common.Const;
 import play.data.validation.Constraints;
 
@@ -31,8 +33,8 @@ public class RegistEmpForm {
     public String departmentName;
     public String divisionCode = Const.DEFAULT_CODE;
     public String divisionName;
-    public String businessCode = Const.DEFAULT_CODE;
-    public String businessName;
+    public List<String> businessCode;
+    public List<String> businessName;
     public String businessTeamCode = Const.DEFAULT_CODE;
     public String businessTeamName;
     public String breakdownName1;
