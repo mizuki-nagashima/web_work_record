@@ -35,7 +35,7 @@ public class RegistEmpForm {
     public String divisionName;
     public List<String> businessCode;
     public List<String> businessName;
-    public String businessTeamCode = Const.DEFAULT_CODE;
+    public String businessTeamCode;
     public String businessTeamName;
     public String breakdownName1;
     public String breakdownName2;

@@ -132,27 +132,21 @@ public class RegistEmpCtl extends Controller {
 				MsEmployee ymat = MakeModelUtil.makeMsEmployeeTbl(registEmpForm);
 				MsEmployee.updateMsEmployee(ymat);
 			}
+
 			// 同じ社員番号で同じ業務コードがあった場合は更新する
-			if(MsPerformanceManage.getBusinessCode(sesEmpNo, Const.BUSINESS_CODE_NAME, registEmpForm.businessCode).isEmpty()) {
+			List<String> busCodeList = registEmpForm.businessCode;
+			String busTeamCode = registEmpForm.businessTeamCode;
+			if(MsPerformanceManage.getMsPerformaceByCodeName(sesEmpNo, Const.BUSINESS_CODE_NAME,busCodeList).isEmpty()) {
 				// 社員業務管理マスタに登録
-				// TODO 複数登録
-				for (String busCode : registEmpForm.businessCode) {
-//				String busCode = registEmpForm.businessCode;
-					String busTeamCode = registEmpForm.businessTeamCode;
-					MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(empNo,busCode,busTeamCode);
-				perManage.registUserId = sesEmpNo;
-				perManage.updateUserId = sesEmpNo;
-				MsPerformanceManage.insertMsPerManage(perManage);
+				for (String busCode : busCodeList) {
+					MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(empNo,busCode,busTeamCode,sesEmpNo);
+					MsPerformanceManage.insertMsPerManage(perManage);
 				}
 			} else {
 				// 社員業務管理マスタを更新
-				for (String busCode : registEmpForm.businessCode) {
-					String busTeamCode = registEmpForm.businessTeamCode;
-					MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(empNo,busCode,busTeamCode);
-				perManage.registUserId = sesEmpNo;
-				perManage.updateUserId = sesEmpNo;
-				System.out.println("busCode:" +busCode);
-				MsPerformanceManage.updateMsPerManage(perManage);
+				for (String busCode : busCodeList) {
+					MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(empNo,busCode,busTeamCode,sesEmpNo);
+					MsPerformanceManage.updateMsPerManage(perManage);
 				}
 			}
 		} catch (Exception e) {
