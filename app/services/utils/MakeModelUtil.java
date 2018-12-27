@@ -106,15 +106,15 @@ public class MakeModelUtil {
                 	businessCode.add(busCode);
                 	businessName.add(MsGeneralCode.getCodeMaster(
                           Const.BUSINESS_CODE_NAME,busCode).getString("CODE_NAME"));
+                businessTeamCode= mst.getString(Const.BUSINESS_TEAM_CODE_NAME);
+                businessTeamName = MsGeneralCode.getCodeMaster(
+                            Const.BUSINESS_TEAM_CODE_NAME,businessTeamCode).getString("CODE_NAME");
                 }
                 if(businessCode.isEmpty()) {
                 	businessCode.add(busCode);
                 	businessName.add(MsGeneralCode.getCodeMaster(
                             Const.BUSINESS_CODE_NAME,busCode).getString("CODE_NAME"));
                 }
-                businessTeamCode= pd.getString(Const.BUSINESS_TEAM_CODE_NAME);
-                businessTeamName = MsGeneralCode.getCodeMaster(
-                            Const.BUSINESS_TEAM_CODE_NAME,busCode).getString("CODE_NAME");
             	breakdownName1 = Optional.ofNullable(pd.getString("breakdown_name1")).orElse(breakdownName1);
             	breakdownName2 = Optional.ofNullable(pd.getString("breakdown_name2")).orElse(breakdownName2);
             	breakdownName3 = Optional.ofNullable(pd.getString("breakdown_name3")).orElse(breakdownName3);
