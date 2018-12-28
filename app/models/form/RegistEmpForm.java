@@ -23,6 +23,7 @@ public class RegistEmpForm {
     @Constraints.Required(message = "社員名カナを入力してください。")
     @Constraints.Pattern(value = "^[ァ-ヶー]*$", message = "社員名カナは全角カナのみで入力してください。")
     public String employeeNameKana;
+    public String password;
     public String authorityClass;
     public String authorityClassName;
     public String employmentClass;
@@ -41,5 +42,4 @@ public class RegistEmpForm {
     public String breakdownName2;
     public String breakdownName3;
     public String breakdownName4;
-    public String retirementDate = "";
 }

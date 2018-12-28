@@ -135,6 +135,10 @@ public class RegistEmpCtl extends Controller {
 				// 社員マスタを更新
 				MsEmployee ymat = MakeModelUtil.makeMsEmployeeTbl(registEmpForm);
 				MsEmployee.updateMsEmployee(ymat);
+				// ログイン情報を更新
+				if(!registEmpForm.password.isEmpty()) {
+					TblLoginInfo.updatePassword(empNo,registEmpForm.password);
+				}
 			}
 
 			// 社員業務マスタをreplaceする(削除→登録)
@@ -210,6 +214,19 @@ public class RegistEmpCtl extends Controller {
 		} catch (Exception e) {
 			return notFound();
 		}
+	}
+
+
+	/**
+	 * パスワード再発行
+	 * @return
+	 */
+	public Result passwordReissue() {
+		String password = services.PasswordGenerator.main();
+		return ok(Json.toJson(
+				ImmutableMap.of(
+						"result", "ok",
+						"pass",password)));
 	}
 
 }

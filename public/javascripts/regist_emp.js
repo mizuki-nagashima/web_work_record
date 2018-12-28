@@ -9,6 +9,29 @@
       });
     }
 
+      $(".passClickBtn").click(function () {
+    		const div2 = document.getElementById("div2");
+    		var url =  jsRoutes.controllers.RegistEmpCtl.passwordReissue();
+    		$.ajax({
+                type : 'GET',
+                url : url.url,
+                success : function(data) {
+                  if(data.result == "ok"){
+                	  var password = data.pass;
+              		// 要素の追加
+              		if (!div2.hasChildNodes()){
+              			const input1 = document.createElement("input");
+              			input1.setAttribute("type","text");
+              			input1.setAttribute("name","password");
+              			input1.setAttribute("class","form-control");
+              			input1.setAttribute("value",password);
+              			div2.appendChild(input1);
+              		}
+                  }
+                }
+              });
+    	});
+
      // 登録ボタン
       $("#registEmpBtn").click(function () {
     	  $(".warn-msg").addClass("hidden");
@@ -82,7 +105,7 @@
         $(".messageContents").remove();
 	    var targetTr = $(this).closest('tr');
         var targetTrId = targetTr.attr('id');
-        var empNo = $('#employeeNo' + targetTrId).val();
+        var empNo = $('#employeeNo-' + targetTrId).val();
         url = jsRoutes.controllers.RegistEmpCtl.deleteEmp(empNo);
     	var msgContents =  "<p class= messageContents>社員番号："+empNo + '</p>';
         $('.messageTitle').after(msgContents);

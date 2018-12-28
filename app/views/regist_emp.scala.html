@@ -8,6 +8,7 @@
 @import play.i18n._
 @import helper._
         @javascriptRouter("jsRoutes")(
+        	routes.javascript.RegistEmpCtl.passwordReissue,
             routes.javascript.AttendanceCtl.getBusinessTeamList,
             routes.javascript.AttendanceCtl.getDivisionList,
             routes.javascript.RegistEmpCtl.registEmpCheck,
@@ -265,6 +266,17 @@
               </div>
             </div>
             <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    パスワード再発行
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div id="div2"></div>
+						<input type="button" value="ランダムで再発行" class="passClickBtn">
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="col-md-12 col-sm-12 col-xs-12">
