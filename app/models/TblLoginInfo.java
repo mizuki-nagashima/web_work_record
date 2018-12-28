@@ -228,7 +228,7 @@ public class TblLoginInfo extends CommonModel {
     public static void updatePassword(String empNo, String password) {
         String sql = "UPDATE TBL_LOGIN_INFO SET " +
         		"PASSWORD = :pass " +
-                "WHERE EMPLOYEE_NO = :emp AND PASSWORD = :pass ";
+                "WHERE EMPLOYEE_NO = :emp";
         Ebean.beginTransaction();
         try {
 	        SqlUpdate create = Ebean.createSqlUpdate(sql)

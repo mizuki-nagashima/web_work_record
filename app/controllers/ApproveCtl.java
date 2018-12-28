@@ -134,7 +134,7 @@ public class ApproveCtl extends Controller {
     public List<SqlRow> getBusinessTeamCode() {
     	List<SqlRow> resultList = new ArrayList<>();
 
-    	resultList = MsPerformanceManage.getBusinessTeamCode(session("employeeNo"));
+    	resultList = MsPerformanceManage.getMsPerManage(session("employeeNo"));
 
     	return resultList;
     }

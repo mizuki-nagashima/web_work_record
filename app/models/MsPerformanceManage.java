@@ -9,6 +9,8 @@ import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
 import com.avaje.ebean.SqlUpdate;
 
+import play.Logger;
+
 /**
  * 社員業務管理テーブル
  */
@@ -49,39 +51,61 @@ public class MsPerformanceManage extends CommonModel {
     public String businessManageAuthClass;
 
     /**
-     * 業務チームコード取得
+     * 社員業務管理マスタ取得
      * @param empNo 社員番号
      * @param yearMonth 年月
      * @return sqlRows
      */
-    public static List<SqlRow> getBusinessTeamCode(String empNo) {
-        String sql = "select * from ms_performance_manage " +
-                     "where employee_no = :emp and start_date <= current_timestamp";
+    public static List<SqlRow> getMsPerManage(String empNo) {
+        String sql = "SELECT * FROM MS_PERFORMANCE_MANAGE " +
+                     "WHERE EMPLOYEE_NO = :emp AND START_DATE <= CURRENT_TIMESTAMP "
+                     + "AND END_DATE > CURRENT_TIMESTAMP";
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
         		.setParameter("emp" ,empNo)
                 .findList();
 
- //       Logger.debug("sql:" + String.valueOf(sql));
+ //       Logger.debug("sql:" + String.valueOf(sqlRows));
 
         return sqlRows;
     }
 
     /**
-     * 承認画面年月リスト取得SQL
+     * 社員番号と業務コードからデータ取得
+     * @param empNo 社員番号
+     * @param yearMonth 年月
+     * @return sqlRowsgetMsPerformaceByCodeName
+     */
+    public static List<SqlRow> getMsPerformaceByCodeName(String empNo,String codeName, List<String> code) {
+        String sql = "SELECT * FROM MS_PERFORMANCE_MANAGE " +
+        		"WHERE EMPLOYEE_NO=:emp AND START_DATE <= CURRENT_TIMESTAMP " +
+        		"AND :codeName IN(:code) " ;
+
+        List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
+        		.setParameter("emp" ,empNo)
+        		.setParameter("codeName" ,codeName)
+        		.setParameter("code" ,code)
+                .findList();
+
+        return sqlRows;
+    }
+
+    /**
+     * 社員番号からコードを取得
      * @param empNo 社員番号
      * @param yearMonth 年月
      * @return sqlRows
      */
-    public static List<SqlRow> getApproveYearMonth(String emp) {
-        String sql = "SELECT MIN(START_DATE) FROM MS_PERFORMANCE_MANAGE " +
-                     "WHERE EMPLOYEE_NO = :empNo";
+    public static List<SqlRow> getBusCodeByEmpNo(String empNo) {
+        String sql = "SELECT DISTINCT BUSINESS_CODE,BUSINESS_TEAM_CODE FROM MS_PERFORMANCE_MANAGE " +
+        		"WHERE EMPLOYEE_NO = :emp AND START_DATE <= CURRENT_TIMESTAMP " +
+        		"AND END_DATE > CURRENT_TIMESTAMP";
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
-        		.setParameter("empNo", emp)
+        		.setParameter("emp" ,empNo)
                 .findList();
 
-//        Logger.debug("sql:" + String.valueOf(sql));
+//        Logger.debug("sql:" + String.valueOf(sqlRows));
 
         return sqlRows;
     }

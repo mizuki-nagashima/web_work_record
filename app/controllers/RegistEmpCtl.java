@@ -111,36 +111,43 @@ public class RegistEmpCtl extends Controller {
 	 */
 	public Result registEmp() {
 		RegistEmpForm registEmpForm = formFactory.form(RegistEmpForm.class).bindFromRequest().get();
+
+		String sesEmpNo = session("employeeNo");
+		String empNo = registEmpForm.employeeNo;
+		List<String> busCodeList = registEmpForm.businessCode;
+		String busTeamCode = registEmpForm.businessTeamCode;
+
 		try {
-			String sesEmpNo = session("employeeNo");
-			// 社員情報があった場合は更新する
-			String empNo = registEmpForm.employeeNo;
+			// 社員情報があった場合は更新する;
 			if(!MsEmployee.isRegistEmp(empNo)) {
 				// 社員マスタに登録
 				MsEmployee ymat = MakeModelUtil.makeMsEmployeeTbl(registEmpForm);
 				ymat.registUserId = sesEmpNo;
 				ymat.updateUserId = sesEmpNo;
 				MsEmployee.insertMsEmployee(ymat);
-				// 社員業務管理マスタに登録
-				MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(registEmpForm);
-				perManage.registUserId = sesEmpNo;
-				perManage.updateUserId = sesEmpNo;
-				MsPerformanceManage.insertMsPerManage(perManage);
 				// ログイン情報を登録
 				String password = services.PasswordGenerator.main();
 				TblLoginInfo tblInfo = MakeModelUtil.makeTblInfo(empNo,password);
 				tblInfo.registUserId = sesEmpNo;
 				tblInfo.updateUserId = sesEmpNo;
 				TblLoginInfo.insertLoginInfo(tblInfo);
-
 			} else {
 				// 社員マスタを更新
 				MsEmployee ymat = MakeModelUtil.makeMsEmployeeTbl(registEmpForm);
 				MsEmployee.updateMsEmployee(ymat);
-				// 社員業務管理マスタを更新
-				MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(registEmpForm);
-				MsPerformanceManage.updateMsPerManage(perManage);
+				// ログイン情報を更新
+				if(!registEmpForm.password.isEmpty()) {
+					TblLoginInfo.updatePassword(empNo,registEmpForm.password);
+				}
 			}
+
+			// 社員業務マスタをreplaceする(削除→登録)
+			MsPerformanceManage.deleteMsPerManage(empNo);
+			// 社員業務管理マスタ登録
+				for (String busCode : busCodeList) {
+					MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(empNo,busCode,busTeamCode,sesEmpNo);
+					MsPerformanceManage.insertMsPerManage(perManage);
+				}
 		} catch (Exception e) {
 			System.out.println(e);
 			return ok(Json.toJson(
@@ -149,7 +156,7 @@ public class RegistEmpCtl extends Controller {
 		}
 		return ok(Json.toJson(
 				ImmutableMap.of(
-						"result", "ok")));
+						"result", "ok","buslist",busCodeList)));
 	}
 
 	/**
@@ -207,6 +214,19 @@ public class RegistEmpCtl extends Controller {
 		} catch (Exception e) {
 			return notFound();
 		}
+	}
+
+
+	/**
+	 * パスワード再発行
+	 * @return
+	 */
+	public Result passwordReissue() {
+		String password = services.PasswordGenerator.main();
+		return ok(Json.toJson(
+				ImmutableMap.of(
+						"result", "ok",
+						"pass",password)));
 	}
 
 }

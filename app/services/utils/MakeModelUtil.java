@@ -2,6 +2,7 @@ package services.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,8 +40,6 @@ public class MakeModelUtil {
     	mst.employeeNameKana = registEmpForm.employeeNameKana;
     	mst.positionCode = registEmpForm.positionCode;
     	mst.employmentClass = registEmpForm.employmentClass;
-    	mst.businessCode   = registEmpForm.businessCode;
-    	mst.businessTeamCode   = registEmpForm.businessTeamCode;
     	mst.departmentCode = registEmpForm.departmentCode;
     	mst.divisionCode = registEmpForm.divisionCode;
     	mst.breakdownName1 = registEmpForm.breakdownName1;
@@ -56,8 +55,9 @@ public class MakeModelUtil {
      * @param 社員情報sqlリスト
      * @return 社員登録用フォーム
      */
-    public static List<RegistEmpForm> makeRegistEmpForm(List<SqlRow> sqlList){
+	public static List<RegistEmpForm> makeRegistEmpForm(List<SqlRow> sqlList){
         List<RegistEmpForm> refList = new ArrayList<>();
+        for(SqlRow pd : sqlList) {
             String employeeNo = "";
             String employeeName = "";
             String employeeNameKana = "";
@@ -71,8 +71,8 @@ public class MakeModelUtil {
             String departmentName = "";
             String divisionCode = Const.DEFAULT_CODE;
             String divisionName = "";
-            String businessCode = Const.DEFAULT_CODE;
-            String businessName = "";
+            List<String> businessCode = new ArrayList<>();
+            List<String> businessName = new ArrayList<>();
             String businessTeamCode = Const.DEFAULT_CODE;
             String businessTeamName = "";
             String breakdownName1 = Const.DEFAULT_BREAKDOWN_NAME1;
@@ -81,7 +81,6 @@ public class MakeModelUtil {
             String breakdownName4 = Const.DEFAULT_BREAKDOWN_NAME4;
             String retirementDate = "";
 
-            for(SqlRow pd : sqlList) {
             	employeeNo = pd.getString("employee_no");
             	employeeName = Optional.ofNullable(pd.getString("employee_name")).orElse(employeeName);
             	employeeNameKana = Optional.ofNullable(pd.getString("employee_name_kana")).orElse(employeeNameKana);
@@ -100,12 +99,22 @@ public class MakeModelUtil {
             	divisionCode = pd.getString("division_code");
             	divisionName = MsGeneralCode.getCodeMaster(
                         Const.DIVISION_CODE_NAME, divisionCode).getString("CODE_NAME");
-            	businessCode =  pd.getString("business_code");
-            	businessName = MsGeneralCode.getCodeMaster(
-                        Const.BUSINESS_CODE_NAME,businessCode).getString("CODE_NAME");
-            	businessTeamCode = pd.getString("business_team_code");
-            	businessTeamName = MsGeneralCode.getCodeMaster(
-                        Const.BUSINESS_TEAM_CODE_NAME,businessTeamCode ).getString("CODE_NAME");
+            	//  業務コード　Listに収納
+            	String busCode = Const.DEFAULT_CODE ;
+                for(SqlRow mst :MsPerformanceManage.getBusCodeByEmpNo(employeeNo)) {
+                	busCode = mst.getString(Const.BUSINESS_CODE_NAME);
+                	businessCode.add(busCode);
+                	businessName.add(MsGeneralCode.getCodeMaster(
+                          Const.BUSINESS_CODE_NAME,busCode).getString("CODE_NAME"));
+                businessTeamCode= mst.getString(Const.BUSINESS_TEAM_CODE_NAME);
+                businessTeamName = MsGeneralCode.getCodeMaster(
+                            Const.BUSINESS_TEAM_CODE_NAME,businessTeamCode).getString("CODE_NAME");
+                }
+                if(businessCode.isEmpty()) {
+                	businessCode.add(busCode);
+                	businessName.add(MsGeneralCode.getCodeMaster(
+                            Const.BUSINESS_CODE_NAME,busCode).getString("CODE_NAME"));
+                }
             	breakdownName1 = Optional.ofNullable(pd.getString("breakdown_name1")).orElse(breakdownName1);
             	breakdownName2 = Optional.ofNullable(pd.getString("breakdown_name2")).orElse(breakdownName2);
             	breakdownName3 = Optional.ofNullable(pd.getString("breakdown_name3")).orElse(breakdownName3);
@@ -117,18 +126,18 @@ public class MakeModelUtil {
         	ref.employeeName = employeeName;
         	ref.employeeNameKana = employeeNameKana;
         	ref.authorityClass = authorityClass;
-        	ref.employmentClass = employmentClass;
-        	ref.positionCode = positionCode;
-        	ref.departmentCode = departmentCode;
-        	ref.divisionCode = divisionCode;
-        	ref.businessCode   = businessCode;
-        	ref.businessTeamCode   = businessTeamCode;
         	ref.authorityClassName = authorityClassName;
+        	ref.employmentClass = employmentClass;
         	ref.employmentClassName = employmentClassName;
+        	ref.positionCode = positionCode;
         	ref.positionName = positionName;
+        	ref.departmentCode = departmentCode;
         	ref.departmentName = departmentName;
+        	ref.divisionCode = divisionCode;
         	ref.divisionName = divisionName;
+        	ref.businessCode   = businessCode;
         	ref.businessName   = businessName;
+        	ref.businessTeamCode   = businessTeamCode;
         	ref.businessTeamName   = businessTeamName;
         	ref.breakdownName1 = breakdownName1;
         	ref.breakdownName2 = breakdownName2;
@@ -143,18 +152,27 @@ public class MakeModelUtil {
      * @param registEmpForm
      * @return 社員業務管理マスタ
      */
-    public static MsPerformanceManage makeMsPerformanceManage(RegistEmpForm registEmpForm){
+    public static MsPerformanceManage makeMsPerformanceManage(String empNo, String busCode,String busTeamCode,String sesEmpNo){
     	MsPerformanceManage mst = new MsPerformanceManage();
 
-    	mst.startDate = DateUtil.getDateFormat();
-    	mst.endDate = DateUtil.getEndOfFiscalYear(DateUtil.getDateFormat()) + "-03-31";
-    	mst.employeeNo = registEmpForm.employeeNo;
-    	mst.businessCode   = registEmpForm.businessCode;
-    	mst.businessTeamCode   = registEmpForm.businessTeamCode;
-    	mst.businessManageAuthClass = "02";
+	    mst.startDate = DateUtil.getDateFormat();
+	    mst.endDate = DateUtil.getEndOfFiscalYear(DateUtil.getDateFormat()) + "-03-31";
+	    mst.employeeNo = empNo;
+	    mst.businessCode   = busCode;
+	    mst.businessTeamCode   = busTeamCode;
+	    mst.businessManageAuthClass = "02";
+	    mst.registUserId = sesEmpNo;
+	    mst.updateUserId = sesEmpNo;
+
         return mst;
     }
 
+    /**
+     * ログイン情報登録用のデータを作成します。
+     * @param empNo
+     * @param password
+     * @return
+     */
     public static TblLoginInfo makeTblInfo(String empNo,String password){
     	TblLoginInfo mst = new TblLoginInfo();
     	mst.employeeNo = empNo;
@@ -493,7 +511,7 @@ public class MakeModelUtil {
      * コードタイプのリストをanyvalue2から作成します。
      * @return List<MGeneralCode>
      */
-    public static List<MsGeneralCode> makeCodeTypeList(String codeType,String anyValue2){
+    public static List<MsGeneralCode> makeCodeTypeList(String codeType,List<String> anyValue2){
         List<MsGeneralCode> mgcList = new ArrayList<>();
 
         for (SqlRow mgc : MsGeneralCode.getCodeListByAnyValue2(codeType,anyValue2)) {

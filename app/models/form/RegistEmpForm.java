@@ -1,5 +1,7 @@
 package models.form;
 
+import java.util.List;
+
 import common.Const;
 import play.data.validation.Constraints;
 
@@ -21,6 +23,7 @@ public class RegistEmpForm {
     @Constraints.Required(message = "社員名カナを入力してください。")
     @Constraints.Pattern(value = "^[ァ-ヶー]*$", message = "社員名カナは全角カナのみで入力してください。")
     public String employeeNameKana;
+    public String password;
     public String authorityClass;
     public String authorityClassName;
     public String employmentClass;
@@ -31,13 +34,12 @@ public class RegistEmpForm {
     public String departmentName;
     public String divisionCode = Const.DEFAULT_CODE;
     public String divisionName;
-    public String businessCode = Const.DEFAULT_CODE;
-    public String businessName;
-    public String businessTeamCode = Const.DEFAULT_CODE;
+    public List<String> businessCode;
+    public List<String> businessName;
+    public String businessTeamCode;
     public String businessTeamName;
     public String breakdownName1;
     public String breakdownName2;
     public String breakdownName3;
     public String breakdownName4;
-    public String retirementDate = "";
 }

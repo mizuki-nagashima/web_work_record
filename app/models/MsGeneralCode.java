@@ -10,6 +10,7 @@ import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
 
 import common.Const;
+import play.Logger;
 
 /**
  * 汎用コード管理マスタ
@@ -250,10 +251,10 @@ public class MsGeneralCode extends CommonModel {
      * @param year 年度
      * @param anyValue2 任意値2
      */
-    public static List<SqlRow> getCodeListByAnyValue2(String codeType,String anyValue2) {
+    public static List<SqlRow> getCodeListByAnyValue2(String codeType,List<String> anyValue2) {
 
         String sql = "SELECT * FROM MS_GENERAL_CODE " +
-                     "WHERE CODE_TYPE = :codeType AND ANY_VALUE2 = :anyValue2" ;
+                     "WHERE CODE_TYPE = :codeType AND ANY_VALUE2 in( :anyValue2)" ;
 
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
         			.setParameter("codeType",codeType)

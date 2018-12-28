@@ -9,6 +9,29 @@
       });
     }
 
+      $(".passClickBtn").click(function () {
+    		const div2 = document.getElementById("div2");
+    		var url =  jsRoutes.controllers.RegistEmpCtl.passwordReissue();
+    		$.ajax({
+                type : 'GET',
+                url : url.url,
+                success : function(data) {
+                  if(data.result == "ok"){
+                	  var password = data.pass;
+              		// 要素の追加
+              		if (!div2.hasChildNodes()){
+              			const input1 = document.createElement("input");
+              			input1.setAttribute("type","text");
+              			input1.setAttribute("name","password");
+              			input1.setAttribute("class","form-control");
+              			input1.setAttribute("value",password);
+              			div2.appendChild(input1);
+              		}
+                  }
+                }
+              });
+    	});
+
      // 登録ボタン
       $("#registEmpBtn").click(function () {
     	  $(".warn-msg").addClass("hidden");
@@ -70,8 +93,8 @@
 		$('select[name="positionCode"]').val($('#position-' + targetTrId).val());
 		$('select[name="departmentCode"]').val($('#department-' + targetTrId).val());
 		$('select[name="divisionCode"]').val($('#division-' + targetTrId).val());
-		$('select[name="businessCode"]').val($('#business-' + targetTrId).val());
-		$('select[name="businessTeamCode"]').val($('#businessTeam-' + targetTrId).val());
+		$('select[id="businessCode"]').val($('#business-' + targetTrId).val());
+		$('select[id="businessTeamCode"]').val($('#businessTeam-' + targetTrId).val());
     });
 
     // TODO 削除前モーダル
@@ -82,7 +105,7 @@
         $(".messageContents").remove();
 	    var targetTr = $(this).closest('tr');
         var targetTrId = targetTr.attr('id');
-        var empNo = $('#employeeNo' + targetTrId).val();
+        var empNo = $('#employeeNo-' + targetTrId).val();
         url = jsRoutes.controllers.RegistEmpCtl.deleteEmp(empNo);
     	var msgContents =  "<p class= messageContents>社員番号："+empNo + '</p>';
         $('.messageTitle').after(msgContents);
@@ -129,6 +152,7 @@
             if(data.result == "ok"){
             	var divisionList = data.value;
 	            $('#divisionCode').html("");
+	            $('#divisionCode').append($("<option>").val("00").text("該当なし"));
 	            $.each(divisionList, function (i, val) {
 	               $('#divisionCode').append($("<option>").val(val.code).text(val.codeName));
                 });
@@ -142,9 +166,13 @@
     });
 
     $(".changeBusinessCd").change(function(){
-      var businessCode = $('#businessCode').val();
-      if(businessCode != 00 || businessCode != ""){
-        var url =jsRoutes.controllers.AttendanceCtl.getBusinessTeamList(businessCode);
+		var text_array = [];
+		$('[id=businessCode] option:selected').each(function() {
+			text_array.push($(this).val());
+		});
+		var businessCodeList = text_array;
+      if(businessCodeList != 00 || businessCodeList != ""){
+        var url =jsRoutes.controllers.AttendanceCtl.getBusinessTeamList(text_array);
         $.ajax({
           type : 'GET',
           url : url.url,
@@ -162,6 +190,13 @@
         $('#businessTeamCode').html("");
 		$('#businessTeamCode').append($("<option>").val("00").text("該当なし"));
 	  }
+    });
+
+    $(".businessTeamCode").change(function(){
+		var text_array = [];
+		$('[name=businessTeamCode] option:selected').each(function() {
+			text_array.push($(this).val());
+		});
     });
 
     $(".warn-msg").click(function () {

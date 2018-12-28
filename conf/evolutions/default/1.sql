@@ -13,8 +13,6 @@ create table ms_employee (
   department_code               varchar(255),
   division_code                 varchar(255),
   employment_class              varchar(255) not null,
-  business_code                 varchar(255),
-  business_team_code            varchar(255),
   breakdown_name1               varchar(255),
   breakdown_name2               varchar(255),
   breakdown_name3               varchar(255),

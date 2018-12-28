@@ -8,6 +8,7 @@
 @import play.i18n._
 @import helper._
         @javascriptRouter("jsRoutes")(
+        	routes.javascript.RegistEmpCtl.passwordReissue,
             routes.javascript.AttendanceCtl.getBusinessTeamList,
             routes.javascript.AttendanceCtl.getDivisionList,
             routes.javascript.RegistEmpCtl.registEmpCheck,
@@ -121,7 +122,7 @@
                     @messages.at("attendance.department")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-                  <select id="departmentCode" name="departmentCode" class="form-control departmentCode changeDepartmentCd departmentCode" required>
+                  <select id="departmentCode" name="departmentCode" class="form-control departmentCode changeDepartmentCd">
 				  <option value="00" disabled selected>@messages.at("notApplicable")</option>
 				  @departList.map{ dpl =>
                     <option value="@dpl.code">@dpl.codeName</option>
@@ -166,10 +167,10 @@
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
-                    @messages.at("attendance.workName")
+                    @messages.at("attendance.workName") <small style="red">複数選択可</small>
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-	                <select id="businessCode" name="businessCode" class="form-control businessCode changeBusinessCd businessCode" required>
+	                <select id="businessCode" name="businessCode[]" class="form-control businessCode changeBusinessCd businessCode" multiple>
 					  <option value="00" disabled selected>@messages.at("notApplicable")</option>
 					  @businessList.map{ dpl =>
 	                    <option value="@dpl.code">@dpl.codeName</option>
@@ -193,7 +194,7 @@
                     @messages.at("attendance.workTeamName")
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-	                 <select id="businessTeamCode" class="businessTeamCode form-control" name="businessTeamCode" required>
+	                 <select id="businessTeamCode" class="businessTeamCode form-control" name="businessTeamCode" multiple>
 					  <option value="00" disabled selected>@messages.at("notApplicable")</option>
 					  @businessTeamList.map{ dvl =>
 	                     <option value="@dvl.code">@dvl.codeName</option>
@@ -265,6 +266,17 @@
               </div>
             </div>
             <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-12 col-sm-12 col-xs-12">
+                    パスワード再発行
+                  </label>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div id="div2"></div>
+						<input type="button" value="ランダムで再発行" class="passClickBtn">
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="col-md-12 col-sm-12 col-xs-12">
