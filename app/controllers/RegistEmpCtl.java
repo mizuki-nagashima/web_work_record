@@ -111,10 +111,14 @@ public class RegistEmpCtl extends Controller {
 	 */
 	public Result registEmp() {
 		RegistEmpForm registEmpForm = formFactory.form(RegistEmpForm.class).bindFromRequest().get();
+
+		String sesEmpNo = session("employeeNo");
+		String empNo = registEmpForm.employeeNo;
+		List<String> busCodeList = registEmpForm.businessCode;
+		String busTeamCode = registEmpForm.businessTeamCode;
+
 		try {
-			String sesEmpNo = session("employeeNo");
-			// 社員情報があった場合は更新する
-			String empNo = registEmpForm.employeeNo;
+			// 社員情報があった場合は更新する;
 			if(!MsEmployee.isRegistEmp(empNo)) {
 				// 社員マスタに登録
 				MsEmployee ymat = MakeModelUtil.makeMsEmployeeTbl(registEmpForm);
@@ -133,22 +137,13 @@ public class RegistEmpCtl extends Controller {
 				MsEmployee.updateMsEmployee(ymat);
 			}
 
-			// 同じ社員番号で同じ業務コードがあった場合は更新する
-			List<String> busCodeList = registEmpForm.businessCode;
-			String busTeamCode = registEmpForm.businessTeamCode;
-			if(MsPerformanceManage.getMsPerformaceByCodeName(sesEmpNo, Const.BUSINESS_CODE_NAME,busCodeList).isEmpty()) {
-				// 社員業務管理マスタに登録
+			// 社員業務マスタをreplaceする(削除→登録)
+			MsPerformanceManage.deleteMsPerManage(empNo);
+			// 社員業務管理マスタ登録
 				for (String busCode : busCodeList) {
 					MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(empNo,busCode,busTeamCode,sesEmpNo);
 					MsPerformanceManage.insertMsPerManage(perManage);
 				}
-			} else {
-				// 社員業務管理マスタを更新
-				for (String busCode : busCodeList) {
-					MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(empNo,busCode,busTeamCode,sesEmpNo);
-					MsPerformanceManage.updateMsPerManage(perManage);
-				}
-			}
 		} catch (Exception e) {
 			System.out.println(e);
 			return ok(Json.toJson(
@@ -157,7 +152,7 @@ public class RegistEmpCtl extends Controller {
 		}
 		return ok(Json.toJson(
 				ImmutableMap.of(
-						"result", "ok")));
+						"result", "ok","buslist",busCodeList)));
 	}
 
 	/**

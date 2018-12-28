@@ -317,7 +317,7 @@
        $('#inputForm').attr("action", "/attendance/fixCheck/"+empNum+"/"+year +"/"+month);
        $.postAjax('#inputForm', function(data){
             if(data.result == "ok"){
-              var msgContents = '<p id="approveBody" class="fix-contents">てすと</p>';
+              var msgContents = '<p id="approveBody" class="fix-contents">承認要請</p>';
 		      $('#approveTitle').after(msgContents);
 		　　　　　 $('#fixModal').modal('show');
             }else if(data.result == "ng"){

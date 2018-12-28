@@ -11,7 +11,6 @@
 
      // 登録ボタン
       $("#registEmpBtn").click(function () {
-		alert($('select[id="businessCode"]').val());
     	  $(".warn-msg").addClass("hidden");
     	  $('.warn-msg-contents').remove();
     	  $(".messageContents").remove();
@@ -130,6 +129,7 @@
             if(data.result == "ok"){
             	var divisionList = data.value;
 	            $('#divisionCode').html("");
+	            $('#divisionCode').append($("<option>").val("00").text("該当なし"));
 	            $.each(divisionList, function (i, val) {
 	               $('#divisionCode').append($("<option>").val(val.code).text(val.codeName));
                 });
