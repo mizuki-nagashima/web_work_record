@@ -136,11 +136,10 @@ public class RegistEmpCtl extends Controller {
 				MsEmployee ymat = MakeModelUtil.makeMsEmployeeTbl(registEmpForm);
 				MsEmployee.updateMsEmployee(ymat);
 				// ログイン情報を更新
-				if(!registEmpForm.password.isEmpty()) {
+				if(registEmpForm.password != null) {
 					TblLoginInfo.updatePassword(empNo,registEmpForm.password);
 				}
 			}
-
 			// 社員業務マスタをreplaceする(削除→登録)
 			MsPerformanceManage.deleteMsPerManage(empNo);
 			// 社員業務管理マスタ登録
