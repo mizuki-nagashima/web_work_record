@@ -73,8 +73,8 @@ public class MakeModelUtil {
             String divisionName = "";
             List<String> businessCode = new ArrayList<>();
             List<String> businessName = new ArrayList<>();
-            String businessTeamCode = Const.DEFAULT_CODE;
-            String businessTeamName = "";
+            List<String> businessTeamCode = new ArrayList<>();
+            List<String> businessTeamName = new ArrayList<>();
             String breakdownName1 = Const.DEFAULT_BREAKDOWN_NAME1;
             String breakdownName2 = Const.DEFAULT_BREAKDOWN_NAME2;
             String breakdownName3 = Const.DEFAULT_BREAKDOWN_NAME3;
@@ -101,19 +101,27 @@ public class MakeModelUtil {
                         Const.DIVISION_CODE_NAME, divisionCode).getString("CODE_NAME");
             	//  業務コード　Listに収納
             	String busCode = Const.DEFAULT_CODE ;
+            	String busTeamCode = Const.DEFAULT_CODE ;
+//                for(SqlRow mst :MsPerformanceManage.getBusCodeByEmpNo(employeeNo)) {
                 for(SqlRow mst :MsPerformanceManage.getBusCodeByEmpNo(employeeNo)) {
                 	busCode = mst.getString(Const.BUSINESS_CODE_NAME);
                 	businessCode.add(busCode);
                 	businessName.add(MsGeneralCode.getCodeMaster(
                           Const.BUSINESS_CODE_NAME,busCode).getString("CODE_NAME"));
-                businessTeamCode= mst.getString(Const.BUSINESS_TEAM_CODE_NAME);
-                businessTeamName = MsGeneralCode.getCodeMaster(
-                            Const.BUSINESS_TEAM_CODE_NAME,businessTeamCode).getString("CODE_NAME");
+                	busTeamCode = mst.getString(Const.BUSINESS_TEAM_CODE_NAME);
+                	businessTeamCode.add(busTeamCode);
+	                businessTeamName.add(MsGeneralCode.getCodeMaster(
+	                            Const.BUSINESS_TEAM_CODE_NAME,busTeamCode).getString("CODE_NAME"));
                 }
                 if(businessCode.isEmpty()) {
                 	businessCode.add(busCode);
                 	businessName.add(MsGeneralCode.getCodeMaster(
                             Const.BUSINESS_CODE_NAME,busCode).getString("CODE_NAME"));
+                }
+                if(businessTeamCode.isEmpty()) {
+                	businessTeamCode.add(busTeamCode);
+                	businessName.add(MsGeneralCode.getCodeMaster(
+                            Const.BUSINESS_CODE_NAME,busTeamCode).getString("CODE_NAME"));
                 }
             	breakdownName1 = Optional.ofNullable(pd.getString("breakdown_name1")).orElse(breakdownName1);
             	breakdownName2 = Optional.ofNullable(pd.getString("breakdown_name2")).orElse(breakdownName2);
@@ -248,7 +256,7 @@ public class MakeModelUtil {
             sawf.monthsYearsStatus = ymat.getString("months_years_status");
         	}catch (Exception e) {
 
-        		System.out.println(e);
+        		System.out.println(CheckUtil.getClassName()+ " " +e);
 			}
         } else {
             // 社員マスタから社員情報を取得
@@ -291,7 +299,7 @@ public class MakeModelUtil {
                 try {
 					TblYearMonthAttribute.insertYearMonthData(tblYearMonthAttribute);
 				} catch (Exception e) {
-					System.out.println(e);
+					System.out.println(CheckUtil.getClassName()+ " " +e);
 				}
         }
         return sawf;

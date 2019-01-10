@@ -9,6 +9,8 @@ import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
 import com.avaje.ebean.SqlUpdate;
 
+import services.utils.CheckUtil;
+
 /**
  * 年月属性テーブル
  */
@@ -125,7 +127,7 @@ public class TblYearMonthAttribute extends CommonModel {
         } catch (Exception e) {
             Ebean.rollbackTransaction();
             // FIXME debug
-            System.out.println(e);
+            System.out.println(CheckUtil.getClassName()+ " " +e);
             throw e;
         } finally {
             Ebean.endTransaction();
@@ -143,7 +145,7 @@ public class TblYearMonthAttribute extends CommonModel {
             Ebean.commitTransaction();
         } catch (Exception e) {
             // FIXME debug
-            System.out.println(e);
+            System.out.println(CheckUtil.getClassName()+ " " +e);
             Ebean.rollbackTransaction();
             throw e;
         } finally {
@@ -170,7 +172,7 @@ public class TblYearMonthAttribute extends CommonModel {
         } catch (Exception e) {
             Ebean.rollbackTransaction();
             // FIXME debug
-            System.out.println(e);
+            System.out.println(CheckUtil.getClassName()+ " " +e);
             throw e;
         } finally {
             Ebean.endTransaction();

@@ -20,6 +20,7 @@ import play.data.validation.ValidationError;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
+import services.utils.CheckUtil;
 import services.utils.DateUtil;
 import services.utils.MakeModelUtil;
 import views.html.regist_emp;
@@ -72,6 +73,8 @@ public class RegistEmpCtl extends Controller {
 			ValidationError errorEmpNo = form.error("employeeNo");
 			ValidationError errorEmpName = form.error("employeeName");
 			ValidationError errorEmpNameKana = form.error("employeeNameKana");
+			ValidationError errorBusinessCode = form.error("businessCode");
+			ValidationError errorBusinessTeamCode = form.error("businessTeamCode");
 			if (errorEmpNo != null) {
 				map.put("errorEmpNo", errorEmpNo.message());
 			}
@@ -81,6 +84,12 @@ public class RegistEmpCtl extends Controller {
 			if (errorEmpNameKana != null) {
 				map.put("errorEmpNameKana", errorEmpNameKana.message());
 			}
+			if (errorBusinessCode != null) {
+				map.put("errorBusinessCode", errorBusinessCode.message());
+			}
+			if (errorBusinessTeamCode != null) {
+				map.put("errorBusinessTeamCode", errorBusinessTeamCode.message());
+			}
 			errorMsgList.add(map);
 			if (!errorMsgList.isEmpty()) {
 				return ok(Json.toJson(
@@ -89,6 +98,7 @@ public class RegistEmpCtl extends Controller {
 								"msg", errorMsgList)));
 			}
 		}
+		// TODO 複数選択バリデーション
 		//社員番号検索
 		RegistEmpForm registEmpForm = form.get();
 		String empNo = registEmpForm.employeeNo;
@@ -115,7 +125,7 @@ public class RegistEmpCtl extends Controller {
 		String sesEmpNo = session("employeeNo");
 		String empNo = registEmpForm.employeeNo;
 		List<String> busCodeList = registEmpForm.businessCode;
-		String busTeamCode = registEmpForm.businessTeamCode;
+		List<String> busTeamCodeList = registEmpForm.businessTeamCode;
 
 		try {
 			// 社員情報があった場合は更新する;
@@ -144,11 +154,13 @@ public class RegistEmpCtl extends Controller {
 			MsPerformanceManage.deleteMsPerManage(empNo);
 			// 社員業務管理マスタ登録
 				for (String busCode : busCodeList) {
+					for (String busTeamCode : busTeamCodeList) {
 					MsPerformanceManage perManage = MakeModelUtil.makeMsPerformanceManage(empNo,busCode,busTeamCode,sesEmpNo);
 					MsPerformanceManage.insertMsPerManage(perManage);
+					}
 				}
 		} catch (Exception e) {
-			System.out.println(e);
+			System.out.println(CheckUtil.getClassName()+ " " +e);
 			return ok(Json.toJson(
 					ImmutableMap.of(
 							"result", "ng","msg","社員情報登録中にエラーが発生しました。")));
@@ -179,7 +191,7 @@ public class RegistEmpCtl extends Controller {
 			TblLoginInfo.updateDeleteFlg(empNo,"1");
 		} catch (Exception e) {
 			//  debug
-			System.out.println(e);
+			System.out.println(CheckUtil.getClassName()+ " " +e);
 			map.put("isRegistEmp", "社員情報を削除中にエラーが発生しました。");
 			errorMsgList.add(map);
 		}
