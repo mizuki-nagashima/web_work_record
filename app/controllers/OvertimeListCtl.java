@@ -33,7 +33,10 @@ public class OvertimeListCtl extends Controller {
      * @return 残業一覧画面
      */
     public Result index() {
+		String sesEmpNo = session("employeeNo");
+		String sesEmpName = session("employeeName");
+		String sesAuthClass = session("authorityClass");
 //        Form<OvertimeListForm> overtimeListForm = formFactory.form(OvertimeListForm.class);
-        return ok(overtimeList.render("残業一覧画面"));
+        return ok(overtimeList.render(sesEmpNo, sesEmpName, sesAuthClass));
     }
 }
