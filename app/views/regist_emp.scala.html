@@ -191,10 +191,10 @@
               <div class="form-horizontal">
                 <div class="form-group">
                   <label class="col-md-12 col-sm-12 col-xs-12">
-                    @messages.at("attendance.workTeamName")
+                    @messages.at("attendance.workTeamName") <small style="red">複数選択可</small>
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
-	                 <select id="businessTeamCode" class="businessTeamCode form-control" name="businessTeamCode" multiple>
+	                 <select id="businessTeamCode" name="businessTeamCode[]" class="businessTeamCode form-control" multiple>
 					  <option value="00" disabled selected>@messages.at("notApplicable")</option>
 					  @businessTeamList.map{ dvl =>
 	                     <option value="@dvl.code">@dvl.codeName</option>
@@ -273,6 +273,8 @@
                   </label>
                   <div class="col-md-12 col-sm-12 col-xs-12">
                     <div id="div2"></div>
+                    <p class="hidden pass-success-msg">新パスワードを発行しました。
+                    保存する場合は「@messages.at("attendance.statusSave")」ボタンを押してください。</p>
 						<input type="button" value="ランダムで再発行" class="passClickBtn">
                   </div>
                 </div>

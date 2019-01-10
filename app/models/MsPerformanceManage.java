@@ -97,7 +97,7 @@ public class MsPerformanceManage extends CommonModel {
      * @return sqlRows
      */
     public static List<SqlRow> getBusCodeByEmpNo(String empNo) {
-        String sql = "SELECT DISTINCT BUSINESS_CODE,BUSINESS_TEAM_CODE FROM MS_PERFORMANCE_MANAGE " +
+        String sql = "SELECT DISTINCT * FROM MS_PERFORMANCE_MANAGE " +
         		"WHERE EMPLOYEE_NO = :emp AND START_DATE <= CURRENT_TIMESTAMP " +
         		"AND END_DATE > CURRENT_TIMESTAMP";
 
@@ -105,7 +105,7 @@ public class MsPerformanceManage extends CommonModel {
         		.setParameter("emp" ,empNo)
                 .findList();
 
-//        Logger.debug("sql:" + String.valueOf(sqlRows));
+//        Logger.debug("sql:" + String.valueOf(sql));
 
         return sqlRows;
     }

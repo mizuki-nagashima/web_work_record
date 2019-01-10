@@ -15,6 +15,14 @@ import play.Logger;
  */
 public class CheckUtil {
 
+	/**
+     * 実行中のクラス名を取得します。
+     * @return クラス名
+     */
+    public static String getClassName() {
+        return Thread.currentThread().getStackTrace()[2].getClassName();
+    }
+
     /**
      * 作業実績内訳チェック
      * @param break1 作業内訳1

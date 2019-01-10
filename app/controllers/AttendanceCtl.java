@@ -124,7 +124,7 @@ public class AttendanceCtl extends Controller {
 	        }
 		} catch (Exception e) {
 	        //  debug
-	        System.out.println(e);
+	        System.out.println(CheckUtil.getClassName()+ " " +e);
 	        return notFound();
 		}
     }
@@ -158,7 +158,7 @@ public class AttendanceCtl extends Controller {
             }
         } catch (Exception e) {
             //  debug
-            System.out.println(e);
+            System.out.println(CheckUtil.getClassName()+ " " +e);
             return ok(Json.toJson(ImmutableMap.of("result", "ng")));
         }
         return ok(Json.toJson(ImmutableMap.of("result", "ok")));
@@ -233,7 +233,7 @@ public class AttendanceCtl extends Controller {
                             }
 	                    } catch (Exception e) {
 	        	            //  debug
-	        	            System.out.println(e);
+	        	            System.out.println(CheckUtil.getClassName()+ " " +e);
 	        	            return ok(Json.toJson(
 	        	                    ImmutableMap.of(
 	        	                            "result", "ng",
@@ -397,7 +397,7 @@ public class AttendanceCtl extends Controller {
 	            	TblYearMonthAttribute.updateYearMonthDataStatus(refEmpNo,monthsYears,attrStatus);
         	} catch (Exception e) {
 	            //  debug
-	            System.out.println(e);
+	            System.out.println(CheckUtil.getClassName()+ " " +e);
 	            return ok(Json.toJson(
 	                    ImmutableMap.of(
 	                            "result", "ng",

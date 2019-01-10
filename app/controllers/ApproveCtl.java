@@ -23,6 +23,7 @@ import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
+import services.utils.CheckUtil;
 import services.utils.DateUtil;
 import services.utils.MakeModelUtil;
 import play.data.validation.*;
@@ -113,7 +114,7 @@ public class ApproveCtl extends Controller {
 		    }
 		} catch (Exception e) {
 	       //  debug
-	       System.out.println(e);
+	       System.out.println(CheckUtil.getClassName()+ " " +e);
 	       map.put(date, "承認処理中にエラーが発生しました。");
 	       errorMsgList.add(map);
 		}

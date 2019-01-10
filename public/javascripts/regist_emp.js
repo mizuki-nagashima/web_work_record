@@ -9,6 +9,7 @@
       });
     }
 
+      //パスワード再発行ボタン
       $(".passClickBtn").click(function () {
     		const div2 = document.getElementById("div2");
     		var url =  jsRoutes.controllers.RegistEmpCtl.passwordReissue();
@@ -26,13 +27,22 @@
               			input1.setAttribute("class","form-control");
               			input1.setAttribute("value",password);
               			div2.appendChild(input1);
+              			$(".pass-success-msg").removeClass("hidden");
               		}
                   }
                 }
               });
     	});
 
-     // 登録ボタン
+      //協力社員選択時の社員番号処理
+      $("#empClass02").click(function () {
+    	   if ($("input[id='empClass02']:checked").val()) {
+    		   var str = $('input[name="employeeNo"]').val();
+    		   $('input[name="employeeNo"]').val("k"+str);
+    	    }
+      });
+
+     // 登録モーダル表示
       $("#registEmpBtn").click(function () {
     	  $(".warn-msg").addClass("hidden");
     	  $('.warn-msg-contents').remove();
@@ -113,6 +123,7 @@
     	$('#deleteModal').modal('show');
     });
 
+    // 削除ボタン
     $(".deleteModalBtn").click(function () {
    	 	$.ajax({
           type : 'POST',
@@ -190,13 +201,6 @@
         $('#businessTeamCode').html("");
 		$('#businessTeamCode').append($("<option>").val("00").text("該当なし"));
 	  }
-    });
-
-    $(".businessTeamCode").change(function(){
-		var text_array = [];
-		$('[name=businessTeamCode] option:selected').each(function() {
-			text_array.push($(this).val());
-		});
     });
 
     $(".warn-msg").click(function () {
