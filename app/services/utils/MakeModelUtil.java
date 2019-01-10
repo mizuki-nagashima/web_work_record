@@ -42,6 +42,8 @@ public class MakeModelUtil {
     	mst.employmentClass = registEmpForm.employmentClass;
     	mst.departmentCode = registEmpForm.departmentCode;
     	mst.divisionCode = registEmpForm.divisionCode;
+//    	mst.businessCode = registEmpForm;
+//    	mst.businessTeamCode = ;
     	mst.breakdownName1 = registEmpForm.breakdownName1;
     	mst.breakdownName2 = registEmpForm.breakdownName2;
     	mst.breakdownName3 = registEmpForm.breakdownName3;

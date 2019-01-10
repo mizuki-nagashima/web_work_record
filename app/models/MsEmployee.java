@@ -59,15 +59,15 @@ public class MsEmployee extends CommonModel {
     @NotNull
     public String employmentClass;
 
-//    /**
-//     * 業務コード
-//     */
-//    public String businessCode;
-//
-//    /**
-//     * 業務チームコード
-//     */
-//    public String businessTeamCode;
+    /**
+     * 業務コード
+     */
+    public String businessCode;
+
+    /**
+     * 業務チームコード
+     */
+    public String businessTeamCode;
 
     /**
      * 作業内訳名1

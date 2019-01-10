@@ -98,7 +98,6 @@ public class RegistEmpCtl extends Controller {
 								"msg", errorMsgList)));
 			}
 		}
-		// TODO 複数選択バリデーション
 		//社員番号検索
 		RegistEmpForm registEmpForm = form.get();
 		String empNo = registEmpForm.employeeNo;
@@ -131,6 +130,7 @@ public class RegistEmpCtl extends Controller {
 			// 社員情報があった場合は更新する;
 			if(!MsEmployee.isRegistEmp(empNo)) {
 				// 社員マスタに登録
+				// TODO 所属メイン業務とチームを別に設定？→複数の場合は「該当なし」で登録？
 				MsEmployee ymat = MakeModelUtil.makeMsEmployeeTbl(registEmpForm);
 				ymat.registUserId = sesEmpNo;
 				ymat.updateUserId = sesEmpNo;
