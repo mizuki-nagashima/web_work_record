@@ -13,11 +13,15 @@ import models.MsEmployee;
 import models.MsGeneralCode;
 import models.MsPerformanceManage;
 import models.TblLoginInfo;
+import models.TblPerformance;
+import models.TblPerformanceAdmin;
 import models.TblYearMonthAttribute;
 import models.form.ApproveForm;
 import models.form.AttendanceInputForm;
 import models.form.AttendanceSumForm;
 import models.form.DateList;
+import models.form.OvertimeListForm;
+import models.form.OvertimeListForm;
 import models.form.RegistEmpForm;
 import models.form.StatusAndWorkForm;
 
@@ -498,6 +502,50 @@ public class MakeModelUtil {
     	}
     	return approveFormList;
     }
+    /**
+     * 残業一覧用データを作成します。
+     * @param performanceData performanceData
+     * @return List<OvertimeListForm>
+     */
+    //TODO 1/11 「その年月の一覧」を
+    public static List<OvertimeListForm> makeOvertimeForm(List<SqlRow> performanceData,String year,String month) {
+    	//所定労働時間/月を取得
+    	double defaultWorkTime = DateUtil.getDefaultWorkTime(year, month);
+
+    	List<OvertimeListForm> aifList = new ArrayList<>();
+    	String empNo = "";
+    	String empName = "";
+    	String monthsYears = "";
+    	double sumDeductionNight = 0.0;
+    	double sumDeductionOther = 0.0;
+    	double sumPerformanceTime = 0.0;
+    	double overTime = 0.0;
+
+    	for(SqlRow pd : performanceData) {
+    		empNo = pd.getString("employee_no");
+    		empName = pd.getString("employee_name");
+    		monthsYears = pd.getString("years");
+    		sumDeductionNight = Optional.ofNullable(pd.getDouble("sum_deduction_night")).orElse(sumDeductionNight);
+    		sumDeductionOther = Optional.ofNullable(pd.getDouble("sum_deduction_other")).orElse(sumDeductionOther);
+    		sumPerformanceTime = Optional.ofNullable(pd.getDouble("sum_performance_time")).orElse(sumPerformanceTime);
+        	// 残業時間/月の計算
+    		overTime = sumPerformanceTime - defaultWorkTime;
+    		if(Math.signum(overTime) == -1) {
+    			overTime = 0.0;
+    		}
+
+    		OvertimeListForm aif = new OvertimeListForm();
+    		aif.employeeNo = empNo;
+    		aif.employeeName = empName;
+    		aif.monthsYears = monthsYears;
+    		aif.sumDeductionNight = sumDeductionNight;
+    		aif.sumDeductionOther = sumDeductionOther;
+    		aif.sumPerformanceTime = sumPerformanceTime;
+    		aif.overTime = overTime;
+    		aifList.add(aif);
+    	}
+    	return aifList;
+    }
 
     /**
      * コードタイプのリストを作成します。
@@ -527,6 +575,21 @@ public class MakeModelUtil {
             mGeneralCode.code = mgc.getString("code");
             mGeneralCode.codeName = mgc.getString("code_name");
             mGeneralCode.anyValue2 = mgc.getString("any_value2");
+            mgcList.add(mGeneralCode);
+        }
+        return mgcList;
+    }
+
+    /**
+     * 年リストを作成します。
+     * @return List<MGeneralCode>
+     */
+    public static List<MsGeneralCode> makeYearList(){
+        List<MsGeneralCode> mgcList = new ArrayList<>();
+
+        for (SqlRow mgc : MsGeneralCode.getYearList()) {
+            MsGeneralCode mGeneralCode = new MsGeneralCode();
+            mGeneralCode.targetYear = mgc.getString("TARGET_YEAR");
             mgcList.add(mGeneralCode);
         }
         return mgcList;

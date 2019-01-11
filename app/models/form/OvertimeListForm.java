@@ -5,19 +5,15 @@ package models.form;
  */
 
 public class OvertimeListForm {
-	public Integer appNo = 0;
-    public String bsCode = "";
     public String employeeNo = "";
     public String employeeName = "";
     public String monthsYears = "";
-    public String performanceDate = "";
-    public String contents = "";
-    public String remarks = "";
-    public String performanceStatus = "";
-    public Boolean isApprove;
-    public String approvalEmployeeNo = "";
-    public String approvalDate = "";
-    public String approvalPositionCode = "";
-    public String approvalEmployeeName = "";
-    public String monthsYearsStatus = "";
+    public String positionName = "";
+    public String workCode = "";
+    public String workName = "";
+    public String teamLeader = "";
+    public Double sumDeductionNight = 0.0;
+    public Double sumDeductionOther = 0.0;
+    public Double sumPerformanceTime = 0.0;
+    public Double overTime = 0.0;
 }

@@ -38,7 +38,7 @@ POST	/approve/updateApprove/:empNo/:yearMonth/:date/:flg  	controllers.ApproveCt
 GET     /approve/moveTargetYearMonth/:empNo/:yearMonth/:nowYearMonth       controllers.ApproveCtl.moveTargetYearMonth(empNo: String, yearMonth: String, nowYearMonth: String)
 GET     /approve/moveAttendanceByApprove/:empNo/:year/:month	controllers.ApproveCtl.moveAttendanceByApprove(empNo: String, year: String, month: String)
 
-GET		/overtimeList	controllers.OvertimeListCtl.index()
+GET		/overtimeList	controllers.OvertimeListCtl.index(year: String)
 GET		/outputPdf	controllers.OutputPdfCtl.outputPdf()
 
 GET     /user                                  controllers.RegistEmpCtl.index()

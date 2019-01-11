@@ -1,43 +1,55 @@
-@(sesEmpNo: String, sesEmpName: String, sesAuthClass: String)
+@(sesEmpNo: String, sesEmpName: String, sesAuthClass: String,
+year: String, month: String, appFormList: List[models.form.OvertimeListForm],yearList: List[models.MsGeneralCode])
 @import play.i18n._
 @import helper._
+        @javascriptRouter("jsRoutes")(
+        	routes.javascript.ApproveCtl.moveTargetYearMonth,
+        	routes.javascript.ApproveCtl.moveAttendanceByApprove,
+        	routes.javascript.OvertimeListCtl.index
+        )
 @main(messages.at("header.title","残業一覧"),sesEmpNo,sesEmpName,sesAuthClass) {
 <section class="content">
-<script src="@routes.Assets.versioned("javascripts/regist_emp.js")" type="text/javascript"></script>
+<script src="@routes.Assets.versioned("javascripts/overtime_list.js")" type="text/javascript"></script>
+<input type="hidden" id="month" name="month" value="@month">
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
-  <div class="row">
-        <h2>@messages.at("overTimeList")</h2>
-   </div>
-
-<!-- ためしでべた書きテーブルを作成 2018.04.04 -->
-	<br>年度
-	<select name="year">
-		<option value="2018">2018年度</option>
-		<option value="2017">2017年度</option>
-		<option value="2016">2016年度</option>
-	</select>
-	<button type="button">
-	 	更新
-	</button>
-    <button type="button" class="btn btn-primary pdf" style="margin-right: 10px" onClick="window.open('@routes.OutputPdfCtl.outputPdf','_blank','')">
-		<i class="fa fa-file-text"></i>
-              PDF出力
-    </button>
-	<br>
-	<br>
+      <div class="col-md-10 col-sm-10 col-xs-12">
+        <h2><i class="fa fa-pencil-square-o"></i> @messages.at("titleDate.year",year)</h2>
+      </div>
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
+          <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
+     <!--        <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
+              <i class="fa fa-file-text"></i>
+              @messages.at("attendance.pdf")
+            </button>  -->
+            <div class="pull-right hidden-xs">
+              <label>@messages.at("moveYear")</label>
+            <select name="moveYear">
+            <option value="">---</option>
+            	@yearList.map{ yl =>
+                    <option value="@yl.targetYear">@yl.targetYear 年度</option>
+                  }
+                 <script>
+                    if(@year != ""){$("#year").val(@year)}
+                 </script>
+			</select>
+			            </div>
+          </div>
+        </div>
+      </div>
 	<div>
         <table id="data" class="table table-bordered">
           <thead style="background: #d3e5ff;">
           <tr>
-            <th cmanFilterBtn>社員番号</th>
-            <th cmanFilterBtn>氏名</th>
-            <th class="table-filterable">部署</th>
-            <th class="table-filterable">役職</th>
+            <th>社員番号</th>
+            <th>氏名</th>
+             <th>残業時間</th>
+<!--            <th class="table-filterable">役職</th>
             <th class="table-filterable">業務コード</th>
             <th class="table-filterable">業務名</th>
             <th class="table-filterable">チームリーダー</th>
-            <th class="table-filterable">4月</th>
+<!--             <th class="table-filterable">4月</th>
             <th class="table-filterable">5月</th>
             <th class="table-filterable">6月</th>
             <th class="table-filterable">7月</th>
@@ -50,59 +62,43 @@
             <th class="table-filterable">2月</th>
             <th class="table-filterable">3月</th>
             <th class="table-filterable">45時間以上回数</th>
-            <th class="table-filterable">平均残業時間</th>
+            <th class="table-filterable">平均残業時間</th> -->
           </tr>
           </thead>
           <tbody>
-          <tr>
-            <td>00229</td>
-            <td>大塚果穂</td>
-            <td>SSC</td>
-            <td>-</td>
-            <td>社内運用保守</td>
-            <td>社内運用保守</td>
-            <td>高橋康太</td>
-            <td>10</td>
-            <td>12</td>
-            <td>20</td>
-            <td>30</td>
-            <td style="color:#ff4500">50</td>
-            <td>13</td>
-            <td>32</td>
-            <td>15</td>
-            <td>18</td>
-            <td>22</td>
-            <td>29</td>
-            <td>32</td>
-            <td>1</td>_pl
-            <td>23.6</td>
-          </tr>
-          <tr>
-            <td>00232</td>
-            <td>宮崎慎也</td>
-            <td>第1SI-2</td>
-            <td>-</td>
-            <td>基金</td>
-            <td>基金</td>
-            <td>三上和</td>
-            <td>1</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
-            <td>7</td>
-            <td>8</td>
-            <td>9</td>
-            <td>10</td>
-            <td>11</td>
-            <td>12</td>
-            <td>0</td>
-            <td>6.5</td>
-          </tr>
+          @for(app <- appFormList ){
+	          <tr id="@app.employeeNo">
+	         	 <input type="hidden" id="employeeNo@app.employeeNo" name="employeeNo" value="@app.employeeNo">
+	              <input type="hidden" id="monthsYears@app.employeeNo" name="monthsYears" value="@app.monthsYears">
+	            <td>@app.employeeNo</td>
+	            <td>@app.employeeName</td>
+	            <td>@app.overTime</td>
+			</tr>
+			}
           </tbody>
         </table>
 	</div>
+	<div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
+          <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
+    <!--         <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
+              <i class="fa fa-file-text"></i>
+              @messages.at("attendance.pdf")
+            </button>  -->
+            <div class="pull-right hidden-xs">
+              <label>@messages.at("moveYear")</label>
+            <select name="year">
+            	@yearList.map{ yl =>
+                    <option value="@yl.targetYear">@yl.targetYear 年度</option>
+                  }
+                 <script>
+                    if(@year != ""){$("#year").val(@year)}
+                 </script>
+			</select>
+			</div>
+          </div>
+        </div>
+      </div>
 	</div>
 	</div>
 </section>

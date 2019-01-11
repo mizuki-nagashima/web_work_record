@@ -7,6 +7,7 @@ titleDate={0}年{1}月度
 titleDate.year={0}年度
 
 moveYearMonth=年月を指定して移動：
+moveYear=年を指定して移動：
 
 errorModal.message.header=以下の入力値が誤っているため保存できません、修正して下さい。
 errorModal.message.footer=※クリックでこのメッセージを閉じます。

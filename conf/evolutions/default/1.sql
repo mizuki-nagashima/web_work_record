@@ -105,6 +105,32 @@ create table tbl_performance (
   update_date                   datetime(6) not null
 );
 
+create table tbl_performance_admin (
+  regist_user_id                varchar(255) not null,
+  update_user_id                varchar(255),
+  employee_no                   varchar(255) not null,
+  year                          varchar(255) not null,
+  month                         varchar(255) not null,
+  sum_performance_time          double,
+  sum_deduction_night           double,
+  sum_deduction_other           double,
+  sum_salaried                  double,
+  overtime                      double,
+  attendance_day                varchar(255),
+  absence_day                   varchar(255),
+  attendance_holiday            varchar(255),
+  comp_holiday                  varchar(255),
+  salaried_holiday              varchar(255),
+  summer_holiday                varchar(255),
+  newyear_holiday               varchar(255),
+  supecial_holiday              varchar(255),
+  nursing_leave                 varchar(255),
+  approval_employee_no          varchar(255),
+  approval_date                 datetime(6),
+  regist_date                   datetime(6) not null,
+  update_date                   datetime(6) not null
+);
+
 create table tbl_year_month_attribute (
   regist_user_id                varchar(255) not null,
   update_user_id                varchar(255),
@@ -137,6 +163,8 @@ drop table if exists ms_performance_manage;
 drop table if exists tbl_login_info;
 
 drop table if exists tbl_performance;
+
+drop table if exists tbl_performance_admin;
 
 drop table if exists tbl_year_month_attribute;
 

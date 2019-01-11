@@ -263,4 +263,18 @@ public class MsGeneralCode extends CommonModel {
 
         return sqlRows;
     }
+
+    /**
+     * 年月リストを取得します
+     * @return
+     */
+    public static List<SqlRow> getYearList() {
+        String sql = "SELECT DISTINCT TARGET_YEAR FROM MS_GENERAL_CODE " +
+        		"WHERE CODE_TYPE='PUBLIC_HOLIDAY_CLASS' ";
+
+        List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
+        		.findList();
+
+        return sqlRows;
+    }
 }
