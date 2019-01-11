@@ -507,7 +507,7 @@ public class MakeModelUtil {
      * @param performanceData performanceData
      * @return List<OvertimeListForm>
      */
-    //TODO 1/11 「その年月の一覧」を
+    //TODO 1/11 年月ごとの残業代を求めるメソッドを別につくる
     public static List<OvertimeListForm> makeOvertimeForm(List<SqlRow> performanceData,String year,String month) {
     	//所定労働時間/月を取得
     	double defaultWorkTime = DateUtil.getDefaultWorkTime(year, month);
@@ -516,6 +516,9 @@ public class MakeModelUtil {
     	String empNo = "";
     	String empName = "";
     	String monthsYears = "";
+    	String positionName = "";
+    	String workCode = "";
+    	String teamLeader = "";
     	double sumDeductionNight = 0.0;
     	double sumDeductionOther = 0.0;
     	double sumPerformanceTime = 0.0;
@@ -525,6 +528,9 @@ public class MakeModelUtil {
     		empNo = pd.getString("employee_no");
     		empName = pd.getString("employee_name");
     		monthsYears = pd.getString("years");
+    		positionName = MsGeneralCode.getCodeMaster(Const.POSITION_CODE_NAME, pd.getString("position_code")).getString("code_name");
+    		workCode = MsGeneralCode.getCodeMaster(Const.BUSINESS_CODE_NAME, pd.getString("business_code")).getString("code_name");
+    		teamLeader = pd.getString("leader");
     		sumDeductionNight = Optional.ofNullable(pd.getDouble("sum_deduction_night")).orElse(sumDeductionNight);
     		sumDeductionOther = Optional.ofNullable(pd.getDouble("sum_deduction_other")).orElse(sumDeductionOther);
     		sumPerformanceTime = Optional.ofNullable(pd.getDouble("sum_performance_time")).orElse(sumPerformanceTime);
@@ -538,6 +544,9 @@ public class MakeModelUtil {
     		aif.employeeNo = empNo;
     		aif.employeeName = empName;
     		aif.monthsYears = monthsYears;
+    		aif.positionName= positionName;
+    		aif.workCode = workCode;
+    		aif.teamLeader = teamLeader;
     		aif.sumDeductionNight = sumDeductionNight;
     		aif.sumDeductionOther = sumDeductionOther;
     		aif.sumPerformanceTime = sumPerformanceTime;

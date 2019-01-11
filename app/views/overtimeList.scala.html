@@ -44,11 +44,10 @@ year: String, month: String, appFormList: List[models.form.OvertimeListForm],yea
           <tr>
             <th>社員番号</th>
             <th>氏名</th>
-             <th>残業時間</th>
-<!--            <th class="table-filterable">役職</th>
+            <th class="table-filterable">役職</th>
             <th class="table-filterable">業務コード</th>
-            <th class="table-filterable">業務名</th>
             <th class="table-filterable">チームリーダー</th>
+             <th>残業時間</th>
 <!--             <th class="table-filterable">4月</th>
             <th class="table-filterable">5月</th>
             <th class="table-filterable">6月</th>
@@ -72,6 +71,9 @@ year: String, month: String, appFormList: List[models.form.OvertimeListForm],yea
 	              <input type="hidden" id="monthsYears@app.employeeNo" name="monthsYears" value="@app.monthsYears">
 	            <td>@app.employeeNo</td>
 	            <td>@app.employeeName</td>
+	            <td>@app.positionName</td>
+	            <td>@app.workCode</td>
+	            <td>@app.teamLeader</td>
 	            <td>@app.overTime</td>
 			</tr>
 			}
@@ -88,6 +90,7 @@ year: String, month: String, appFormList: List[models.form.OvertimeListForm],yea
             <div class="pull-right hidden-xs">
               <label>@messages.at("moveYear")</label>
             <select name="year">
+            <option value="">---</option>
             	@yearList.map{ yl =>
                     <option value="@yl.targetYear">@yl.targetYear 年度</option>
                   }

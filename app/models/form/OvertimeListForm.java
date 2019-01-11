@@ -10,7 +10,6 @@ public class OvertimeListForm {
     public String monthsYears = "";
     public String positionName = "";
     public String workCode = "";
-    public String workName = "";
     public String teamLeader = "";
     public Double sumDeductionNight = 0.0;
     public Double sumDeductionOther = 0.0;

@@ -126,9 +126,17 @@ public class TblPerformanceAdmin extends CommonModel {
      * @return sqlRows
      */
     public static List<SqlRow> getPerformanceData() {
-        String sql = "SELECT * FROM TBL_PERFORMANCE_ADMIN PER " +
-        		"LEFT JOIN MS_EMPLOYEE MS ON PER.EMPLOYEE_NO=MS.EMPLOYEE_NO ";
+        String sql = "SELECT DISTINCT  TB.EMPLOYEE_NO,EM.EMPLOYEE_NAME,EM.POSITION_CODE,EM.BUSINESS_CODE AS BUSINESS_CODE,EM2.EMPLOYEE_NAME AS LEADER " +
+        		"FROM TBL_PERFORMANCE_ADMIN TB " +
+        		"LEFT JOIN MS_EMPLOYEE EM ON TB.EMPLOYEE_NO=EM.EMPLOYEE_NO " +
+        		"LEFT JOIN (" +
+        		"SELECT MS.EMPLOYEE_NO, MS.EMPLOYEE_NAME,MS.POSITION_CODE,PM.BUSINESS_CODE,PM.BUSINESS_TEAM_CODE  " +
+        		"FROM KINTAI.MS_EMPLOYEE MS  " +
+        		"LEFT OUTER JOIN MS_PERFORMANCE_MANAGE PM ON PM.EMPLOYEE_NO= MS.EMPLOYEE_NO " +
+        		"WHERE MS.POSITION_CODE != :code) EM2 " +
+        		"ON EM.BUSINESS_CODE=EM2.BUSINESS_CODE ";
         List<SqlRow> sqlRows = Ebean.createSqlQuery(sql)
+        		.setParameter("code", Const.DEFAULT_CODE)
                 .findList();
 
         return sqlRows;
