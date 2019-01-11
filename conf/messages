@@ -4,6 +4,7 @@ title=KMS勤怠管理【WEB】
 header.title={0} - KMS勤怠管理【WEB】
 header.name=ログイン中： {0} {1}さん
 titleDate={0}年{1}月度
+titleDate.year={0}年度
 
 moveYearMonth=年月を指定して移動：
 
