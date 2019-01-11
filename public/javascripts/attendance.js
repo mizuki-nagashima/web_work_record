@@ -10,6 +10,22 @@
       });
     }
 
+    $('.opnDefault').timepicker({
+        'scrollDefault': '10:00',
+        'timeFormat':'H:i',
+        'wrapHours': false,
+        'showOnFocus': false
+      });
+
+      $('.cloDefault').timepicker({
+        'scrollDefault': 'now',
+        'timeFormat':'H:i',
+        'wrapHours': false,
+        'showOnFocus': false
+      });
+
+    //TODO デフォルト勤怠入力
+
     $('.openingTime').timepicker({
       'scrollDefault': '10:00',
       'timeFormat':'H:i',
