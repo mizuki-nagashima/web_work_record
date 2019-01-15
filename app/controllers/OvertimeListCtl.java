@@ -54,7 +54,7 @@ public class OvertimeListCtl extends Controller {
     	for(SqlRow sqlrow :sqlBusinessTeamCodeList) {
     		businessTeamCodeList.add(sqlrow.getString("business_team_code"));
     	}
-       	// 承認申請されたデータを取得
+       	// 実績登録されたデータを取得
     	List<SqlRow> sqlList = TblPerformanceAdmin.getPerformanceData();
     	// TODO 上記参考にしつつ残業一覧データを取得
 

@@ -2,107 +2,170 @@
 year: String, month: String, appFormList: List[models.form.OvertimeListForm],yearList: List[models.MsGeneralCode])
 @import play.i18n._
 @import helper._
-        @javascriptRouter("jsRoutes")(
-        	routes.javascript.ApproveCtl.moveTargetYearMonth,
-        	routes.javascript.ApproveCtl.moveAttendanceByApprove,
-        	routes.javascript.OvertimeListCtl.index
-        )
-@main(messages.at("header.title","残業一覧"),sesEmpNo,sesEmpName,sesAuthClass) {
+@main(messages.at("header.title","残業一覧"),sesEmpNo,sesEmpName,sesAuthClass){
 <section class="content">
-<script src="@routes.Assets.versioned("javascripts/overtime_list.js")" type="text/javascript"></script>
-<input type="hidden" id="month" name="month" value="@month">
-  <div class="row">
-    <div class="col-md-12 col-sm-12 col-xs-12">
-      <div class="col-md-10 col-sm-10 col-xs-12">
-        <h2><i class="fa fa-pencil-square-o"></i> @messages.at("titleDate.year",year)</h2>
-      </div>
-      <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
-          <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
-     <!--        <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
-              <i class="fa fa-file-text"></i>
-              @messages.at("attendance.pdf")
-            </button>  -->
-            <div class="pull-right hidden-xs">
-              <label>@messages.at("moveYear")</label>
-            <select name="moveYear">
-            <option value="">---</option>
-            	@yearList.map{ yl =>
-                    <option value="@yl.targetYear">@yl.targetYear 年度</option>
-                  }
-                 <script>
-                    if(@year != ""){$("#year").val(@year)}
-                 </script>
-			</select>
-			            </div>
-          </div>
-        </div>
-      </div>
-	<div>
-        <table id="data" class="table table-bordered">
-          <thead style="background: #d3e5ff;">
-          <tr>
-            <th>社員番号</th>
-            <th>氏名</th>
-            <th class="table-filterable">役職</th>
-            <th class="table-filterable">業務コード</th>
-            <th class="table-filterable">チームリーダー</th>
-             <th>残業時間</th>
-<!--             <th class="table-filterable">4月</th>
-            <th class="table-filterable">5月</th>
-            <th class="table-filterable">6月</th>
-            <th class="table-filterable">7月</th>
-            <th class="table-filterable">8月</th>
-            <th class="table-filterable">9月</th>
-            <th class="table-filterable">10月</th>
-            <th class="table-filterable">11月</th>
-            <th class="table-filterable">12月</th>
-            <th class="table-filterable">1月</th>
-            <th class="table-filterable">2月</th>
-            <th class="table-filterable">3月</th>
-            <th class="table-filterable">45時間以上回数</th>
-            <th class="table-filterable">平均残業時間</th> -->
-          </tr>
-          </thead>
-          <tbody>
-          @for(app <- appFormList ){
-	          <tr id="@app.employeeNo">
-	         	 <input type="hidden" id="employeeNo@app.employeeNo" name="employeeNo" value="@app.employeeNo">
-	              <input type="hidden" id="monthsYears@app.employeeNo" name="monthsYears" value="@app.monthsYears">
-	            <td>@app.employeeNo</td>
-	            <td>@app.employeeName</td>
-	            <td>@app.positionName</td>
-	            <td>@app.workCode</td>
-	            <td>@app.teamLeader</td>
-	            <td>@app.overTime</td>
-			</tr>
-			}
-          </tbody>
-        </table>
-	</div>
+	<input type="hidden" id="month" name="month" value="@month">
 	<div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
-          <div class="col-md-12 col-sm-12 col-xs-12 form-inline">
-    <!--         <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
+		<div class="col-md-12 col-sm-12 col-xs-12">
+			<div class="col-md-10 col-sm-10 col-xs-12">
+        <h2><i class="fa fa-pencil-square-o"></i> @messages.at("titleDate.year",year)</h2>
+			</div>
+			<div class="row">
+				<div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
+					<div class="col-md-12 col-sm-12 col-xs-12 form-inline">
+						<!--        <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
               <i class="fa fa-file-text"></i>
               @messages.at("attendance.pdf")
             </button>  -->
-            <div class="pull-right hidden-xs">
-              <label>@messages.at("moveYear")</label>
-            <select name="year">
-            <option value="">---</option>
-            	@yearList.map{ yl =>
-                    <option value="@yl.targetYear">@yl.targetYear 年度</option>
-                  }
-                 <script>
+						<div class="pull-right hidden-xs">
+							<label>@messages.at("moveYear")</label> <select name="moveYear">
+								<option value="">---</option> @yearList.map{ yl =>
+								<option value="@yl.targetYear">@yl.targetYear 年度</option> }
+								<script>
+				                    if(@year != ""){$("#year").val(@year)}
+				                 </script>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div>
+			@if(appFormList.isEmpty()){ 対象のデータはありません。 } else {
+					<table id="tabelData" class="table table-bordered">
+						<thead style="background: #d3e5ff;">
+							<tr>
+								<th class="hidden-xs">社員番号</th>
+								<th class="hidden-xs" width="6%">氏名</th>
+								<th class="hidden-xs">部署</th>
+								<th class="hidden-xs"  width="6%">役職</th>
+								<th class="hidden-xs">業務チーム名</th>
+								<th class="hidden-xs"  width="6%">チームリーダー</th>
+								<th>45時間以上回数</th>
+								<th>平均残業時間</th>
+								<th>4月</th>
+								<th>5月</th>
+								<th>6月</th>
+								<th>7月</th>
+								<th>8月</th>
+								<th>9月</th>
+								<th>10月</th>
+								<th>11月</th>
+								<th>12月</th>
+								<th>1月</th>
+								<th>2月</th>
+								<th>3月</th>
+							</tr>
+						</thead>
+						<tbody>
+							@for(app <- appFormList ){
+							<tr id="@app.employeeNo">
+								<input type="hidden" id="employeeNo@app.employeeNo"
+									name="employeeNo" value="@app.employeeNo">
+								<td class="empno">@app.employeeNo</td>
+								<td class="name">@app.employeeName</td>
+								<td class="born">部署</td>
+								<td>@app.positionName</td>
+								<td>@app.workCode</td>
+								<td>@app.teamLeader</td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+							}
+						</tbody>
+					</table>
+			}
+			</div>
+			<div class="row">
+				<div class="col-md-12 col-sm-12 col-xs-12  margin-bottom">
+					<div class="col-md-12 col-sm-12 col-xs-12 form-inline">
+						<!--         <button type="button" class="btn btn-info pdfBtn" style="margin-right: 10px">
+              <i class="fa fa-file-text"></i>
+              @messages.at("attendance.pdf")
+            </button>  -->
+						<div class="pull-right hidden-xs">
+							<label>@messages.at("moveYear")</label> <select name="moveYear">
+								<option value="">---</option> @yearList.map{ yl =>
+								<option value="@yl.targetYear">@yl.targetYear 年度</option> }
+								<script>
                     if(@year != ""){$("#year").val(@year)}
                  </script>
-			</select>
+							</select>
+						</div>
+					</div>
+				</div>
 			</div>
-          </div>
-        </div>
-      </div>
-	</div>
+		</div>
 	</div>
 </section>
+<script>
+$(function(){
+    if(localStorage.saveMsg){
+      $(".success-msg").removeClass("hidden");
+      $('.success-msg').text(" " + localStorage.saveMsg).fadeIn(1000).delay(2000).fadeOut(2000);
+      localStorage.removeItem('saveMsg');
+    }else if(navigator.userAgent.match(/(iPhone|iPod|Android)/)){
+      $(document).ready(function () {
+        setTimeout(function() { window.scrollTo(0,$('#attendanceSaveTop').offset().top); }, 1);
+      });
+    }
+
+    // プルダウン変更時に遷移
+    $('select[name=moveYear]').change(function() {
+      if ($(this).val() != '') {
+    	var url =  '@routes.OvertimeListCtl.index("0")';
+    	 url = url.substring(0, url.length - 1) + @year;
+        window.location.href = url;
+      }
+    });
+
+    $(".pdfBtn").click(function () {
+    	$('#pdfModal').modal('show');
+    });
+
+	$('#tabelData').DataTable({
+	    stateSave: true,
+		paging: false,
+		searching: false,
+		"autoWidth": false,
+		columnDefs: [
+			{"orderable": false ,"targets": [6,7,8,9,10,11,12,13,14,15,16,17,18,19] }
+		]
+	});
+
+    $.postAjax = function(formId, callBack, url) {
+      var form = (typeof formId == "string" ? $(formId) : formId);
+      var accessUrl = null;
+      try {
+        if(form && form[0]) {
+          accessUrl = url ? url : form.attr('action')
+          $.ajax({
+            url     : accessUrl,
+            data    : form.serialize(),
+            type    : "POST",
+            success : function(data) {
+              callBack(data);
+            },
+            complete : function() {
+            }
+          });
+        }
+      } catch(e) {
+        alert('エラーが発生しました。');
+      }
+    };
+
+  });
+</script>
 }

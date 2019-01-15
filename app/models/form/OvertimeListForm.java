@@ -7,7 +7,8 @@ package models.form;
 public class OvertimeListForm {
     public String employeeNo = "";
     public String employeeName = "";
-    public String monthsYears = "";
+    public String year = "";
+    public String month = "";
     public String positionName = "";
     public String workCode = "";
     public String teamLeader = "";

@@ -515,7 +515,6 @@ public class MakeModelUtil {
     	List<OvertimeListForm> aifList = new ArrayList<>();
     	String empNo = "";
     	String empName = "";
-    	String monthsYears = "";
     	String positionName = "";
     	String workCode = "";
     	String teamLeader = "";
@@ -527,7 +526,6 @@ public class MakeModelUtil {
     	for(SqlRow pd : performanceData) {
     		empNo = pd.getString("employee_no");
     		empName = pd.getString("employee_name");
-    		monthsYears = pd.getString("years");
     		positionName = MsGeneralCode.getCodeMaster(Const.POSITION_CODE_NAME, pd.getString("position_code")).getString("code_name");
     		workCode = MsGeneralCode.getCodeMaster(Const.BUSINESS_CODE_NAME, pd.getString("business_code")).getString("code_name");
     		teamLeader = pd.getString("leader");
@@ -543,7 +541,8 @@ public class MakeModelUtil {
     		OvertimeListForm aif = new OvertimeListForm();
     		aif.employeeNo = empNo;
     		aif.employeeName = empName;
-    		aif.monthsYears = monthsYears;
+    		aif.year = year;
+    		aif.month = month;
     		aif.positionName= positionName;
     		aif.workCode = workCode;
     		aif.teamLeader = teamLeader;
